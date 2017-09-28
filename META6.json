@@ -1,0 +1,16 @@
+{   "perl"        : "6",
+    "name"        : "Font::FreeType",
+    "license"     : "Artistic-2.0",
+    "version"     : "0.0.1",
+    "auth"        : "github:p6-pdf",
+    "description" : "read font files and render glyphs using FreeType2",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/p6-pdf/Font-FreeType-p6.git",
+    "provides"    : {
+        "Font::FreeType" : "lib/Font/FreeType.pm",
+        "Font::FreeType::Error" : "lib/Font/FreeType/Error.pm",
+        "Font::FreeType::Glyph" : "lib/Font/FreeType/Glyph.pm"
+     }
+}
+
+ 
