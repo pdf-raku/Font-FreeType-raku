@@ -2,7 +2,6 @@ unit module Font::FreeType::Native;
 
 use NativeCall;
 use NativeCall::Types;
-use Font::FreeType::Error;
 
 our $ftlib;
 BEGIN {
@@ -13,12 +12,47 @@ BEGIN {
     }
 }
 
-constant FT_Byte   = Blob[uint8];
+constant FT_Byte   = uint8;
 constant FT_Error  is export = uint32;
+constant FT_Encoding = uint32;
+constant FT_Int    = int32;
 constant FT_Long   = long;
+constant FT_Pos    = long;
+constant FT_Short  = int16;
 constant FT_String = Str;
+constant FT_UInt   = uint32;
+constant FT_UShort = uint16;
 
-class FT_Face is repr('CStruct') is export {
+my class FT_Bitmap_Size is repr('CStruct') {
+    has FT_Short  $.height;
+    has FT_Short  $.width;
+
+    has FT_Pos    $.size;
+
+    has FT_Pos    $.x_ppem;
+    has FT_Pos    $.y_ppem;
+}
+
+class FT_Face is repr('CStruct') {...}
+
+my class FT_CharMap is repr('CStruct') {
+    has FT_Face      $.face;
+    has FT_Encoding  $.encoding;
+    has FT_UShort    $.platform_id;
+    has FT_UShort    $.encoding_id;
+}
+
+class FT_Generic is repr('CStruct') {
+    has Pointer       $.data;
+    has Pointer       $.finalizer;
+}
+
+class FT_BBox is repr('CStruct') {
+    has FT_Pos  ($.xMin, $.yMin);
+    has FT_Pos  ($.xMax, $.yMax);
+}
+
+class FT_Face is export {
     has FT_Long           $.num_faces;
     has FT_Long           $.face_index;
 
@@ -29,44 +63,35 @@ class FT_Face is repr('CStruct') is export {
 
     has FT_String         $.family_name;
     has FT_String         $.style_name;
-##
-##    FT_Int            num_fixed_sizes;
-##    FT_Bitmap_Size*   available_sizes;
-##
-##    FT_Int            num_charmaps;
-##    FT_CharMap*       charmaps;
-##
-##    FT_Generic        generic;
+
+    has FT_Int            $.num_fixed_sizes;
+    has Pointer[FT_Bitmap_Size]   $.available_sizes;
+
+    has FT_Int            $.num_charmaps;
+    has Pointer[FT_CharMap]       $.charmaps;
+
+    HAS FT_Generic        $.generic;
 ##
 ##    /*# The following member variables (down to `underline_thickness') */
 ##    /*# are only relevant to scalable outlines; cf. @FT_Bitmap_Size    */
 ##    /*# for bitmap fonts.                                              */
-##    FT_BBox           bbox;
+    HAS FT_BBox           $.bbox;
+
+    has FT_UShort         $.units_per_EM;
+    has FT_Short          $.ascender;
+    has FT_Short          $.descender;
+    has FT_Short          $.height;
+
+    has FT_Short          $.max_advance_width;
+    has FT_Short          $.max_advance_height;
+
+    has FT_Short          $.underline_position;
+    has FT_Short          $.underline_thickness;
+
+##  has FT_GlyphSlot      $.glyph;
+##  has FT_Size           $.size;
+##  has FT_CharMap        $.charmap;
 ##
-##    FT_UShort         units_per_EM;
-##    FT_Short          ascender;
-##    FT_Short          descender;
-##    FT_Short          height;
-##
-##    FT_Short          max_advance_width;
-##    FT_Short          max_advance_height;
-##
-##    FT_Short          underline_position;
-##    FT_Short          underline_thickness;
-##
-##    FT_GlyphSlot      glyph;
-##    FT_Size           size;
-##    FT_CharMap        charmap;
-##
-##    /*@private begin */
-##
-##    FT_Driver         driver;
-##    FT_Memory         memory;
-##    FT_Stream         stream;
-##
-##    FT_ListRec        sizes_list;
-##
-##    FT_Generic        autohint;   /* face-specific auto-hinter data */
 
 }
 
@@ -79,7 +104,7 @@ class FT_Library is repr('CPointer') is export {
     returns FT_Error is native($ftlib) {*};
 
     method FT_New_Memory_Face(
-        FT_Byte $buffer,
+        Blob[FT_Byte] $buffer,
         FT_Long $buffer-size,
         FT_Long $face-index,
         Pointer[FT_Face] $aface is rw

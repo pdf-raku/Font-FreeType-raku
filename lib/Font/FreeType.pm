@@ -1,9 +1,10 @@
 unit class Font::FreeType;
 
 use v6;
+use NativeCall;
 use Font::FreeType::Native;
 use Font::FreeType::Face;
-use NativeCall;:Types;
+use Font::FreeType::Error;
 
 has FT_Library $.library;
 
