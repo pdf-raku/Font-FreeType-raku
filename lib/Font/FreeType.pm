@@ -35,3 +35,8 @@ multi method face(buf8 $file-buf,
     my FT_Face $face = $p.deref;
     Font::FreeType::Face.new: :$face;
 }
+
+method version returns Version {
+    $!library.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
+    Version.new: "v{$major}.{$minor}.{$patch}";
+}
