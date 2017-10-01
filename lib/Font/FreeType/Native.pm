@@ -29,14 +29,27 @@ constant FT_Glyph_Format = int32; # enum
 class FT_Face is repr('CStruct') {...}
 class FT_Library is repr('CPointer') {...}
 
-class FT_Bitmap_Size is repr('CStruct') {
+my role PointerArithmetic {
+
+    method succ {
+	Pointer[self.WHAT].new: +nativecast(Pointer,self) + nativesizeof(self);
+    }
+}
+
+class FT_Bitmap_Size is repr('CStruct') does PointerArithmetic is export {
     has FT_Short  $.height;
     has FT_Short  $.width;
 
-    has FT_Pos    $.size;
+    has FT_Pos    $!size;
 
     has FT_Pos    $.x_ppem;
     has FT_Pos    $.y_ppem;
+
+    method size { $!size / 64.0 }
+    multi method x_res(:$ppem! where .so) { $!x_ppem / 64.0 }
+    multi method x_res(:$dpi!  where .so) { 72.0/64.0 * $!x_ppem / self.size }
+    multi method y_res(:$ppem! where .so) { $!y_ppem / 64.0 }
+    multi method y_res(:$dpi!  where .so) { 72.0/64.0 * $!y_ppem / self.size }
 }
 
 class FT_CharMap is repr('CStruct') {
@@ -218,6 +231,9 @@ class FT_Face is export {
 
     method FT_Has_PS_Glyph_Names(  )
         returns FT_Int is native($ftlib) {*};
+
+    method FT_Get_Postscript_Name(  )
+        returns Str is native($ftlib) {*};
 }
 
 class FT_Library is export {

@@ -1,6 +1,25 @@
 unit class Font::FreeType::Face;
+
+use NativeCall;
 use Font::FreeType::Native;
-has FT_Face $.face handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes available_sizes num_charmaps charmaps generic bbox units_per_EM ascender descender height max_advance_width max_advance_height underline_position underline_thickness glyph size charmap>;
+
+has FT_Face $.face handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps charmaps generic bbox height max_advance_width max_advance_height glyph size charmap>;
+
+method units_per_EM { self.is-scalable ?? $!face.unit_per_EM !! Mu }
+method underline_position { self.is-scalable ?? $!face.underline_position !! Mu }
+method underline_thickness { self.is-scalable ?? $!face.underline_thickness !! Mu }
+method ascender { self.is-scalable ?? $!face.ascender !! Mu }
+method descender { self.is-scalable ?? $!face.descender !! Mu }
+
+method fixed_sizes {
+    my int $n-sizes = self.num_fixed_sizes;
+    my $ptr = $!face.available_sizes.deref;
+    (0 ..^ $n-sizes).map: {
+        $ptr++;
+    }
+}
+
+method postscript_name { $!face.FT_Get_Postscript_Name }
 
 method !flag-set(FT_FACE_FLAG $f) { ?($!face.face_flags +& $f) }
 method is-scalable { self!flag-set: FT_FACE_FLAG_SCALABLE }
