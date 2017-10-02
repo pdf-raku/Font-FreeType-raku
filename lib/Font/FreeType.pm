@@ -23,8 +23,8 @@ submethod BUILD {
 multi method face(Str $file-path-name, Int :$index = 0) {
     my $p = Pointer[FT_Face].new;
     ft-try({ $!library.FT_New_Face($file-path-name, $index, $p) });
-    my FT_Face $face = $p.deref; #nativecast(FT_Face, $p);
-    Font::FreeType::Face.new: :$face;
+    my FT_Face $struct = $p.deref;
+    Font::FreeType::Face.new: :$struct;
 }
 
 multi method face(buf8 $file-buf,
@@ -32,8 +32,8 @@ multi method face(buf8 $file-buf,
                   Int :$index = 0) {
     my $p = Pointer[FT_Face].new;
     ft-try({ $!library.FT_New_Memory_Face($file-buf, $size, $index, $p) });
-    my FT_Face $face = $p.deref;
-    Font::FreeType::Face.new: :$face;
+    my FT_Face $struct = $p.deref;
+    Font::FreeType::Face.new: :$struct;
 }
 
 method version returns Version {

@@ -40,16 +40,10 @@ class FT_Bitmap_Size is repr('CStruct') does PointerArithmetic is export {
     has FT_Short  $.height;
     has FT_Short  $.width;
 
-    has FT_Pos    $!size;
+    has FT_Pos    $.size;
 
     has FT_Pos    $.x_ppem;
     has FT_Pos    $.y_ppem;
-
-    method size { $!size / 64.0 }
-    multi method x_res(:$ppem! where .so) { $!x_ppem / 64.0 }
-    multi method x_res(:$dpi!  where .so) { 72.0/64.0 * $!x_ppem / self.size }
-    multi method y_res(:$ppem! where .so) { $!y_ppem / 64.0 }
-    multi method y_res(:$dpi!  where .so) { 72.0/64.0 * $!y_ppem / self.size }
 }
 
 class FT_CharMap is repr('CStruct') {
