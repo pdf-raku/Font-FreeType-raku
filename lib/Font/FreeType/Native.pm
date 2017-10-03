@@ -21,7 +21,8 @@ constant FT_Long   = long;
 constant FT_Pos    = long;
 constant FT_Short  = int16;
 constant FT_String = Str;
-constant FT_UInt   = uint32;
+constant FT_UInt   is export = uint32;
+constant FT_ULong  is export = ulong;
 constant FT_UShort = uint16;
 
 constant FT_Glyph_Format = int32; # enum
@@ -29,14 +30,7 @@ constant FT_Glyph_Format = int32; # enum
 class FT_Face is repr('CStruct') {...}
 class FT_Library is repr('CPointer') {...}
 
-my role PointerArithmetic {
-
-    method succ {
-	Pointer[self.WHAT].new: +nativecast(Pointer,self) + nativesizeof(self);
-    }
-}
-
-class FT_Bitmap_Size is repr('CStruct') does PointerArithmetic is export {
+class FT_Bitmap_Size is repr('CStruct') is export {
     has FT_Short  $.height;
     has FT_Short  $.width;
 
@@ -46,7 +40,20 @@ class FT_Bitmap_Size is repr('CStruct') does PointerArithmetic is export {
     has FT_Pos    $.y_ppem;
 }
 
-class FT_CharMap is repr('CStruct') {
+sub ft_enc_tag(Str $s) {
+    my uint32 $enc = 0;
+    for $s.ords {
+        $enc *= 256;
+        $enc += $_;
+    }
+    $enc;
+}
+
+enum FT_ENCODING is export (
+    FT_ENCODING_UNICODE => ft_enc_tag("unic"),
+    );
+
+class FT_CharMap is export is repr('CStruct') {
     has FT_Face      $.face;
     has FT_Encoding  $.encoding;
     has FT_UShort    $.platform_id;
@@ -160,6 +167,16 @@ class FT_GlyphSlot is repr('CStruct') {
     has FT_Slot_Internal  $.internal;
 }
 
+class FT_SfntName is repr('CStruct') {
+    has FT_UShort  $.platform_id;
+    has FT_UShort  $.encoding_id;
+    has FT_UShort  $.language_id;
+    has FT_UShort  $.name_id;
+
+    has Pointer[FT_Byte]   $.string;      #| this string is *not* null-terminated! */
+    has FT_UInt   $.string_len;  #| in bytes                              */
+}
+
 enum FT_FACE_FLAG is export «
     :FT_FACE_FLAG_SCALABLE(1 +<  0)
     :FT_FACE_FLAG_FIXED_SIZES(1 +<  1)
@@ -221,13 +238,24 @@ class FT_Face is export {
 
     has FT_GlyphSlot      $.glyph;
     has FT_Size           $.size;
-    HAS FT_CharMap        $.charmap;
+    has FT_CharMap        $.charmap;
 
     method FT_Has_PS_Glyph_Names(  )
         returns FT_Int is native($ftlib) {*};
 
     method FT_Get_Postscript_Name(  )
         returns Str is native($ftlib) {*};
+
+    method FT_Get_Sfnt_Name_Count(  )
+        returns FT_UInt is native($ftlib) {*};
+
+    method FT_Get_Sfnt_Name( FT_UInt $index, Str $sfnt is rw  )
+        returns FT_Error is native($ftlib) {*};
+
+    method FT_Done_Face
+        returns FT_Error
+        is export
+        is native($ftlib) {*};
 }
 
 class FT_Library is export {
@@ -250,8 +278,13 @@ class FT_Library is export {
         FT_Int $major is rw,
         FT_Int $minor is rw,
         FT_Int $patch is rw,
-    )
+        )
     returns FT_Error is native($ftlib) {*};
+
+    method FT_Done_FreeType
+        returns FT_Error
+        is export
+        is native($ftlib) {*};
 }
 
 sub FT_Init_FreeType(FT_Library $library is rw)

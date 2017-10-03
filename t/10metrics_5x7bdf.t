@@ -2,6 +2,7 @@
 use v6;
 use Test;
 use Font::FreeType;
+use Font::FreeType::Native;
 
 my Font::FreeType $ft .= new;
 # Load the BDF file.
@@ -62,46 +63,29 @@ ok(abs($fixed_size.size * $fixed_size.y_res(:dpi) / 72
 
 skip 'Perl 5 port in progress...', 42;
 
-=begin pod
-
-is $bdf.namedinfos, Mu, "no named infos for fixed size font";
+is $bdf.named_infos, Mu, "no named infos for fixed size font";
 is $bdf.bounding_box, Mu, "no bounding box for fixed size font";
 
-# Test iterating over all the characters.  1836*1 tests.
-my $glyph_list_filename = catfile($data_dir, 'bdf_glyphs.txt');
-open my $glyph_list, '<', $glyph_list_filename
-  or die "error opening file for list of glyphs: $!";
-$bdf.foreach_char(sub {
-    die "shouldn't be any argumetns passed in" unless @_ == 0;
-    my $line = <$glyph_list>;
-    die "not enough characters in listing file '$glyph_list_filename'"
-      unless defined $line;
-    chomp $line;
-    my ($unicode, $name) = split ' ', $line;
-    $unicode = hex $unicode;
-    is($_.char_code, $unicode,
-       "glyph $unicode char code in foreach_char()");
-    # Can't test the name yet because it isn't implemented in FreeType.
-    #is($_.name, $name, "glyph $unicode name in foreach_char()");
-});
-is(scalar <$glyph_list>, Mu, "we aren't missing any glyphs");
-
-subtest "charmaps" => sub {
-    subtest "default charmap" => sub {
+subtest {
+    plan 2;
+    subtest {
+        plan 4;
         my $default_cm = $bdf.charmap;
         ok $default_cm;
         is $default_cm.platform_id, 3;
         is $default_cm.encoding_id, 1;
-        is $default_cm.encoding, FT_ENCODING_UNICODE;
-    };
+        is $default_cm.encoding, +FT_ENCODING_UNICODE;
+    }, "default charmap";
 
-    subtest "available charmaps" => sub {
+    subtest {
+        plan 3;
         my $charmaps = $bdf.charmaps;
-        ok $charmaps;
-        is ref($charmaps), 'ARRAY';
-        is scalar(@$charmaps), 1;
-    }
-};
+        ok $charmaps.defined;
+        isa-ok $charmaps, Array;
+        is +$charmaps, 1;
+    }, "available charmaps"
+
+}, "charmaps";
 
 # Test metrics on some particlar glyphs.
 my %glyph_metrics = (
@@ -116,6 +100,8 @@ my %glyph_metrics = (
     '|' => { name => 'bar', advance => 5,
              LBearing => 0, RBearing => 0 },
 );
+
+=begin pod
 
 # 4*2 tests.
 foreach my $get_by_code (0 .. 1) {

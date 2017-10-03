@@ -16,13 +16,18 @@ sub ft-try(&sub) {
 
 submethod BUILD {
     my $p = Pointer[$!library].new;
-    ft-try({ FT_Init_FreeType( $p ) });
+    ft-try: FT_Init_FreeType( $p );
     $!library = $p.deref;
+}
+
+submethod DESTROY {
+    ft-try: $!library.FT_Done_FreeType;
+    $!library = Nil;
 }
 
 multi method face(Str $file-path-name, Int :$index = 0) {
     my $p = Pointer[FT_Face].new;
-    ft-try({ $!library.FT_New_Face($file-path-name, $index, $p) });
+    ft-try: $!library.FT_New_Face($file-path-name, $index, $p);
     my FT_Face $struct = $p.deref;
     Font::FreeType::Face.new: :$struct;
 }
@@ -38,5 +43,5 @@ multi method face(buf8 $file-buf,
 
 method version returns Version {
     $!library.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
-    Version.new: "v{$major}.{$minor}.{$patch}";
+    Version.new: "{$major}.{$minor}.{$patch}";
 }

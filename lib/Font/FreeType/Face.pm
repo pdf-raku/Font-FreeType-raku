@@ -2,12 +2,15 @@ unit class Font::FreeType::Face;
 
 use NativeCall;
 use Font::FreeType::Native;
+use Font::FreeType::Glyph;
 
-has FT_Face $.struct handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps charmaps generic bbox height max_advance_width max_advance_height glyph size charmap>;
+has FT_Face $.struct handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps generic height max_advance_width max_advance_height glyph size charmap>;
 
 method units_per_EM { self.is-scalable ?? $!struct.units_per_EM !! Mu }
 method underline_position { self.is-scalable ?? $!struct.underline_position !! Mu }
 method underline_thickness { self.is-scalable ?? $!struct.underline_thickness !! Mu }
+method bounding_box { self.is-scalable ?? $!struct.bbox !! Mu }
+
 method ascender { self.is-scalable ?? $!struct.ascender !! Mu }
 method descender { self.is-scalable ?? $!struct.descender !! Mu }
 
@@ -24,9 +27,32 @@ class Bitmap_Size {
 
 method fixed_sizes {
     my int $n-sizes = self.num_fixed_sizes;
-    my $ptr = $!struct.available_sizes.deref;
+    my $ptr = $!struct.available_sizes;
+    my Bitmap_Size @fixed_sizes;
     (0 ..^ $n-sizes).map: {
-        Bitmap_Size.new: :struct($ptr++);
+        my $struct = $ptr[$_];
+        @fixed_sizes.push: Bitmap_Size.new: :$struct;
+    }
+    @fixed_sizes;
+}
+
+method charmaps {
+    my int $n-sizes = self.num_charmaps;
+    my $ptr = $!struct.charmaps;
+    my FT_CharMap @charmaps;
+    (0 ..^ $n-sizes).map: {
+        @charmaps.push: $ptr[$_];
+    }
+    @charmaps;
+}
+
+method named_infos {
+    return Mu unless self.is-scalable;
+    my int $n-sizes = $!struct.FT_Get_Sfnt_Name_Count;
+    (0 ..^ $n-sizes).map: -> $i {
+        my Str $sfnt;
+        ft-try: $!struct.FT_Get_Sfnt_Name($i, $sfnt);
+        $sfnt;
     }
 }
 
@@ -44,3 +70,8 @@ method has-glyph-names { self!flag-set: FT_FACE_FLAG_GLYPH_NAMES }
 method has-reliable-glyph-names { self.has-glyph-names && ? $!struct.FT_Has_PS_Glyph_Names }
 method is-bold { ?($!struct.style_flags & FT_STYLE_FLAG_BOLD) }
 method is-italic { ?($!struct.style_flags & FT_STYLE_FLAG_ITALIC) }
+
+submethod DESTROY {
+    ft-try: $!struct.FT_Done_Face;
+    $!struct = Nil;
+}
