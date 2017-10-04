@@ -1,4 +1,5 @@
 class Font::FreeType::Error is Exception {
+    use Font::FreeType::Native;
     our @Messages is export(:Messages);
     sub error-def(Int $num, Str $message ) {
         @Messages[$num] = $message;
@@ -13,6 +14,12 @@ class Font::FreeType::Error is Exception {
         my $message = @Messages[$!error]
             // "unknown error code: $!error";
         "FreeType Error: $message";
+    }
+
+    sub ft-try(&sub) is export {
+        my FT_Error $error = &sub();
+        Font::FreeType::Error.new(:$error).throw
+            if $error;
     }
 }
 

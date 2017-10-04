@@ -1,10 +1,11 @@
 unit class Font::FreeType::Face;
 
 use NativeCall;
+use Font::FreeType::Error;
 use Font::FreeType::Native;
 use Font::FreeType::Glyph;
 
-has FT_Face $.struct handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps generic height max_advance_width max_advance_height glyph size charmap>;
+has FT_Face $.struct handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps generic height max_advance_width max_advance_height size charmap>;
 
 method units_per_EM { self.is-scalable ?? $!struct.units_per_EM !! Mu }
 method underline_position { self.is-scalable ?? $!struct.underline_position !! Mu }
@@ -70,6 +71,19 @@ method has-glyph-names { self!flag-set: FT_FACE_FLAG_GLYPH_NAMES }
 method has-reliable-glyph-names { self.has-glyph-names && ? $!struct.FT_Has_PS_Glyph_Names }
 method is-bold { ?($!struct.style_flags & FT_STYLE_FLAG_BOLD) }
 method is-italic { ?($!struct.style_flags & FT_STYLE_FLAG_ITALIC) }
+
+method !get-glyph-name(UInt $ord) {
+    my buf8 $buf .= allocate(256);
+    my FT_UInt $index = $!struct.FT_Get_Char_Index( $ord );
+    ft-try: $!struct.FT_Get_Glyph_Name($index, $buf, $buf.bytes);
+    nativecast(Str, $buf);
+}
+
+method glyph-name(Str $char) {
+    self.has-glyph-names
+        ?? self!get-glyph-name($char.ord)
+        !! Mu;
+}
 
 submethod DESTROY {
     ft-try: $!struct.FT_Done_Face;

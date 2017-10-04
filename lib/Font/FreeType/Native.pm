@@ -252,6 +252,16 @@ class FT_Face is export {
     method FT_Get_Sfnt_Name( FT_UInt $index, Str $sfnt is rw  )
         returns FT_Error is native($ftlib) {*};
 
+    method FT_Get_Glyph_Name(
+        FT_UInt $glyph_index,
+        buf8    $buffer,
+        FT_UInt $buffer_max )
+    returns FT_Error is native($ftlib) {*};
+
+    method FT_Get_Char_Index(
+        FT_ULong  $charcode )
+    returns FT_UInt is native($ftlib) {*};
+
     method FT_Done_Face
         returns FT_Error
         is export

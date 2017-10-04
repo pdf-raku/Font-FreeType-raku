@@ -30,6 +30,8 @@ lives-ok { $face = $freetype.face('t/fonts/DejaVuSerif.ttf'.IO.slurp(:bin)) }, '
 is $face.num_faces, 1, 'num_faces';
 is $face.family_name, 'DejaVu Serif', 'face family name';
 
+is $face.glyph-name('&'), 'ampersand', 'glyph name';
+
 lives-ok {$face.DESTROY}, 'face DESTROY';
 lives-ok {$freetype.DESTROY}, 'freetype DESTROY';
 

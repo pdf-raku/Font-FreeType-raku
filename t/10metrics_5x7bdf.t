@@ -8,7 +8,7 @@ my Font::FreeType $ft .= new;
 # Load the BDF file.
 my $bdf = $ft.face: 't/fonts/5x7.bdf';
 ok $bdf.defined, 'FreeType.face returns an object';
-isa-ok $bdf, ::('Font::FreeType::Face'),
+isa-ok $bdf, (require ::('Font::FreeType::Face')),
     'FreeType.face returns face object';
 
 # Test general properties of the face.
@@ -104,11 +104,9 @@ my %glyph_metrics = (
 =begin pod
 
 # 4*2 tests.
-foreach my $get_by_code (0 .. 1) {
-    foreach my $char (sort keys %glyph_metrics) {
-        my $glyph = $get_by_code ? $bdf.glyph_from_char_code(ord $char)
-                                 : $bdf.glyph_from_char($char);
-        die "no glyph for character '$char'" unless $glyph;
+for %glyph_metrics.keys.sort -> $char {
+    my $glyph = $bdf.glyph($char);
+    die "no glyph for character '$char'" unless $glyph;
         local $_ = $glyph_metrics{$char};
         # Can't do names until it's implemented in FreeType.
         #is($glyph.name, .<name>,
@@ -121,7 +119,6 @@ foreach my $get_by_code (0 .. 1) {
            "right bearing of glyph '$char'");
         is($glyph.width, .<advance> - .<LBearing> - .<RBearing>,
            "width of glyph '$char'");
-    }
 }
 
 # Test kerning.

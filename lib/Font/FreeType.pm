@@ -8,12 +8,6 @@ use Font::FreeType::Error;
 
 has FT_Library $.library;
 
-sub ft-try(&sub) {
-    my FT_Error $error = &sub();
-    Font::FreeType::Error.new(:$error).throw
-        if $error;
-}
-
 submethod BUILD {
     my $p = Pointer[$!library].new;
     ft-try: FT_Init_FreeType( $p );
@@ -36,7 +30,7 @@ multi method face(buf8 $file-buf,
                   Int :$size = $file-buf.bytes,
                   Int :$index = 0) {
     my $p = Pointer[FT_Face].new;
-    ft-try({ $!library.FT_New_Memory_Face($file-buf, $size, $index, $p) });
+    ft-try: $!library.FT_New_Memory_Face($file-buf, $size, $index, $p);
     my FT_Face $struct = $p.deref;
     Font::FreeType::Face.new: :$struct;
 }
