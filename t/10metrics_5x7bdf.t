@@ -101,13 +101,11 @@ my %glyph_metrics = (
              LBearing => 0, RBearing => 0 },
 );
 
-=begin pod
-
 # 4*2 tests.
 for %glyph_metrics.keys.sort -> $char {
     my $glyph = $bdf.glyph($char);
     die "no glyph for character '$char'" unless $glyph;
-        local $_ = $glyph_metrics{$char};
+    with %glyph_metrics{$char} {
         # Can't do names until it's implemented in FreeType.
         #is($glyph.name, .<name>,
         #   "name of glyph '$char'");
@@ -119,7 +117,11 @@ for %glyph_metrics.keys.sort -> $char {
            "right bearing of glyph '$char'");
         is($glyph.width, .<advance> - .<LBearing> - .<RBearing>,
            "width of glyph '$char'");
+    }
+    last; # rakudo bugs
 }
+
+=begin pod
 
 # Test kerning.
 my %kerning = (

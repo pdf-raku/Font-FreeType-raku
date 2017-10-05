@@ -1,16 +1,11 @@
-unit class Font::FreeType::Glyph;
+unit class Font::FreeType::Glyphs;
+
+use NativeCall;
 use Font::FreeType::Native;
+use Font::FreeType::Error;
 
 has $.face is required;
-has FT_ULong $!char_code;
-has FT_UInt  $!index;
-has Str      $!name;
+has FT_ULong $!ord;
+has FT_UInt  $.index;
+has Str      $.name;
 
-multi submethod TWEAK(Str :$char!) {
-    my Int:D $ord = $char.ords[0];
-    self.TWEAK( :$ord );
-}
-
-multi submethod TWEAK(Int :$ord!) {
-    $!index = $!face.FT_Get_Char_Index( $ord );
-}

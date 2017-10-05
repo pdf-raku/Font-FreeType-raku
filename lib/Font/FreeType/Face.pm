@@ -26,6 +26,23 @@ class Bitmap_Size {
 
 }
 
+class GlyphSlot {
+    has FT_GlyphSlot $.struct handles <metrics>;
+
+    method left_bearing { $.metrics.horiBearingX; }
+    method right_bearing {
+        .horiAdvance - .horiBearingX - .width
+            with $.metrics
+    }
+    method horizontal_advance {
+        $.metrics.horiAdvance;
+    }
+    method vertical_advance {
+        $.metrics.horiAdvance;
+    }
+    method width { $.metrics.width }
+}
+
 method fixed_sizes {
     my int $n-sizes = self.num_fixed_sizes;
     my $ptr = $!struct.available_sizes;
@@ -83,6 +100,13 @@ method glyph-name(Str $char) {
     self.has-glyph-names
         ?? self!get-glyph-name($char.ord)
         !! Mu;
+}
+
+method glyph(Str $char, Int $flags = 0) {
+    ft-try: $!struct.FT_Load_Char( $char.ord, $flags );
+    my $struct = $!struct.glyph;
+    $struct.TWEAK;
+    GlyphSlot.new: :$struct;
 }
 
 submethod DESTROY {

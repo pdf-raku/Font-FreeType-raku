@@ -16,6 +16,7 @@ constant FT_Byte   = uint8;
 constant FT_Error  is export = uint32;
 constant FT_Encoding = uint32;
 constant FT_Int    is export = int32;
+constant FT_Int32  is export = int32;
 constant FT_Fixed  = long;
 constant FT_Long   = long;
 constant FT_Pos    = long;
@@ -133,12 +134,12 @@ class FT_Size is repr('CStruct') {
     has FT_Size_Internal  $.internal;
 }
 
-class FT_GlyphSlot is repr('CStruct') {
+class FT_GlyphSlot is repr('CStruct') is export {
     has FT_Library        $.library;
     has FT_Face           $.face;
     has FT_GlyphSlot      $.next;
     has FT_UInt           $.reserved;       #| retained for binary compatibility
-    has FT_Generic        $.generic;
+    HAS FT_Generic        $.generic;
 
     HAS FT_Glyph_Metrics  $.metrics;
     has FT_Fixed          $.linearHoriAdvance;
@@ -147,11 +148,11 @@ class FT_GlyphSlot is repr('CStruct') {
 
     has FT_Glyph_Format   $.format;
 
-    has FT_Bitmap         $.bitmap;
+    HAS FT_Bitmap         $.bitmap;
     has FT_Int            $.bitmap_left;
     has FT_Int            $.bitmap_top;
 
-    has FT_Outline        $.outline;
+    HAS FT_Outline        $.outline;
 
     has FT_UInt           $.num_subglyphs;
     has FT_SubGlyph       $.subglyphs;
@@ -165,6 +166,11 @@ class FT_GlyphSlot is repr('CStruct') {
     has Pointer           $.other;
 
     has FT_Slot_Internal  $.internal;
+
+    submethod TWEAK {
+        $!face := FT_Face.new;
+        $!metrics := FT_Glyph_Metrics.new
+    }
 }
 
 class FT_SfntName is repr('CStruct') {
@@ -261,6 +267,16 @@ class FT_Face is export {
     method FT_Get_Char_Index(
         FT_ULong  $charcode )
     returns FT_UInt is native($ftlib) {*};
+
+    method FT_Load_Glyph(
+        FT_UInt   $glyph_index,
+        FT_Int32  $load_flags )
+    returns FT_Error is native($ftlib) {*};
+
+    method FT_Load_Char(
+        FT_ULong  $char_code,
+        FT_Int32  $load_flags )
+    returns FT_Error is native($ftlib) {*};
 
     method FT_Done_Face
         returns FT_Error
