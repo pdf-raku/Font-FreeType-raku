@@ -103,8 +103,8 @@ my %glyph_metrics = (
 
 # 4*2 tests.
 for %glyph_metrics.keys.sort -> $char {
-    my $glyph = $bdf.glyph($char);
-    die "no glyph for character '$char'" unless $glyph;
+    my $glyph = $bdf.load-glyph($char)
+        // die "no glyph for character '$char'";
     with %glyph_metrics{$char} {
         # Can't do names until it's implemented in FreeType.
         #is($glyph.name, .<name>,

@@ -168,8 +168,6 @@ class FT_GlyphSlot is repr('CStruct') is export {
     has FT_Slot_Internal  $.internal;
 
     submethod TWEAK {
-        $!face := FT_Face.new;
-        $!metrics := FT_Glyph_Metrics.new
     }
 }
 

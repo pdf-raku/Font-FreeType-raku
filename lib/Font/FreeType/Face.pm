@@ -27,7 +27,7 @@ class Bitmap_Size {
 }
 
 class GlyphSlot {
-    has FT_GlyphSlot $.struct handles <metrics>;
+    has FT_GlyphSlot $.struct is required handles <metrics>;
 
     method left_bearing { $.metrics.horiBearingX; }
     method right_bearing {
@@ -38,7 +38,7 @@ class GlyphSlot {
         $.metrics.horiAdvance;
     }
     method vertical_advance {
-        $.metrics.horiAdvance;
+        $.metrics.vertAdvance;
     }
     method width { $.metrics.width }
 }
@@ -102,8 +102,9 @@ method glyph-name(Str $char) {
         !! Mu;
 }
 
-method glyph(Str $char, Int $flags = 0) {
-    ft-try: $!struct.FT_Load_Char( $char.ord, $flags );
+method load-glyph(Str $char, Int $flags = 0) {
+    my $ord = $char.ord // die "empty string";
+    ft-try: $!struct.FT_Load_Char( $ord, $flags );
     my $struct = $!struct.glyph;
     $struct.TWEAK;
     GlyphSlot.new: :$struct;
