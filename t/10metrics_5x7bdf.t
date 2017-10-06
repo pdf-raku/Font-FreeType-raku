@@ -13,7 +13,7 @@ isa-ok $bdf, (require ::('Font::FreeType::Face')),
 
 # Test general properties of the face.
 is $bdf.num_faces, 1, '$face.num_faces';
-is $bdf.face_index, 0, '$face.face_index()';
+is $bdf.face_index, 0, '$face.face_index';
 
 is $bdf.postscript_name, Str, 'there is no postscript name';
 is $bdf.family_name, 'Fixed', '$face->family_name() is right';

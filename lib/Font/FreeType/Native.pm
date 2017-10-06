@@ -171,13 +171,13 @@ class FT_GlyphSlot is repr('CStruct') is export {
     }
 }
 
-class FT_SfntName is repr('CStruct') {
+class FT_SfntName is repr('CStruct') is export {
     has FT_UShort  $.platform_id;
     has FT_UShort  $.encoding_id;
     has FT_UShort  $.language_id;
     has FT_UShort  $.name_id;
 
-    has Pointer[FT_Byte]   $.string;      #| this string is *not* null-terminated! */
+    has CArray[FT_Byte]   $.string;      #| this string is *not* null-terminated! */
     has FT_UInt   $.string_len;  #| in bytes                              */
 }
 
@@ -253,8 +253,10 @@ class FT_Face is export {
     method FT_Get_Sfnt_Name_Count(  )
         returns FT_UInt is native($ftlib) {*};
 
-    method FT_Get_Sfnt_Name( FT_UInt $index, Str $sfnt is rw  )
-        returns FT_Error is native($ftlib) {*};
+    method FT_Get_Sfnt_Name(
+        FT_UInt $index,
+        FT_SfntName $sfnt)
+    returns FT_Error is native($ftlib) {*};
 
     method FT_Get_Glyph_Name(
         FT_UInt $glyph_index,

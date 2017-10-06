@@ -67,10 +67,17 @@ method charmaps {
 method named_infos {
     return Mu unless self.is-scalable;
     my int $n-sizes = $!struct.FT_Get_Sfnt_Name_Count;
+    my FT_SfntName $sfnt .= new;
+
     (0 ..^ $n-sizes).map: -> $i {
-        my Str $sfnt;
         ft-try: $!struct.FT_Get_Sfnt_Name($i, $sfnt);
-        $sfnt;
+        my $len = $sfnt.string_len;
+        my buf8 $buf .= allocate($len);
+        with $sfnt.string -> $s {
+            $buf[$_] = $s[$_] for 0 ..^ $len;
+        }
+        # todo variable encoding
+        $buf.decode;
     }
 }
 
