@@ -8,7 +8,10 @@ use Font::FreeType::Glyph;
 constant Dpi = 72.0;
 constant Px = 64.0;
 
+my class GlyphSlot is rw {...}
+
 has FT_Face $.struct handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps generic height max_advance_width max_advance_height size charmap>;
+has GlyphSlot $!glyph-slot;
 
 method units_per_EM { self.is-scalable ?? $!struct.units_per_EM !! Mu }
 method underline_position { self.is-scalable ?? $!struct.underline_position !! Mu }
@@ -28,7 +31,7 @@ class Bitmap_Size {
     multi method y_res(:$dpi!  where .so) { Dpi/Px * $!struct.y_ppem / self.size }
 }
 
-class GlyphSlot {
+my class GlyphSlot is rw {
     has FT_GlyphSlot $.struct is required handles <metrics>;
     has FT_ULong     $.char_code;
     has Str          $.name;
@@ -126,11 +129,25 @@ multi method glyph-name(Int $char_code) {
         !! Mu;
 }
 
+method !set-glyph( :$struct!, :$char_code!) {
+    with $!glyph-slot {
+        .struct = $struct;
+        .char_code = $char_code;
+    }
+    else {
+        $!glyph-slot .= new: :$struct, :$char_code;
+    }
+
+    $!glyph-slot.name = $_
+        with self.glyph-name($char_code);
+    $!glyph-slot;
+}
+
 method load-glyph(Str $char, Int :$flags = 0) {
     my $char_code = $char.ord // die "empty string";
     ft-try: $!struct.FT_Load_Char( $char_code, $flags );
     my $struct = $!struct.glyph;
-    GlyphSlot.new: :$struct, :$char_code;
+    self!set-glyph: :$struct, :$char_code;
 }
 
 method foreach_char(&code, Int :$flags = 0) {
@@ -140,9 +157,8 @@ method foreach_char(&code, Int :$flags = 0) {
     while $glyph_idx {
         ft-try: $!struct.FT_Load_Glyph( $glyph_idx, $flags );
         my $struct = $!struct.glyph;
-        my $name = self.glyph-name($char_code);
-        my $glyph-slot = GlyphSlot.new: :$struct, :$char_code, :$name;
-        &code($glyph-slot);
+        self!set-glyph: :$struct, :$char_code;
+        &code($!glyph-slot);
         $char_code = $!struct.FT_Get_Next_Char( $char_code, $glyph_idx);
     }
 }

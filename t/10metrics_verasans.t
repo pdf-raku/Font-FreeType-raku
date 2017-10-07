@@ -118,7 +118,6 @@ $vera.foreach_char: -> $_ {
     my $line = @glyph_list[$i++];
     die "not enough characters in listing file '$glyph_list_filename'"
         unless defined $line;
-    warn $line;
     my ($unicode, $name) = split /\s+/, $line;
     $unicode = :16($unicode);
     is .char_code, $unicode,
