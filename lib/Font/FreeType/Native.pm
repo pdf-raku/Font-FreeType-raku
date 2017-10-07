@@ -67,8 +67,8 @@ class FT_Generic is repr('CStruct') {
 }
 
 class FT_BBox is repr('CStruct') {
-    has FT_Pos  ($.xMin, $.yMin);
-    has FT_Pos  ($.xMax, $.yMax);
+    has FT_Pos  ($.x_min, $.y_min);
+    has FT_Pos  ($.x_max, $.y_max);
 }
 
 class FT_Glyph_Metrics  is repr('CStruct') {
@@ -277,6 +277,15 @@ class FT_Face is export {
         FT_ULong  $char_code,
         FT_Int32  $load_flags )
     returns FT_Error is native($ftlib) {*};
+
+    method FT_Get_First_Char(
+        FT_UInt  $agindex is rw )
+    returns FT_UInt is native($ftlib) {*};
+
+    method FT_Get_Next_Char(
+        FT_UInt  $char_code,
+        FT_UInt  $agindex is rw )
+    returns FT_UInt is native($ftlib) {*};
 
     method FT_Done_Face
         returns FT_Error

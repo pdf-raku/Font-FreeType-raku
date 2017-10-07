@@ -26,11 +26,12 @@ class Bitmap_Size {
     multi method x_res(:$dpi!  where .so) { Dpi/Px * $!struct.x_ppem / self.size }
     multi method y_res(:$ppem! where .so) { $!struct.y_ppem / Px }
     multi method y_res(:$dpi!  where .so) { Dpi/Px * $!struct.y_ppem / self.size }
-
 }
 
 class GlyphSlot {
     has FT_GlyphSlot $.struct is required handles <metrics>;
+    has FT_ULong     $.char_code;
+    has Str          $.name;
 
     method left_bearing { $.metrics.horiBearingX; }
     method right_bearing {
@@ -44,6 +45,7 @@ class GlyphSlot {
         $.metrics.vertAdvance / Px;
     }
     method width { $.metrics.width / Px }
+    method Str {$!char_code.chr}
 }
 
 method fixed_sizes {
@@ -67,22 +69,29 @@ method charmaps {
     @charmaps;
 }
 
+class SfntName {
+    has FT_SfntName $.struct handles <platform_id encoding_id language_id name_id string_len>;
+
+    method string {
+        my $len = $.string_len;
+        my buf8 $buf .= allocate($len);
+        with $!struct.string -> $s {
+            $buf[$_] = $s[$_] for 0 ..^ $len;
+        }
+        # todo various encoding schemes
+        $buf.decode;
+    }
+}
+
 method named_infos {
     return Mu unless self.is-scalable;
     my int $n-sizes = $!struct.FT_Get_Sfnt_Name_Count;
-    my FT_SfntName $sfnt .= new;
     my buf8 $buf .= allocate(256);
 
     (0 ..^ $n-sizes).map: -> $i {
+        my FT_SfntName $sfnt .= new;
         ft-try: $!struct.FT_Get_Sfnt_Name($i, $sfnt);
-        my $len = $sfnt.string_len;
-        $buf.reallocate($len)
-            if $len > $buf.bytes;
-        with $sfnt.string -> $s {
-            $buf[$_] = $s[$_] for 0 ..^ $len;
-        }
-        # todo variable encoding
-        $buf.decode;
+        SfntName.new: :struct($sfnt);
     }
 }
 
@@ -108,18 +117,34 @@ method !get-glyph-name(UInt $ord) {
     nativecast(Str, $buf);
 }
 
-method glyph-name(Str $char) {
+multi method glyph-name(Str $char) {
+    $.glyph-name($char.ord);
+}
+multi method glyph-name(Int $char_code) {
     self.has-glyph-names
-        ?? self!get-glyph-name($char.ord)
+        ?? self!get-glyph-name($char_code)
         !! Mu;
 }
 
-method load-glyph(Str $char, Int $flags = 0) {
-    my $ord = $char.ord // die "empty string";
-    ft-try: $!struct.FT_Load_Char( $ord, $flags );
+method load-glyph(Str $char, Int :$flags = 0) {
+    my $char_code = $char.ord // die "empty string";
+    ft-try: $!struct.FT_Load_Char( $char_code, $flags );
     my $struct = $!struct.glyph;
-    $struct.TWEAK;
-    GlyphSlot.new: :$struct;
+    GlyphSlot.new: :$struct, :$char_code;
+}
+
+method foreach_char(&code, Int :$flags = 0) {
+    my FT_ULong $char_code;
+    my FT_UInt  $glyph_idx;
+    $char_code = $!struct.FT_Get_First_Char( $glyph_idx);
+    while $glyph_idx {
+        ft-try: $!struct.FT_Load_Glyph( $glyph_idx, $flags );
+        my $struct = $!struct.glyph;
+        my $name = self.glyph-name($char_code);
+        my $glyph-slot = GlyphSlot.new: :$struct, :$char_code, :$name;
+        &code($glyph-slot);
+        $char_code = $!struct.FT_Get_Next_Char( $char_code, $glyph_idx);
+    }
 }
 
 submethod DESTROY {
