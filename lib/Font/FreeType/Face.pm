@@ -5,6 +5,9 @@ use Font::FreeType::Error;
 use Font::FreeType::Native;
 use Font::FreeType::Glyph;
 
+constant Dpi = 72.0;
+constant Px = 64.0;
+
 has FT_Face $.struct handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps generic height max_advance_width max_advance_height size charmap>;
 
 method units_per_EM { self.is-scalable ?? $!struct.units_per_EM !! Mu }
@@ -18,11 +21,11 @@ method descender { self.is-scalable ?? $!struct.descender !! Mu }
 class Bitmap_Size {
     submethod BUILD(:$!struct) {}
     has FT_Bitmap_Size $!struct is required handles <width height x_ppem y_ppem>;
-    method size { $!struct.size / 64.0 }
-    multi method x_res(:$ppem! where .so) { $!struct.x_ppem / 64.0 }
-    multi method x_res(:$dpi!  where .so) { 72.0/64.0 * $!struct.x_ppem / self.size }
-    multi method y_res(:$ppem! where .so) { $!struct.y_ppem / 64.0 }
-    multi method y_res(:$dpi!  where .so) { 72.0/64.0 * $!struct.y_ppem / self.size }
+    method size { $!struct.size / Px }
+    multi method x_res(:$ppem! where .so) { $!struct.x_ppem / Px }
+    multi method x_res(:$dpi!  where .so) { Dpi/Px * $!struct.x_ppem / self.size }
+    multi method y_res(:$ppem! where .so) { $!struct.y_ppem / Px }
+    multi method y_res(:$dpi!  where .so) { Dpi/Px * $!struct.y_ppem / self.size }
 
 }
 
@@ -31,16 +34,16 @@ class GlyphSlot {
 
     method left_bearing { $.metrics.horiBearingX; }
     method right_bearing {
-        .horiAdvance - .horiBearingX - .width
+        (.horiAdvance - .horiBearingX - .width) / Px
             with $.metrics
     }
     method horizontal_advance {
-        $.metrics.horiAdvance;
+        $.metrics.horiAdvance / Px;
     }
     method vertical_advance {
-        $.metrics.vertAdvance;
+        $.metrics.vertAdvance / Px;
     }
-    method width { $.metrics.width }
+    method width { $.metrics.width / Px }
 }
 
 method fixed_sizes {
@@ -68,11 +71,13 @@ method named_infos {
     return Mu unless self.is-scalable;
     my int $n-sizes = $!struct.FT_Get_Sfnt_Name_Count;
     my FT_SfntName $sfnt .= new;
+    my buf8 $buf .= allocate(256);
 
     (0 ..^ $n-sizes).map: -> $i {
         ft-try: $!struct.FT_Get_Sfnt_Name($i, $sfnt);
         my $len = $sfnt.string_len;
-        my buf8 $buf .= allocate($len);
+        $buf.reallocate($len)
+            if $len > $buf.bytes;
         with $sfnt.string -> $s {
             $buf[$_] = $s[$_] for 0 ..^ $len;
         }
