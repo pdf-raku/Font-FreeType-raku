@@ -116,8 +116,8 @@ method has-vertical-metrics { self!flag-set: FT_FACE_FLAG_VERTICAL }
 method has-kerning { self!flag-set: FT_FACE_FLAG_KERNING }
 method has-glyph-names { self!flag-set: FT_FACE_FLAG_GLYPH_NAMES }
 method has-reliable-glyph-names { self.has-glyph-names && ? $!struct.FT_Has_PS_Glyph_Names }
-method is-bold { ?($!struct.style_flags & FT_STYLE_FLAG_BOLD) }
-method is-italic { ?($!struct.style_flags & FT_STYLE_FLAG_ITALIC) }
+method is-bold { ?($!struct.style_flags +& FT_STYLE_FLAG_BOLD) }
+method is-italic { ?($!struct.style_flags +& FT_STYLE_FLAG_ITALIC) }
 
 method !get-glyph-name(UInt $ord) {
     my buf8 $buf .= allocate(256);
@@ -156,10 +156,10 @@ method load-glyph(Str $char, Int :$flags = 0, Bool :$fallback) {
     ft-try: $!struct.FT_Load_Char( $char_code, $flags );
     my $struct = $!struct.glyph;
     self!set-glyph: :$struct, :$char_code;
-    my $glyph_index = $!struct.FT_Get_Char_Index($char_code);
-    $glyph_index || $fallback
+
+    $fallback || $!struct.FT_Get_Char_Index($char_code)
         ?? $!glyph-slot
-    !! Mu;
+        !! Mu;
 }
 
 method foreach_char(&code, Int :$flags = 0) {

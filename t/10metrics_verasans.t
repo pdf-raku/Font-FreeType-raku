@@ -41,6 +41,7 @@ my %expected-flags = (
     :is-scalable(True),
     :is-sfnt(True),
 );
+
 for %expected-flags.pairs.sort {
     is-deeply $vera."{.key}"(), .value, "\$face.{.key}";
 }
@@ -84,9 +85,8 @@ subtest {
 
 subtest {
     my $infos = $vera.named_infos;
-    skip 'rakudo bugs?', 2;
-##    ok $infos;
-##    is $infos.elems, 22;
+    ok $infos;
+    ok $infos.elems, 22;
     my $copy_info = $infos[0];
     like $copy_info.string, rx/'Copyright'.*'Bitstream, Inc.'/;
     is $copy_info.language_id, 0;
