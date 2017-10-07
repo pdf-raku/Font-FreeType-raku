@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 78 + 5 * 2 + 256 * 2 + 5;
+plan 65 + 256 * 2;
 use Font::FreeType;
 use Font::FreeType::Native;
 
@@ -126,8 +126,6 @@ $vera.foreach_char: -> $_ {
 };
 is $i, +@glyph_list, "we aren't missing any glyphs";
 
-=begin pod
-
 # Test metrics on some particlar glyphs.
 my %glyph_metrics = (
     'A' => { name => 'A', advance => 1401,
@@ -143,25 +141,23 @@ my %glyph_metrics = (
 );
 
 # Set the size to match the em size, so that the values are in font units.
-$vera->set_char_size(2048, 2048, 72, 72);
+$vera.set_char_size(2048, 2048, 72, 72);
 
 # 5*2 tests.
-foreach my $get_by_code (0 .. 1) {
-    foreach my $char (sort keys %glyph_metrics) {
-        my $glyph = $get_by_code ? $vera->glyph_from_char_code(ord $char)
-                                 : $vera->glyph_from_char($char);
-        die "no glyph for character '$char'" unless $glyph;
-        local $_ = $glyph_metrics{$char};
-        is($glyph->name, $_->{name},
-           "name of glyph '$char'");
-        is($glyph->horizontal_advance, $_->{advance},
-           "advance width of glyph '$char'");
-        is($glyph->left_bearing, $_->{LBearing},
-           "left bearing of glyph '$char'");
-        is($glyph->right_bearing, $_->{RBearing},
-           "right bearing of glyph '$char'");
-        is($glyph->width, $_->{advance} - $_->{LBearing} - $_->{RBearing},
-           "width of glyph '$char'");
+for %glyph_metrics.keys.sort -> $char {
+    my $glyph = $vera.load-glyph($char)
+        // die "no glyph for character '$char'";
+    with %glyph_metrics{$char} {
+        is $glyph.name, .<name>,
+           "name of glyph '$char'";
+        is $glyph.horizontal_advance, .<advance>,
+           "advance width of glyph '$char'";
+        is $glyph.left_bearing, .<LBearing>,
+           "left bearing of glyph '$char'";
+        is $glyph.right_bearing, .<RBearing>,
+           "right bearing of glyph '$char'";
+        is $glyph.width, .<advance> - .<LBearing> - .<RBearing>,
+           "width of glyph '$char'";
     }
 }
 
@@ -173,28 +169,17 @@ my %kerning = (
     'T.' => -243,
 );
 
-foreach my $pair (sort keys %kerning) {
-    my ($kern_x, $kern_y) = $vera->kerning(
-        map { $vera->glyph_from_char($_)->index } split //, $pair);
-    is($kern_x, $kerning{$pair}, "horizontal kerning of '$pair'");
-    is($kern_y, 0, "vertical kerning of '$pair'");
+for %kerning.keys.sort {
+    my ($left, $right) = .comb;
+    my $kern = $vera.kerning( $left, $right);
+    is $kern.x, %kerning{$_}, "horizontal kerning of '$_'";
+    is $kern.y, 0, "vertical kerning of '$_'";
 }
 
-# Get just the horizontal kerning more conveniently.
-my $kern_x = $vera->kerning(
-    map { $vera->glyph_from_char($_)->index } 'A', 'V');
-is($kern_x, -131, "horizontal kerning of 'AV' in scalar context");
+my $missing_glyph = $vera.load-glyph('˗');
+is $missing_glyph, Mu, "no fallback glyph";
 
-my $missing_glyph = $vera->glyph_from_char('˗');
-is $missing_glyph, undef, "no fallback glyph";
+$missing_glyph = $vera.load-glyph('˗', :fallback );
+ok $missing_glyph.defined, "fallback glyph is defined";
+is $missing_glyph.horizontal_advance, 1229, "missing glyph has horizontal advance";
 
-$missing_glyph = $vera->glyph_from_char('˗', 1);
-isnt $missing_glyph, undef, "fallback glyph is defined";
-is $missing_glyph->horizontal_advance, 1229, "missing glyph has horizontal advance";
-
-is $vera->glyph_from_char_code(ord '˗', 0), undef, "no fallback glyph";
-isnt $vera->glyph_from_char_code(ord '˗', 1), undef, "missing glyph is defined";
-
-# vim:ft=perl ts=4 sw=4 expandtab:
-
-=end pod

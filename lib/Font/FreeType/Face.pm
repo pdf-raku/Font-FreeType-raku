@@ -36,7 +36,7 @@ my class GlyphSlot is rw {
     has FT_ULong     $.char_code;
     has Str          $.name;
 
-    method left_bearing { $.metrics.horiBearingX; }
+    method left_bearing { $.metrics.horiBearingX / Px; }
     method right_bearing {
         (.horiAdvance - .horiBearingX - .width) / Px
             with $.metrics
@@ -86,6 +86,12 @@ class SfntName {
     }
 }
 
+my class Vector {
+    has FT_Vector $.struct;
+    method x { $!struct.x / Px }
+    method y { $!struct.y / Px }
+}
+
 method named_infos {
     return Mu unless self.is-scalable;
     my int $n-sizes = $!struct.FT_Get_Sfnt_Name_Count;
@@ -129,7 +135,8 @@ multi method glyph-name(Int $char_code) {
         !! Mu;
 }
 
-method !set-glyph( :$struct!, :$char_code!) {
+method !set-glyph(FT_GlyphSlot :$struct!, Int :$char_code!) {
+
     with $!glyph-slot {
         .struct = $struct;
         .char_code = $char_code;
@@ -140,14 +147,19 @@ method !set-glyph( :$struct!, :$char_code!) {
 
     $!glyph-slot.name = $_
         with self.glyph-name($char_code);
+
     $!glyph-slot;
 }
 
-method load-glyph(Str $char, Int :$flags = 0) {
+method load-glyph(Str $char, Int :$flags = 0, Bool :$fallback) {
     my $char_code = $char.ord // die "empty string";
     ft-try: $!struct.FT_Load_Char( $char_code, $flags );
     my $struct = $!struct.glyph;
     self!set-glyph: :$struct, :$char_code;
+    my $glyph_index = $!struct.FT_Get_Char_Index($char_code);
+    $glyph_index || $fallback
+        ?? $!glyph-slot
+    !! Mu;
 }
 
 method foreach_char(&code, Int :$flags = 0) {
@@ -161,6 +173,22 @@ method foreach_char(&code, Int :$flags = 0) {
         &code($!glyph-slot);
         $char_code = $!struct.FT_Get_Next_Char( $char_code, $glyph_idx);
     }
+}
+
+method set_char_size(Numeric $width, Numeric $height, UInt $horiz_res, UInt $vert_res) {
+    my FT_F26Dot6 $w = ($width * Px + 0.5).Int;
+    my FT_F26Dot6 $h = ($height * Px + 0.5).Int;
+    ft-try: $!struct.FT_Set_Char_Size($w, $h, $horiz_res, $vert_res);
+    self.load-glyph($_)
+        with $!glyph-slot.Str;
+}
+
+method kerning(Str $left, Str $right, UInt :$mode = 0) {
+    my FT_UInt $left_idx = $!struct.FT_Get_Char_Index( $left.ord );
+    my FT_UInt $right_idx = $!struct.FT_Get_Char_Index( $right.ord );
+    my $vec = FT_Vector.new;
+    ft-try: $!struct.FT_Get_Kerning($left_idx, $right_idx, $mode, $vec);
+    Vector.new: :struct($vec);
 }
 
 submethod DESTROY {

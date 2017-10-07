@@ -25,7 +25,7 @@ constant FT_String = Str;
 constant FT_UInt   is export = uint32;
 constant FT_ULong  is export = ulong;
 constant FT_UShort = uint16;
-
+constant FT_F26Dot6 is export = long;
 constant FT_Glyph_Format = int32; # enum
 
 class FT_Face is repr('CStruct') {...}
@@ -84,7 +84,7 @@ class FT_Glyph_Metrics  is repr('CStruct') {
     has FT_Pos  $.vertAdvance;
 }
 
-class FT_Vector is repr('CStruct') {
+class FT_Vector is repr('CStruct') is export {
     has FT_Pos  $.x;
     has FT_Pos  $.y;
  }
@@ -286,6 +286,20 @@ class FT_Face is export {
         FT_UInt  $char_code,
         FT_UInt  $agindex is rw )
     returns FT_UInt is native($ftlib) {*};
+
+    method FT_Set_Char_Size(
+        FT_F26Dot6  $char_width,
+        FT_F26Dot6  $char_height,
+        FT_UInt     $horz_resolution,
+        FT_UInt     $vert_resolution )
+    returns FT_Error is native($ftlib) {*};
+
+    method FT_Get_Kerning(
+        FT_UInt     $left_glyph,
+        FT_UInt     $right_glyph,
+        FT_UInt     $kern_mode,
+        FT_Vector   $kerning)
+    returns FT_Error is native($ftlib) {*};
 
     method FT_Done_Face
         returns FT_Error
