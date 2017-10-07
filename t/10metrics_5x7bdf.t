@@ -1,6 +1,7 @@
 # Information obtained from looking at the BDF file.
 use v6;
 use Test;
+plan 59 + 4 * 1 + 1836 * 1;
 use Font::FreeType;
 use Font::FreeType::Native;
 
@@ -61,10 +62,24 @@ ok(abs($fixed_size.size * $fixed_size.x_res(:dpi) / 72
 ok(abs($fixed_size.size * $fixed_size.y_res(:dpi) / 72
        - $fixed_size.y_res(:ppem)) < 0.1, 'fixed size y resolution in ppem');
 
-skip 'Perl 5 port in progress...', 42;
-
 is $bdf.named_infos, Mu, "no named infos for fixed size font";
 is $bdf.bounding_box, Mu, "no bounding box for fixed size font";
+
+my $glyph_list_filename = 't/fonts/bdf_glyphs.txt';
+my @glyph_list = $glyph_list_filename.IO.lines;
+my $i = 0;
+$bdf.foreach_char: -> $_ {
+    my $line = @glyph_list[$i++];
+    die "not enough characters in listing file '$glyph_list_filename'"
+        unless defined $line;
+    my ($unicode, $name) = split /\s+/, $line;
+    $unicode = :16($unicode);
+    is .char_code, $unicode, "glyph $unicode char code in foreach_char()";
+    # Can't test the name yet because it isn't implemented in FreeType.
+    #is .name, $name, "glyph $unicode name in foreach_char";
+};
+
+is $i, +@glyph_list, "we aren't missing any glyphs";
 
 subtest {
     plan 2;
@@ -118,10 +133,7 @@ for %glyph_metrics.keys.sort -> $char {
         is($glyph.width, .<advance> - .<LBearing> - .<RBearing>,
            "width of glyph '$char'");
     }
-    last; # rakudo bugs
 }
-
-=begin pod
 
 # Test kerning.
 my %kerning = (
@@ -131,17 +143,10 @@ my %kerning = (
     'T.' => 0,
 );
 
-foreach my $pair (sort keys %kerning) {
-    my ($kern_x, $kern_y) = $bdf.kerning(
-        map { $bdf.glyph_from_char($_).index } split //, $pair);
-    is($kern_x, $kerning{$pair}, "horizontal kerning of '$pair'");
-    is($kern_y, 0, "vertical kerning of '$pair'");
+for %kerning.keys.sort {
+    my ($left, $right) = .comb;
+    my $kern = $bdf.kerning( $left, $right);
+    is $kern.x, %kerning{$_}, "horizontal kerning of '$_'";
+    is $kern.y, 0, "vertical kerning of '$_'";
 }
-
-# Get just the horizontal kerning more conveniently.
-my $kern_x = $bdf.kerning(
-    map { $bdf.glyph_from_char($_).index } 'A', 'V');
-is($kern_x, 0, "horizontal kerning of 'AV' in scalar context");
-
-=end pod
 
