@@ -13,22 +13,22 @@ die "FreeType2 version $version is too old"
     unless $version >= v2.1.1;
 my Font::FreeType::Face $face;
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from file';
-is $face.num_faces, 1, 'num_faces';
-is $face.family_name, 'DejaVu Sans', 'face family name';
-is $face.num_glyphs, 6253, 'num_glyphs';
-my $bbox = $face.bounding_box;
-ok $bbox.defined, 'got bounding_box';
-is $bbox.x_min, -2090, 'bbox.x_min';
-is $bbox.x_max, 3673, 'bbox.x_max';
-is $bbox.y_min, -948, 'bbox.y_min';
-is $bbox.y_max, 2524, 'bbox.y_max';
-is $face.units_per_EM, 2048, '.units_per_EM';
+is $face.num-faces, 1, 'num-faces';
+is $face.family-name, 'DejaVu Sans', 'face family name';
+is $face.num-glyphs, 6253, 'num-glyphs';
+my $bbox = $face.bounding-box;
+ok $bbox.defined, 'got bounding-box';
+is $bbox.x-min, -2090, 'bbox.x-min';
+is $bbox.x-max, 3673, 'bbox.x-max';
+is $bbox.y-min, -948, 'bbox.y-min';
+is $bbox.y-max, 2524, 'bbox.y-max';
+is $face.units-per-EM, 2048, '.units-per-EM';
 is $face.ascender, 1901, '.ascender';
 is $face.descender, -483, '.ascender';
 
 lives-ok { $face = $freetype.face('t/fonts/DejaVuSerif.ttf'.IO.slurp(:bin)) }, 'face creation from buffer';
-is $face.num_faces, 1, 'num_faces';
-is $face.family_name, 'DejaVu Serif', 'face family name';
+is $face.num-faces, 1, 'num-faces';
+is $face.family-name, 'DejaVu Serif', 'face family name';
 
 is $face.glyph-name('&'), 'ampersand', 'glyph name';
 

@@ -10,60 +10,60 @@ constant Px = 64.0;
 
 my class GlyphSlot is rw {...}
 
-has FT_Face $.struct handles <num_faces face_index face_flags style_flags num_glyphs family_name style_name num_fixed_sizes num_charmaps generic height max_advance_width max_advance_height size charmap>;
+has FT_Face $.struct handles <num-faces face-index face-flags style-flags num-glyphs family-name style-name num-fixed-sizes num-charmaps generic height max-advance-width max-advance-height size charmap>;
 has GlyphSlot $!glyph-slot;
 
-method units_per_EM { self.is-scalable ?? $!struct.units_per_EM !! Mu }
-method underline_position { self.is-scalable ?? $!struct.underline_position !! Mu }
-method underline_thickness { self.is-scalable ?? $!struct.underline_thickness !! Mu }
-method bounding_box { self.is-scalable ?? $!struct.bbox !! Mu }
+method units-per-EM { self.is-scalable ?? $!struct.units-per-EM !! Mu }
+method underline-position { self.is-scalable ?? $!struct.underline-position !! Mu }
+method underline-thickness { self.is-scalable ?? $!struct.underline-thickness !! Mu }
+method bounding-box { self.is-scalable ?? $!struct.bbox !! Mu }
 
 method ascender { self.is-scalable ?? $!struct.ascender !! Mu }
 method descender { self.is-scalable ?? $!struct.descender !! Mu }
 
 class Bitmap_Size {
     submethod BUILD(:$!struct) {}
-    has FT_Bitmap_Size $!struct is required handles <width height x_ppem y_ppem>;
+    has FT_Bitmap_Size $!struct is required handles <width height x-ppem y-ppem>;
     method size { $!struct.size / Px }
-    multi method x_res(:$ppem! where .so) { $!struct.x_ppem / Px }
-    multi method x_res(:$dpi!  where .so) { Dpi/Px * $!struct.x_ppem / self.size }
-    multi method y_res(:$ppem! where .so) { $!struct.y_ppem / Px }
-    multi method y_res(:$dpi!  where .so) { Dpi/Px * $!struct.y_ppem / self.size }
+    multi method x-res(:$ppem! where .so) { $!struct.x-ppem / Px }
+    multi method x-res(:$dpi!  where .so) { Dpi/Px * $!struct.x-ppem / self.size }
+    multi method y-res(:$ppem! where .so) { $!struct.y-ppem / Px }
+    multi method y-res(:$dpi!  where .so) { Dpi/Px * $!struct.y-ppem / self.size }
 }
 
 my class GlyphSlot is rw {
     has FT_GlyphSlot $.struct is required handles <metrics>;
-    has FT_ULong     $.char_code;
+    has FT_ULong     $.char-code;
     has Str          $.name;
 
-    method left_bearing { $.metrics.horiBearingX / Px; }
-    method right_bearing {
+    method left-bearing { $.metrics.horiBearingX / Px; }
+    method right-bearing {
         (.horiAdvance - .horiBearingX - .width) / Px
             with $.metrics
     }
-    method horizontal_advance {
+    method horizontal-advance {
         $.metrics.horiAdvance / Px;
     }
-    method vertical_advance {
+    method vertical-advance {
         $.metrics.vertAdvance / Px;
     }
     method width { $.metrics.width / Px }
-    method Str {$!char_code.chr}
+    method Str {$!char-code.chr}
 }
 
-method fixed_sizes {
-    my int $n-sizes = self.num_fixed_sizes;
-    my $ptr = $!struct.available_sizes;
-    my Bitmap_Size @fixed_sizes;
+method fixed-sizes {
+    my int $n-sizes = self.num-fixed-sizes;
+    my $ptr = $!struct.available-sizes;
+    my Bitmap_Size @fixed-sizes;
     (0 ..^ $n-sizes).map: {
         my $struct = $ptr[$_];
-        @fixed_sizes.push: Bitmap_Size.new: :$struct;
+        @fixed-sizes.push: Bitmap_Size.new: :$struct;
     }
-    @fixed_sizes;
+    @fixed-sizes;
 }
 
 method charmaps {
-    my int $n-sizes = self.num_charmaps;
+    my int $n-sizes = self.num-charmaps;
     my $ptr = $!struct.charmaps;
     my FT_CharMap @charmaps;
     (0 ..^ $n-sizes).map: {
@@ -73,10 +73,10 @@ method charmaps {
 }
 
 class SfntName {
-    has FT_SfntName $.struct handles <platform_id encoding_id language_id name_id string_len>;
+    has FT_SfntName $.struct handles <platform-id encoding-id language-id name-id string-len>;
 
     method string {
-        my $len = $.string_len;
+        my $len = $.string-len;
         my buf8 $buf .= allocate($len);
         with $!struct.string -> $s {
             $buf[$_] = $s[$_] for 0 ..^ $len;
@@ -92,7 +92,7 @@ my class Vector {
     method y { $!struct.y / Px }
 }
 
-method named_infos {
+method named-infos {
     return Mu unless self.is-scalable;
     my int $n-sizes = $!struct.FT_Get_Sfnt_Name_Count;
     my buf8 $buf .= allocate(256);
@@ -104,9 +104,9 @@ method named_infos {
     }
 }
 
-method postscript_name { $!struct.FT_Get_Postscript_Name }
+method postscript-name { $!struct.FT_Get_Postscript_Name }
 
-method !flag-set(FT_FACE_FLAG $f) { ?($!struct.face_flags +& $f) }
+method !flag-set(FT_FACE_FLAG $f) { ?($!struct.face-flags +& $f) }
 method is-scalable { self!flag-set: FT_FACE_FLAG_SCALABLE }
 method has-fixed-sizes { self!flag-set: FT_FACE_FLAG_FIXED_SIZES }
 method is-fixed-width { self!flag-set: FT_FACE_FLAG_FIXED_WIDTH }
@@ -116,8 +116,8 @@ method has-vertical-metrics { self!flag-set: FT_FACE_FLAG_VERTICAL }
 method has-kerning { self!flag-set: FT_FACE_FLAG_KERNING }
 method has-glyph-names { self!flag-set: FT_FACE_FLAG_GLYPH_NAMES }
 method has-reliable-glyph-names { self.has-glyph-names && ? $!struct.FT_Has_PS_Glyph_Names }
-method is-bold { ?($!struct.style_flags +& FT_STYLE_FLAG_BOLD) }
-method is-italic { ?($!struct.style_flags +& FT_STYLE_FLAG_ITALIC) }
+method is-bold { ?($!struct.style-flags +& FT_STYLE_FLAG_BOLD) }
+method is-italic { ?($!struct.style-flags +& FT_STYLE_FLAG_ITALIC) }
 
 method !get-glyph-name(UInt $ord) {
     my buf8 $buf .= allocate(256);
@@ -129,65 +129,65 @@ method !get-glyph-name(UInt $ord) {
 multi method glyph-name(Str $char) {
     $.glyph-name($char.ord);
 }
-multi method glyph-name(Int $char_code) {
+multi method glyph-name(Int $char-code) {
     self.has-glyph-names
-        ?? self!get-glyph-name($char_code)
+        ?? self!get-glyph-name($char-code)
         !! Mu;
 }
 
-method !set-glyph(FT_GlyphSlot :$struct!, Int :$char_code!) {
+method !set-glyph(FT_GlyphSlot :$struct!, Int :$char-code!) {
 
     with $!glyph-slot {
         .struct = $struct;
-        .char_code = $char_code;
+        .char-code = $char-code;
     }
     else {
-        $!glyph-slot .= new: :$struct, :$char_code;
+        $!glyph-slot .= new: :$struct, :$char-code;
     }
 
     $!glyph-slot.name = $_
-        with self.glyph-name($char_code);
+        with self.glyph-name($char-code);
 
     $!glyph-slot;
 }
 
 method load-glyph(Str $char, Int :$flags = 0, Bool :$fallback) {
-    my $char_code = $char.ord // die "empty string";
-    ft-try: $!struct.FT_Load_Char( $char_code, $flags );
+    my $char-code = $char.ord // die "empty string";
+    ft-try: $!struct.FT_Load_Char( $char-code, $flags );
     my $struct = $!struct.glyph;
-    self!set-glyph: :$struct, :$char_code;
+    self!set-glyph: :$struct, :$char-code;
 
-    $fallback || $!struct.FT_Get_Char_Index($char_code)
+    $fallback || $!struct.FT_Get_Char_Index($char-code)
         ?? $!glyph-slot
         !! Mu;
 }
 
-method foreach_char(&code, Int :$flags = 0) {
-    my FT_ULong $char_code;
-    my FT_UInt  $glyph_idx;
-    $char_code = $!struct.FT_Get_First_Char( $glyph_idx);
-    while $glyph_idx {
-        ft-try: $!struct.FT_Load_Glyph( $glyph_idx, $flags );
+method foreach-char(&code, Int :$flags = 0) {
+    my FT_ULong $char-code;
+    my FT_UInt  $glyph-idx;
+    $char-code = $!struct.FT_Get_First_Char( $glyph-idx);
+    while $glyph-idx {
+        ft-try: $!struct.FT_Load_Glyph( $glyph-idx, $flags );
         my $struct = $!struct.glyph;
-        self!set-glyph: :$struct, :$char_code;
+        self!set-glyph: :$struct, :$char-code;
         &code($!glyph-slot);
-        $char_code = $!struct.FT_Get_Next_Char( $char_code, $glyph_idx);
+        $char-code = $!struct.FT_Get_Next_Char( $char-code, $glyph-idx);
     }
 }
 
-method set_char_size(Numeric $width, Numeric $height, UInt $horiz_res, UInt $vert_res) {
+method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
     my FT_F26Dot6 $w = ($width * Px + 0.5).Int;
     my FT_F26Dot6 $h = ($height * Px + 0.5).Int;
-    ft-try: $!struct.FT_Set_Char_Size($w, $h, $horiz_res, $vert_res);
+    ft-try: $!struct.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res);
     self.load-glyph($_)
         with $!glyph-slot.Str;
 }
 
 method kerning(Str $left, Str $right, UInt :$mode = 0) {
-    my FT_UInt $left_idx = $!struct.FT_Get_Char_Index( $left.ord );
-    my FT_UInt $right_idx = $!struct.FT_Get_Char_Index( $right.ord );
+    my FT_UInt $left-idx = $!struct.FT_Get_Char_Index( $left.ord );
+    my FT_UInt $right-idx = $!struct.FT_Get_Char_Index( $right.ord );
     my $vec = FT_Vector.new;
-    ft-try: $!struct.FT_Get_Kerning($left_idx, $right_idx, $mode, $vec);
+    ft-try: $!struct.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec);
     Vector.new: :struct($vec);
 }
 

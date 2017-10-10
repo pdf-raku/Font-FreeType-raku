@@ -15,12 +15,12 @@ isa-ok $font, (require ::('Font::FreeType::Face')),
     'FreeType.face returns face object';
 
 # Test general properties of the face.
-is $font.num_faces, 1, '$face.number_of_faces';
-is $font.face_index, 0, '$face.current_face_index';
+is $font.num-faces, 1, '$face.number-of-faces';
+is $font.face-index, 0, '$face.current-face-index';
 
-is $font.postscript_name, 'OldStandard-Bold', '$face.postscript_name';
-is $font.family_name, 'Old Standard', '$face.family_name';
-is $font.style_name, 'Bold', '$face.style_name() is right';
+is $font.postscript-name, 'OldStandard-Bold', '$face.postscript-name';
+is $font.family-name, 'Old Standard', '$face.family-name';
+is $font.style-name, 'Bold', '$face.style-name() is right';
 
 # Test face flags.
 my %expected-flags = (
@@ -41,11 +41,11 @@ for %expected-flags.pairs.sort {
 }
 
 # Some other general properties.
-is($font.num_glyphs, 1658, '$face.number_of_glyphs() is right');
-is($font.units_per_EM, 1000, '$face.units_per_em() is right');
-my $underline_position = $font.underline_position;
-ok $underline_position <= -178 || $underline_position >= -198, 'underline position';
-is $font.underline_thickness, 40, 'underline thickness';
+is($font.num-glyphs, 1658, '$face.number-of-glyphs() is right');
+is($font.units-per-EM, 1000, '$face.units-per-em() is right');
+my $underline-position = $font.underline-position;
+ok $underline-position <= -178 || $underline-position >= -198, 'underline position';
+is $font.underline-thickness, 40, 'underline thickness';
 is $font.height, 1482, 'text height';
 is $font.ascender, 952, 'ascender';
 is $font.descender, -294, 'descender';
@@ -54,11 +54,11 @@ subtest {
     plan 2;
     subtest {
         plan 4;
-        my $default_cm = $font.charmap;
-        ok $default_cm;
-        is $default_cm.platform_id, 3;
-        is $default_cm.encoding_id, 10;
-        is $default_cm.encoding, +FT_ENCODING_UNICODE;
+        my $default-cm = $font.charmap;
+        ok $default-cm;
+        is $default-cm.platform-id, 3;
+        is $default-cm.encoding-id, 10;
+        is $default-cm.encoding, +FT_ENCODING_UNICODE;
     }, "default charmap";
 
     subtest {
@@ -72,22 +72,22 @@ subtest {
 }, "charmaps";
 
 subtest {
-    my $infos = $font.named_infos;
+    my $infos = $font.named-infos;
     ok $infos;
     ok +$infos, 64;
-    my $copy_info = $infos[0];
-    like $copy_info.string, rx/'Copyright'.*'Alexey Kryukov'/;
-    is $copy_info.language_id, 0;
-    is $copy_info.platform_id, 1;
-    is $copy_info.name_id, 0;
-    is $copy_info.encoding_id, 0;
-}, "named_info";
+    my $copy-info = $infos[0];
+    like $copy-info.string, rx/'Copyright'.*'Alexey Kryukov'/;
+    is $copy-info.language-id, 0;
+    is $copy-info.platform-id, 1;
+    is $copy-info.name-id, 0;
+    is $copy-info.encoding-id, 0;
+}, "named-info";
 
 subtest {
-    my $bb = $font.bounding_box;
+    my $bb = $font.bounding-box;
     ok $bb;
-    is $bb.x_min, -868, "x_min is correct";
-    is $bb.y_min, -294, "y_min is correct";
-    is $bb.x_max, 1930, "x_max is correct";
-    is $bb.y_max, 952,  "y_max is correct";
-}, "bounding_box";
+    is $bb.x-min, -868, "x-min is correct";
+    is $bb.y-min, -294, "y-min is correct";
+    is $bb.x-max, 1930, "x-max is correct";
+    is $bb.y-max, 952,  "y-max is correct";
+}, "bounding-box";

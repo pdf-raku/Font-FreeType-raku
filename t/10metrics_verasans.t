@@ -20,12 +20,12 @@ isa-ok $vera, (require ::('Font::FreeType::Face')),
     'FreeType.face returns face object';
 
 # Test general properties of the face.
-is $vera.num_faces, 1, '$face.num_faces';
-is $vera.face_index, 0, '$face.face_index';
+is $vera.num-faces, 1, '$face.num-faces';
+is $vera.face-index, 0, '$face.face-index';
 
-is $vera.postscript_name, 'BitstreamVeraSans-Roman', '$face.postscript_name';
-is $vera.family_name, 'Bitstream Vera Sans', '$face.family_name';
-is $vera.style_name, 'Roman', '$face->style_name';
+is $vera.postscript-name, 'BitstreamVeraSans-Roman', '$face.postscript-name';
+is $vera.family-name, 'Bitstream Vera Sans', '$face.family-name';
+is $vera.style-name, 'Roman', '$face->style-name';
 
 
 # Test face flags.
@@ -47,30 +47,30 @@ for %expected-flags.pairs.sort {
 }
 
 # Some other general properties.
-is $vera.num_glyphs, 268, '$face.number_of_glyphs';
-is $vera.units_per_EM, 2048, '$face.units_per_em';
-my $underline_position = $vera.underline_position;
-ok $underline_position <= -213 || $underline_position >= -284, 'underline position';
+is $vera.num-glyphs, 268, '$face.number-of-glyphs';
+is $vera.units-per-EM, 2048, '$face.units-per-em';
+my $underline-position = $vera.underline-position;
+ok $underline-position <= -213 || $underline-position >= -284, 'underline position';
 
-is $vera.underline_thickness, 143, 'underline thickness';
+is $vera.underline-thickness, 143, 'underline thickness';
 # italic angle 0
 is $vera.ascender, 1901, 'ascender';
 is $vera.descender, -483, 'descender';
 is $vera.height, 2384, 'height';
 
 # Test getting the set of fixed sizes available.
-my @fixed_sizes = $vera.fixed_sizes;
-is +@fixed_sizes, 0, 'Vera has no fixed sizes';
+my @fixed-sizes = $vera.fixed-sizes;
+is +@fixed-sizes, 0, 'Vera has no fixed sizes';
 
 subtest {
     plan 2;
     subtest {
         plan 4;
-        my $default_cm = $vera.charmap;
-        ok $default_cm;
-        is $default_cm.platform_id, 3;
-        is $default_cm.encoding_id, 1;
-        is $default_cm.encoding, +FT_ENCODING_UNICODE;
+        my $default-cm = $vera.charmap;
+        ok $default-cm;
+        is $default-cm.platform-id, 3;
+        is $default-cm.encoding-id, 1;
+        is $default-cm.encoding, +FT_ENCODING_UNICODE;
     }, "default charmap";
 
     subtest {
@@ -84,24 +84,24 @@ subtest {
 }, "charmaps";
 
 subtest {
-    my $infos = $vera.named_infos;
+    my $infos = $vera.named-infos;
     ok $infos;
     ok $infos.elems, 22;
-    my $copy_info = $infos[0];
-    like $copy_info.string, rx/'Copyright'.*'Bitstream, Inc.'/;
-    is $copy_info.language_id, 0;
-    is $copy_info.platform_id, 1;
-    is $copy_info.name_id, 0;
-    is $copy_info.encoding_id, 0;
-}, "named_info";
+    my $copy-info = $infos[0];
+    like $copy-info.string, rx/'Copyright'.*'Bitstream, Inc.'/;
+    is $copy-info.language-id, 0;
+    is $copy-info.platform-id, 1;
+    is $copy-info.name-id, 0;
+    is $copy-info.encoding-id, 0;
+}, "named-info";
 
 subtest "bounding box" => sub {
-    my $bb = $vera.bounding_box;
+    my $bb = $vera.bounding-box;
     ok $bb;
-    is $bb.x_min, -375, "x_min is correct";
-    is $bb.y_min, -483, "y_min is correct";
-    is $bb.x_max, 2636, "x_max is correct";
-    is $bb.y_max, 1901, "y_max is correct";
+    is $bb.x-min, -375, "x-min is correct";
+    is $bb.y-min, -483, "y-min is correct";
+    is $bb.x-max, 2636, "x-max is correct";
+    is $bb.y-max, 1901, "y-max is correct";
 };
 
 
@@ -111,23 +111,23 @@ subtest "bounding box" => sub {
 # reported by this, and another 2 which have Unicode characters but no glyphs.
 # The expected Unicode codes and names of the glyphs are in a text file.
 # TODO - how can we iterate over the whole lot?
-my $glyph_list_filename = 't/fonts/vera_glyphs.txt';
-my @glyph_list = $glyph_list_filename.IO.lines;
+my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
+my @glyph-list = $glyph-list-filename.IO.lines;
 my $i = 0;
-$vera.foreach_char: -> $_ {
-    my $line = @glyph_list[$i++];
-    die "not enough characters in listing file '$glyph_list_filename'"
+$vera.foreach-char: -> $_ {
+    my $line = @glyph-list[$i++];
+    die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;
     my ($unicode, $name) = split /\s+/, $line;
     $unicode = :16($unicode);
-    is .char_code, $unicode,
-       "glyph $unicode char code in foreach_char()";
-    is .name, $name, "glyph $unicode name in foreach_char";
+    is .char-code, $unicode,
+       "glyph $unicode char code in foreach-char()";
+    is .name, $name, "glyph $unicode name in foreach-char";
 };
-is $i, +@glyph_list, "we aren't missing any glyphs";
+is $i, +@glyph-list, "we aren't missing any glyphs";
 
 # Test metrics on some particlar glyphs.
-my %glyph_metrics = (
+my %glyph-metrics = (
     'A' => { name => 'A', advance => 1401,
              LBearing => 16, RBearing => 17 },
     '_' => { name => 'underscore', advance => 1024,
@@ -141,20 +141,20 @@ my %glyph_metrics = (
 );
 
 # Set the size to match the em size, so that the values are in font units.
-$vera.set_char_size(2048, 2048, 72, 72);
+$vera.set-char-size(2048, 2048, 72, 72);
 
 # 5*2 tests.
-for %glyph_metrics.keys.sort -> $char {
+for %glyph-metrics.keys.sort -> $char {
     my $glyph = $vera.load-glyph($char)
         // die "no glyph for character '$char'";
-    with %glyph_metrics{$char} {
+    with %glyph-metrics{$char} {
         is $glyph.name, .<name>,
            "name of glyph '$char'";
-        is $glyph.horizontal_advance, .<advance>,
+        is $glyph.horizontal-advance, .<advance>,
            "advance width of glyph '$char'";
-        is $glyph.left_bearing, .<LBearing>,
+        is $glyph.left-bearing, .<LBearing>,
            "left bearing of glyph '$char'";
-        is $glyph.right_bearing, .<RBearing>,
+        is $glyph.right-bearing, .<RBearing>,
            "right bearing of glyph '$char'";
         is $glyph.width, .<advance> - .<LBearing> - .<RBearing>,
            "width of glyph '$char'";
@@ -176,10 +176,10 @@ for %kerning.keys.sort {
     is $kern.y, 0, "vertical kerning of '$_'";
 }
 
-my $missing_glyph = $vera.load-glyph('˗');
-is $missing_glyph, Mu, "no fallback glyph";
+my $missing-glyph = $vera.load-glyph('˗');
+is $missing-glyph, Mu, "no fallback glyph";
 
-$missing_glyph = $vera.load-glyph('˗', :fallback );
-ok $missing_glyph.defined, "fallback glyph is defined";
-is $missing_glyph.horizontal_advance, 1229, "missing glyph has horizontal advance";
+$missing-glyph = $vera.load-glyph('˗', :fallback );
+ok $missing-glyph.defined, "fallback glyph is defined";
+is $missing-glyph.horizontal-advance, 1229, "missing glyph has horizontal advance";
 

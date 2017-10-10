@@ -13,12 +13,12 @@ isa-ok $bdf, (require ::('Font::FreeType::Face')),
     'FreeType.face returns face object';
 
 # Test general properties of the face.
-is $bdf.num_faces, 1, '$face.num_faces';
-is $bdf.face_index, 0, '$face.face_index';
+is $bdf.num-faces, 1, '$face.num-faces';
+is $bdf.face-index, 0, '$face.face-index';
 
-is $bdf.postscript_name, Str, 'there is no postscript name';
-is $bdf.family_name, 'Fixed', '$face->family_name() is right';
-is $bdf.style_name, 'Regular', 'no style name, defaults to "Regular"';
+is $bdf.postscript-name, Str, 'there is no postscript name';
+is $bdf.family-name, 'Fixed', '$face->family-name() is right';
+is $bdf.style-name, 'Regular', 'no style name, defaults to "Regular"';
 
 my %expected-flags = (
     :has-glyph-names(False),
@@ -38,58 +38,58 @@ for %expected-flags.pairs.sort {
 }
 
 # Some other general properties.
-is $bdf.num_glyphs, 1837, '$face.num_glyphs';
-is $bdf.units_per_EM, Mu, 'units_per_em() meaningless';
-is $bdf.underline_position, Mu, 'underline position meaningless';
-is $bdf.underline_thickness, Mu, 'underline thickness meaningless';
+is $bdf.num-glyphs, 1837, '$face.num-glyphs';
+is $bdf.units-per-EM, Mu, 'units-per-em() meaningless';
+is $bdf.underline-position, Mu, 'underline position meaningless';
+is $bdf.underline-thickness, Mu, 'underline thickness meaningless';
 is $bdf.ascender, Mu, 'ascender meaningless';
 is $bdf.descender, Mu, 'descender meaningless';
 
 # Test getting the set of fixed sizes available.
-is $bdf.num_fixed_sizes, 1, 'BDF files have a single fixed size';
-my ($fixed_size) = $bdf.fixed_sizes;
+is $bdf.num-fixed-sizes, 1, 'BDF files have a single fixed size';
+my ($fixed-size) = $bdf.fixed-sizes;
 
-is($fixed_size.width, 5, 'fixed size width');
-is($fixed_size.height, 7, 'fixed size width');
+is($fixed-size.width, 5, 'fixed size width');
+is($fixed-size.height, 7, 'fixed size width');
 
-ok(abs($fixed_size.size - (70 / 722.7 * 72)) < 0.1,
+ok(abs($fixed-size.size - (70 / 722.7 * 72)) < 0.1,
    "fixed size is 70 printer's decipoints");
 
-ok(abs($fixed_size.x_res(:dpi) - 72) < 1, 'fixed size x resolution 72dpi');
-ok(abs($fixed_size.y_res(:dpi) - 72) < 1, 'fixed size y resolution 72dpi');
-ok(abs($fixed_size.size * $fixed_size.x_res(:dpi) / 72
-       - $fixed_size.x_res(:ppem)) < 0.1, 'fixed size x resolution in ppem');
-ok(abs($fixed_size.size * $fixed_size.y_res(:dpi) / 72
-       - $fixed_size.y_res(:ppem)) < 0.1, 'fixed size y resolution in ppem');
+ok(abs($fixed-size.x-res(:dpi) - 72) < 1, 'fixed size x resolution 72dpi');
+ok(abs($fixed-size.y-res(:dpi) - 72) < 1, 'fixed size y resolution 72dpi');
+ok(abs($fixed-size.size * $fixed-size.x-res(:dpi) / 72
+       - $fixed-size.x-res(:ppem)) < 0.1, 'fixed size x resolution in ppem');
+ok(abs($fixed-size.size * $fixed-size.y-res(:dpi) / 72
+       - $fixed-size.y-res(:ppem)) < 0.1, 'fixed size y resolution in ppem');
 
-is $bdf.named_infos, Mu, "no named infos for fixed size font";
-is $bdf.bounding_box, Mu, "no bounding box for fixed size font";
+is $bdf.named-infos, Mu, "no named infos for fixed size font";
+is $bdf.bounding-box, Mu, "no bounding box for fixed size font";
 
-my $glyph_list_filename = 't/fonts/bdf_glyphs.txt';
-my @glyph_list = $glyph_list_filename.IO.lines;
+my $glyph-list-filename = 't/fonts/bdf_glyphs.txt';
+my @glyph-list = $glyph-list-filename.IO.lines;
 my $i = 0;
-$bdf.foreach_char: -> $_ {
-    my $line = @glyph_list[$i++];
-    die "not enough characters in listing file '$glyph_list_filename'"
+$bdf.foreach-char: -> $_ {
+    my $line = @glyph-list[$i++];
+    die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;
     my ($unicode, $name) = split /\s+/, $line;
     $unicode = :16($unicode);
-    is .char_code, $unicode, "glyph $unicode char code in foreach_char()";
+    is .char-code, $unicode, "glyph $unicode char code in foreach-char()";
     # Can't test the name yet because it isn't implemented in FreeType.
-    #is .name, $name, "glyph $unicode name in foreach_char";
+    #is .name, $name, "glyph $unicode name in foreach-char";
 };
 
-is $i, +@glyph_list, "we aren't missing any glyphs";
+is $i, +@glyph-list, "we aren't missing any glyphs";
 
 subtest {
     plan 2;
     subtest {
         plan 4;
-        my $default_cm = $bdf.charmap;
-        ok $default_cm;
-        is $default_cm.platform_id, 3;
-        is $default_cm.encoding_id, 1;
-        is $default_cm.encoding, +FT_ENCODING_UNICODE;
+        my $default-cm = $bdf.charmap;
+        ok $default-cm;
+        is $default-cm.platform-id, 3;
+        is $default-cm.encoding-id, 1;
+        is $default-cm.encoding, +FT_ENCODING_UNICODE;
     }, "default charmap";
 
     subtest {
@@ -103,7 +103,7 @@ subtest {
 }, "charmaps";
 
 # Test metrics on some particlar glyphs.
-my %glyph_metrics = (
+my %glyph-metrics = (
     'A' => { name => 'A', advance => 5,
              LBearing => 0, RBearing => 0 },
     '_' => { name => 'underscore', advance => 5,
@@ -117,18 +117,18 @@ my %glyph_metrics = (
 );
 
 # 4*2 tests.
-for %glyph_metrics.keys.sort -> $char {
+for %glyph-metrics.keys.sort -> $char {
     my $glyph = $bdf.load-glyph($char)
         // die "no glyph for character '$char'";
-    with %glyph_metrics{$char} {
+    with %glyph-metrics{$char} {
         # Can't do names until it's implemented in FreeType.
         #is($glyph.name, .<name>,
         #   "name of glyph '$char'");
-        is($glyph.horizontal_advance, .<advance>,
+        is($glyph.horizontal-advance, .<advance>,
            "advance width of glyph '$char'");
-        is($glyph.left_bearing, .<LBearing>,
+        is($glyph.left-bearing, .<LBearing>,
            "left bearing of glyph '$char'");
-        is($glyph.right_bearing, .<RBearing>,
+        is($glyph.right-bearing, .<RBearing>,
            "right bearing of glyph '$char'");
         is($glyph.width, .<advance> - .<LBearing> - .<RBearing>,
            "width of glyph '$char'");

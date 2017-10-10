@@ -37,11 +37,11 @@ class FT_Bitmap_Size is repr('CStruct') is export {
 
     has FT_Pos    $.size;
 
-    has FT_Pos    $.x_ppem;
-    has FT_Pos    $.y_ppem;
+    has FT_Pos    $.x-ppem;
+    has FT_Pos    $.y-ppem;
 }
 
-sub ft_enc_tag(Str $s) {
+sub ft-enc-tag(Str $s) {
     my uint32 $enc = 0;
     for $s.ords {
         $enc *= 256;
@@ -51,14 +51,14 @@ sub ft_enc_tag(Str $s) {
 }
 
 enum FT_ENCODING is export (
-    FT_ENCODING_UNICODE => ft_enc_tag("unic"),
+    FT_ENCODING_UNICODE => ft-enc-tag("unic"),
     );
 
 class FT_CharMap is export is repr('CStruct') {
     has FT_Face      $.face;
     has FT_Encoding  $.encoding;
-    has FT_UShort    $.platform_id;
-    has FT_UShort    $.encoding_id;
+    has FT_UShort    $.platform-id;
+    has FT_UShort    $.encoding-id;
 }
 
 class FT_Generic is repr('CStruct') {
@@ -67,8 +67,8 @@ class FT_Generic is repr('CStruct') {
 }
 
 class FT_BBox is repr('CStruct') {
-    has FT_Pos  ($.x_min, $.y_min);
-    has FT_Pos  ($.x_max, $.y_max);
+    has FT_Pos  ($.x-min, $.y-min);
+    has FT_Pos  ($.x-max, $.y-max);
 }
 
 class FT_Glyph_Metrics  is repr('CStruct') {
@@ -94,15 +94,15 @@ class FT_Bitmap is repr('CStruct') {
     has uint32  $.width;
     has int32   $.pitch;
     has Pointer[uint8]    $.buffer;
-    has uint16  $.num_grays;
-    has uint8   $.pixel_mode;
-    has uint8   $.palette_mode;
+    has uint16  $.num-grays;
+    has uint8   $.pixel-mode;
+    has uint8   $.palette-mode;
     has Pointer $.palette;
 }
 
 class FT_Outline is repr('CStruct') {
-    has uint16       $.n_contours;       #| number of contours in glyph
-    has uint16       $.n_points;         #| number of points in the glyph
+    has uint16       $.n-contours;       #| number of contours in glyph
+    has uint16       $.n-points;         #| number of points in the glyph
 
     has Pointer[FT_Vector]  $.points;    #| the outline's points
     has Pointer[uint8]      $.tags;      #| the points flags
@@ -115,16 +115,16 @@ class FT_Slot_Internal is repr('CPointer') { }
 class FT_Size_Internal is repr('CPointer') { }
 
 class FT_Size_Metrics is repr('CStruct') {
-    has FT_UShort  $.x_ppem;      #| horizontal pixels per EM
-    has FT_UShort  $.y_ppem;      #| vertical pixels per EM
+    has FT_UShort  $.x-ppem;      #| horizontal pixels per EM
+    has FT_UShort  $.y-ppem;      #| vertical pixels per EM
 
-    has FT_Fixed   $.x_scale;     #| scaling values used to convert font
-    has FT_Fixed   $.y_scale;     #| units to 26.6 fractional pixels
+    has FT_Fixed   $.x-scale;     #| scaling values used to convert font
+    has FT_Fixed   $.y-scale;     #| units to 26.6 fractional pixels
 
     has FT_Pos     $.ascender;    #| ascender in 26.6 frac. pixels
     has FT_Pos     $.descender;   #| descender in 26.6 frac. pixels
     has FT_Pos     $.height;      #| text height in 26.6 frac. pixels
-    has FT_Pos     $.max_advance; #| max horizontal advance, in 26.6 pixels
+    has FT_Pos     $.max-advance; #| max horizontal advance, in 26.6 pixels
   }
 
 class FT_Size is repr('CStruct') {
@@ -149,19 +149,19 @@ class FT_GlyphSlot is repr('CStruct') is export {
     has FT_Glyph_Format   $.format;
 
     HAS FT_Bitmap         $.bitmap;
-    has FT_Int            $.bitmap_left;
-    has FT_Int            $.bitmap_top;
+    has FT_Int            $.bitmap-left;
+    has FT_Int            $.bitmap-top;
 
     HAS FT_Outline        $.outline;
 
     has FT_UInt           $.num_subglyphs;
     has FT_SubGlyph       $.subglyphs;
 
-    has Pointer           $.control_data;
-    has long              $.control_len;
+    has Pointer           $.control-data;
+    has long              $.control-len;
 
-    has FT_Pos            $.lsb_delta;
-    has FT_Pos            $.rsb_delta;
+    has FT_Pos            $.lsb-delta;
+    has FT_Pos            $.rsb-delta;
 
     has Pointer           $.other;
 
@@ -172,13 +172,13 @@ class FT_GlyphSlot is repr('CStruct') is export {
 }
 
 class FT_SfntName is repr('CStruct') is export {
-    has FT_UShort  $.platform_id;
-    has FT_UShort  $.encoding_id;
-    has FT_UShort  $.language_id;
-    has FT_UShort  $.name_id;
+    has FT_UShort  $.platform-id;
+    has FT_UShort  $.encoding-id;
+    has FT_UShort  $.language-id;
+    has FT_UShort  $.name-id;
 
     has CArray[FT_Byte]   $.string;      #| this string is *not* null-terminated! */
-    has FT_UInt   $.string_len;  #| in bytes                              */
+    has FT_UInt   $.string-len;  #| in bytes                              */
 }
 
 enum FT_FACE_FLAG is export «
@@ -205,21 +205,21 @@ enum FT_STYLE_FLAG is export «
     »;
 
 class FT_Face is export {
-    has FT_Long           $.num_faces;
-    has FT_Long           $.face_index;
+    has FT_Long           $.num-faces;
+    has FT_Long           $.face-index;
 
-    has FT_Long           $.face_flags;
-    has FT_Long           $.style_flags;
+    has FT_Long           $.face-flags;
+    has FT_Long           $.style-flags;
 
-    has FT_Long           $.num_glyphs;
+    has FT_Long           $.num-glyphs;
 
-    has FT_String         $.family_name;
-    has FT_String         $.style_name;
+    has FT_String         $.family-name;
+    has FT_String         $.style-name;
 
-    has FT_Int            $.num_fixed_sizes;
-    has Pointer[FT_Bitmap_Size]   $.available_sizes;
+    has FT_Int            $.num-fixed-sizes;
+    has Pointer[FT_Bitmap_Size]   $.available-sizes;
 
-    has FT_Int            $.num_charmaps;
+    has FT_Int            $.num-charmaps;
     has Pointer[FT_CharMap]       $.charmaps;
 
     HAS FT_Generic        $.generic;
@@ -229,16 +229,16 @@ class FT_Face is export {
 ##    /*# for bitmap fonts.                                              */
     HAS FT_BBox           $.bbox;
 
-    has FT_UShort         $.units_per_EM;
+    has FT_UShort         $.units-per-EM;
     has FT_Short          $.ascender;
     has FT_Short          $.descender;
     has FT_Short          $.height;
 
-    has FT_Short          $.max_advance_width;
-    has FT_Short          $.max_advance_height;
+    has FT_Short          $.max-advance-width;
+    has FT_Short          $.max-advance-height;
 
-    has FT_Short          $.underline_position;
-    has FT_Short          $.underline_thickness;
+    has FT_Short          $.underline-position;
+    has FT_Short          $.underline-thickness;
 
     has FT_GlyphSlot      $.glyph;
     has FT_Size           $.size;
@@ -259,9 +259,9 @@ class FT_Face is export {
     returns FT_Error is native($ftlib) {*};
 
     method FT_Get_Glyph_Name(
-        FT_UInt $glyph_index,
+        FT_UInt $glyph-index,
         buf8    $buffer,
-        FT_UInt $buffer_max )
+        FT_UInt $buffer-max )
     returns FT_Error is native($ftlib) {*};
 
     method FT_Get_Char_Index(
@@ -269,13 +269,13 @@ class FT_Face is export {
     returns FT_UInt is native($ftlib) {*};
 
     method FT_Load_Glyph(
-        FT_UInt   $glyph_index,
-        FT_Int32  $load_flags )
+        FT_UInt   $glyph-index,
+        FT_Int32  $load-flags )
     returns FT_Error is native($ftlib) {*};
 
     method FT_Load_Char(
-        FT_ULong  $char_code,
-        FT_Int32  $load_flags )
+        FT_ULong  $char-code,
+        FT_Int32  $load-flags )
     returns FT_Error is native($ftlib) {*};
 
     method FT_Get_First_Char(
@@ -283,21 +283,21 @@ class FT_Face is export {
     returns FT_UInt is native($ftlib) {*};
 
     method FT_Get_Next_Char(
-        FT_UInt  $char_code,
+        FT_UInt  $char-code,
         FT_UInt  $agindex is rw )
     returns FT_UInt is native($ftlib) {*};
 
     method FT_Set_Char_Size(
-        FT_F26Dot6  $char_width,
-        FT_F26Dot6  $char_height,
-        FT_UInt     $horz_resolution,
-        FT_UInt     $vert_resolution )
+        FT_F26Dot6  $char-width,
+        FT_F26Dot6  $char-height,
+        FT_UInt     $horz-resolution,
+        FT_UInt     $vert-resolution )
     returns FT_Error is native($ftlib) {*};
 
     method FT_Get_Kerning(
-        FT_UInt     $left_glyph,
-        FT_UInt     $right_glyph,
-        FT_UInt     $kern_mode,
+        FT_UInt     $left-glyph,
+        FT_UInt     $right-glyph,
+        FT_UInt     $kern-mode,
         FT_Vector   $kerning)
     returns FT_Error is native($ftlib) {*};
 
