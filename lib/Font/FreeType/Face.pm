@@ -21,6 +21,62 @@ method bounding-box { self.is-scalable ?? $!struct.bbox !! Mu }
 method ascender { self.is-scalable ?? $!struct.ascender !! Mu }
 method descender { self.is-scalable ?? $!struct.descender !! Mu }
 
+class Bitmap {
+    submethod TWEAK(:$!struct!, :$!library!) {}
+    has FT_Bitmap $!struct handles <rows width pitch num-grays pixel-mode pallette>;
+    has FT_Library $!library;
+    has Int $.left is required;
+    has Int $.top is required;
+    method size { $!struct.size / Px }
+    multi method x-res(:$ppem! where .so) { $!struct.x-ppem / Px }
+    multi method x-res(:$dpi!  where .so) { Dpi/Px * $!struct.x-ppem / self.size }
+    multi method y-res(:$ppem! where .so) { $!struct.y-ppem / Px }
+    multi method y-res(:$dpi!  where .so) { Dpi/Px * $!struct.y-ppem / self.size }
+
+    method convert(UInt :$alignment = 1) {
+        my FT_Bitmap $target .= new;
+        ft-try: $!library.FT_Bitmap_Convert($!struct, $target, $alignment);
+        self.new: :$!library, :struct($target), :$!left, :$!top;
+    }
+
+    method depth {
+        constant @BitsPerPixel = [1, 8, 2, 4, 8, 8, 24];
+        with $!struct.pixel-mode {
+            * > 0 ?? @BitsPerPixel[$_ - 1] !! Mu;
+        }
+    }
+
+    method Buf {
+        my \bits-per-row = ($.depth * $!struct.width + abs($!struct.pitch) + 7) div 8;
+        my $size = bits-per-row * $!struct.rows;
+        my Buf[uint8] $buf .= allocate($size);
+        my Pointer $ptr = $!struct.buffer;
+        $buf[$_] = $ptr[$_] for 0 ..^ $size;
+        $buf;
+    }
+
+    method Str {
+        my $bitmap = $.convert;
+        my $buf = $bitmap.Buf;
+        my $i = 0;
+        my Str @rows;
+        for ^$bitmap.rows {
+            my Str $r = '';
+            for ^$bitmap.width {
+                $r ~= $buf[$i++] ?? '#' !! ' ';
+            }
+            @rows.push: $r;
+        }
+        @rows.join: "\n";
+    }
+
+    method DESTROY {
+        ft-try: $!library.FT_Bitmap_Done($!struct);
+        $!struct = Nil;
+        $!library = Nil;
+    }
+}
+
 class Bitmap_Size {
     submethod BUILD(:$!struct) {}
     has FT_Bitmap_Size $!struct is required handles <width height x-ppem y-ppem>;
@@ -49,6 +105,17 @@ my class GlyphSlot is rw {
     }
     method width { $.metrics.width / Px }
     method Str {$!char-code.chr}
+
+    method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
+        ft-try: $!struct.FT_Render_Glyph($render-mode)
+            unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
+        my $bitmap  = $!struct.bitmap;
+        my $library = $!struct.library;
+        my $left = $!struct.bitmap-left;
+        my $top = $!struct.bitmap-top;
+        Bitmap.new: :struct($bitmap), :$library, :$left, :$top;
+    }
+
 }
 
 method fixed-sizes {
@@ -151,8 +218,10 @@ method !set-glyph(FT_GlyphSlot :$struct!, Int :$char-code!) {
     $!glyph-slot;
 }
 
-method load-glyph(Str $char, Int :$flags = 0, Bool :$fallback) {
-    my $char-code = $char.ord // die "empty string";
+multi method load-glyph(Str $char, |c) {
+    self.load-glyph($char.ord, |c);
+}
+multi method load-glyph(UInt $char-code, Int :$flags = 0, Bool :$fallback) {
     ft-try: $!struct.FT_Load_Char( $char-code, $flags );
     my $struct = $!struct.glyph;
     self!set-glyph: :$struct, :$char-code;

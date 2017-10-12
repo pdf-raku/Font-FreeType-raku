@@ -81,6 +81,17 @@ enum FT_GLYPH_FORMAT is export «
     :FT_GLYPH_FORMAT_PLOT(ft-code('plot'))
     »;
 
+enum FT_PIXEL_MODE is export «
+    :FT_PIXEL_MODE_NONE
+    :FT_PIXEL_MODE_MONO
+    :FT_PIXEL_MODE_GRAY
+    :FT_PIXEL_MODE_GRAY2
+    :FT_PIXEL_MODE_GRAY4
+    :FT_PIXEL_MODE_LCD
+    :FT_PIXEL_MODE_LCD_V
+    :FT_PIXEL_MODE_BGRA
+    »;
+
 enum FT_RENDER_MODE is export «
     :FT_RENDER_MODE_NORMAL
     :FT_RENDER_MODE_LIGHT
@@ -97,6 +108,17 @@ enum FT_STYLE_FLAG is export «
 
 class FT_Face is repr('CStruct') {...}
 class FT_Library is repr('CPointer') {...}
+
+class FT_Bitmap is repr('CStruct') is export {
+    has uint32  $.rows;
+    has uint32  $.width;
+    has int32   $.pitch;
+    has Pointer[uint8]    $.buffer;
+    has uint16  $.num-grays;
+    has uint8   $.pixel-mode;
+    has uint8   $.palette-mode;
+    has Pointer $.palette;
+}
 
 class FT_Bitmap_Size is repr('CStruct') is export {
     has FT_Short  $.height;
@@ -142,17 +164,6 @@ class FT_Vector is repr('CStruct') is export {
     has FT_Pos  $.x;
     has FT_Pos  $.y;
  }
-
-class FT_Bitmap is repr('CStruct') {
-    has uint32  $.rows;
-    has uint32  $.width;
-    has int32   $.pitch;
-    has Pointer[uint8]    $.buffer;
-    has uint16  $.num-grays;
-    has uint8   $.pixel-mode;
-    has uint8   $.palette-mode;
-    has Pointer $.palette;
-}
 
 class FT_Outline is repr('CStruct') {
     has uint16       $.n-contours;       #| number of contours in glyph
@@ -354,7 +365,19 @@ class FT_Library is export {
         FT_Long $face-index,
         Pointer[FT_Face] $aface is rw
         )
-     returns FT_Error is native($ftlib) {*};
+    returns FT_Error is native($ftlib) {*};
+
+    method FT_Bitmap_Convert(
+        FT_Bitmap  $source,
+        FT_Bitmap  $target,
+        FT_Int     $alignment
+        )
+    returns FT_Error is native($ftlib) {*};
+
+    method FT_Bitmap_Done(
+        FT_Bitmap  $bitmap
+        )
+    returns FT_Error is native($ftlib) {*};
 
     method FT_Library_Version(
         FT_Int $major is rw,
