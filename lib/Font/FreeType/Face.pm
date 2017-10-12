@@ -3,7 +3,6 @@ unit class Font::FreeType::Face;
 use NativeCall;
 use Font::FreeType::Error;
 use Font::FreeType::Native;
-use Font::FreeType::Glyph;
 
 constant Dpi = 72.0;
 constant Px = 64.0;
