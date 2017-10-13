@@ -10,7 +10,8 @@
         "Font::FreeType" : "lib/Font/FreeType.pm",
         "Font::FreeType::Error" : "lib/Font/FreeType/Error.pm",
         "Font::FreeType::Face" : "lib/Font/FreeType/Face.pm",
-        "Font::FreeType::Native" : "lib/Font/FreeType/Native.pm"
+        "Font::FreeType::Native" : "lib/Font/FreeType/Native.pm",
+        "Font::FreeType::Native::Types" : "lib/Font/FreeType/Native/Types.pm"
      }
 }
 

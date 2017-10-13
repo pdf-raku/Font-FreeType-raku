@@ -3,14 +3,16 @@ unit class Font::FreeType::Face;
 use NativeCall;
 use Font::FreeType::Error;
 use Font::FreeType::Native;
+use Font::FreeType::Native::Types;
 
 constant Dpi = 72.0;
 constant Px = 64.0;
 
-my class GlyphSlot is rw {...}
+my class GlyphSlot {...};
 
 has FT_Face $.struct handles <num-faces face-index face-flags style-flags num-glyphs family-name style-name num-fixed-sizes num-charmaps generic height max-advance-width max-advance-height size charmap>;
 has GlyphSlot $!glyph-slot;
+has UInt $.load-flags = 0;
 
 method units-per-EM { self.is-scalable ?? $!struct.units-per-EM !! Mu }
 method underline-position { self.is-scalable ?? $!struct.underline-position !! Mu }
@@ -21,11 +23,14 @@ method ascender { self.is-scalable ?? $!struct.ascender !! Mu }
 method descender { self.is-scalable ?? $!struct.descender !! Mu }
 
 class Bitmap {
-    submethod TWEAK(:$!struct!, :$!library!) {}
     has FT_Bitmap $!struct handles <rows width pitch num-grays pixel-mode pallette>;
     has FT_Library $!library;
     has Int $.left is required;
     has Int $.top is required;
+    has Bool $!ref;
+
+    submethod TWEAK(:$!struct!, :$!library!, :$!ref = False) {}
+
     method size { $!struct.size / Px }
     multi method x-res(:$ppem! where .so) { $!struct.x-ppem / Px }
     multi method x-res(:$dpi!  where .so) { Dpi/Px * $!struct.x-ppem / self.size }
@@ -34,24 +39,29 @@ class Bitmap {
 
     method convert(UInt :$alignment = 1) {
         my FT_Bitmap $target .= new;
-        ft-try: $!library.FT_Bitmap_Convert($!struct, $target, $alignment);
+        ft-try({ $!library.FT_Bitmap_Convert($!struct, $target, $alignment); });
         self.new: :$!library, :struct($target), :$!left, :$!top;
     }
 
     method depth {
         constant @BitsPerPixel = [1, 8, 2, 4, 8, 8, 24];
         with $!struct.pixel-mode {
-            * > 0 ?? @BitsPerPixel[$_ - 1] !! Mu;
+            $_ > 0 ?? @BitsPerPixel[$_ - 1] !! Mu;
         }
     }
 
     method Buf {
-        my \bits-per-row = ($.depth * $!struct.width + abs($!struct.pitch) + 7) div 8;
-        my $size = bits-per-row * $!struct.rows;
-        my Buf[uint8] $buf .= allocate($size);
-        my Pointer $ptr = $!struct.buffer;
-        $buf[$_] = $ptr[$_] for 0 ..^ $size;
-        $buf;
+        my \bits-per-row = $.depth * $!struct.width;
+        my $bytes = $!struct.rows
+            ?? bits-per-row * $!struct.rows  +  $!struct.pitch * ($!struct.rows - 1)
+            !! 0;
+        my $cbuf = CArray[uint8].new;
+        if $bytes {
+            $cbuf[$bytes-1] = 0;
+            my $buf-p = nativecast(Pointer, $cbuf);
+            Font::FreeType::Native::memcpy($buf-p, $!struct.buffer, $bytes);
+        }
+        buf8.new: $cbuf;
     }
 
     method Str {
@@ -70,7 +80,8 @@ class Bitmap {
     }
 
     method DESTROY {
-        ft-try: $!library.FT_Bitmap_Done($!struct);
+        ft-try({ $!library.FT_Bitmap_Done($!struct) })
+            unless $!ref;
         $!struct = Nil;
         $!library = Nil;
     }
@@ -106,13 +117,13 @@ my class GlyphSlot is rw {
     method Str {$!char-code.chr}
 
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
-        ft-try: $!struct.FT_Render_Glyph($render-mode)
+        ft-try({ $!struct.FT_Render_Glyph($render-mode) })
             unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
         my $bitmap  = $!struct.bitmap;
         my $library = $!struct.library;
         my $left = $!struct.bitmap-left;
         my $top = $!struct.bitmap-top;
-        Bitmap.new: :struct($bitmap), :$library, :$left, :$top;
+        Bitmap.new: :struct($bitmap), :$library, :$left, :$top, :ref;
     }
 
 }
@@ -165,7 +176,7 @@ method named-infos {
 
     (0 ..^ $n-sizes).map: -> $i {
         my FT_SfntName $sfnt .= new;
-        ft-try: $!struct.FT_Get_Sfnt_Name($i, $sfnt);
+        ft-try({ $!struct.FT_Get_Sfnt_Name($i, $sfnt); });
         SfntName.new: :struct($sfnt);
     }
 }
@@ -188,7 +199,7 @@ method is-italic { ?($!struct.style-flags +& FT_STYLE_FLAG_ITALIC) }
 method !get-glyph-name(UInt $ord) {
     my buf8 $buf .= allocate(256);
     my FT_UInt $index = $!struct.FT_Get_Char_Index( $ord );
-    ft-try: $!struct.FT_Get_Glyph_Name($index, $buf, $buf.bytes);
+    ft-try({ $!struct.FT_Get_Glyph_Name($index, $buf, $buf.bytes); });
     nativecast(Str, $buf);
 }
 
@@ -220,8 +231,9 @@ method !set-glyph(FT_GlyphSlot :$struct!, Int :$char-code!) {
 multi method load-glyph(Str $char, |c) {
     self.load-glyph($char.ord, |c);
 }
-multi method load-glyph(UInt $char-code, Int :$flags = 0, Bool :$fallback) {
-    ft-try: $!struct.FT_Load_Char( $char-code, $flags );
+multi method load-glyph(UInt $char-code, Int :$flags = $!load-flags, Bool :$fallback) {
+
+    ft-try({$!struct.FT_Load_Char( $char-code, $flags ); });
     my $struct = $!struct.glyph;
     self!set-glyph: :$struct, :$char-code;
 
@@ -230,12 +242,12 @@ multi method load-glyph(UInt $char-code, Int :$flags = 0, Bool :$fallback) {
         !! Mu;
 }
 
-method foreach-char(&code, Int :$flags = 0) {
+method foreach-char(&code, Int :$flags = $!load-flags) {
     my FT_ULong $char-code;
     my FT_UInt  $glyph-idx;
     $char-code = $!struct.FT_Get_First_Char( $glyph-idx);
     while $glyph-idx {
-        ft-try: $!struct.FT_Load_Glyph( $glyph-idx, $flags );
+        $!struct.FT_Load_Glyph( $glyph-idx, $flags );
         my $struct = $!struct.glyph;
         self!set-glyph: :$struct, :$char-code;
         &code($!glyph-slot);
@@ -246,20 +258,20 @@ method foreach-char(&code, Int :$flags = 0) {
 method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
     my FT_F26Dot6 $w = ($width * Px + 0.5).Int;
     my FT_F26Dot6 $h = ($height * Px + 0.5).Int;
-    ft-try: $!struct.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res);
-    self.load-glyph($_)
-        with $!glyph-slot.Str;
+    ft-try({ $!struct.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
+    self.load-glyph(.Str)
+        with $!glyph-slot;
 }
 
 method kerning(Str $left, Str $right, UInt :$mode = 0) {
     my FT_UInt $left-idx = $!struct.FT_Get_Char_Index( $left.ord );
     my FT_UInt $right-idx = $!struct.FT_Get_Char_Index( $right.ord );
     my $vec = FT_Vector.new;
-    ft-try: $!struct.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec);
+    ft-try({ $!struct.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); });
     Vector.new: :struct($vec);
 }
 
 submethod DESTROY {
-    ft-try: $!struct.FT_Done_Face;
+    ft-try({ $!struct.FT_Done_Face;});
     $!struct = Nil;
 }

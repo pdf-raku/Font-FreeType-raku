@@ -1,5 +1,5 @@
 class Font::FreeType::Error is Exception {
-    use Font::FreeType::Native;
+    use Font::FreeType::Native::Types;
     our @Messages is export(:Messages);
     sub error-def(Int $num, Str $message ) {
         @Messages[$num] = $message;

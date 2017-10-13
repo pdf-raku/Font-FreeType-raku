@@ -5,7 +5,7 @@ use v6;
 use Test;
 plan 27;
 use Font::FreeType;
-use Font::FreeType::Native;
+use Font::FreeType::Native::Types;
 
 my Font::FreeType $ft .= new;
 # Load the BDF file.
