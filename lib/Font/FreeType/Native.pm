@@ -83,7 +83,17 @@ class FT_Vector is repr('CStruct') is export {
     has FT_Pos  $.y;
  }
 
-class FT_Outline is repr('CStruct') {
+class FT_Outline_Funcs is repr('CStruct') is export {
+  has Pointer   $.move-to;
+  has Pointer   $.line-to;
+  has Pointer  $.conic-to;
+  has Pointer  $.cubic-to;
+
+  has int                     $.shift;
+  has FT_Pos                  $.delta;
+}
+
+class FT_Outline is repr('CStruct') is export {
     has uint16       $.n-contours;       #| number of contours in glyph
     has uint16       $.n-points;         #| number of points in the glyph
 
@@ -91,6 +101,11 @@ class FT_Outline is repr('CStruct') {
     has Pointer[uint8]      $.tags;      #| the points flags
     has Pointer[uint16]     $.contours;  #| the contour end points
     has int32               $.flags;     #| outline masks
+
+    method FT_Outline_Decompose(
+                        Pointer[FT_Outline_Funcs]  $func-interface,
+                        Pointer[void]              $user )
+    returns FT_Error is native($ftlib) {*};
 }
 
 class FT_SubGlyph is repr('CPointer') { }
@@ -316,3 +331,4 @@ sub FT_Init_FreeType(FT_Library $library is rw)
         is native($ftlib) {*};
 
 our sub memcpy(Pointer, Pointer, size_t) is native($ftlib) {*};
+
