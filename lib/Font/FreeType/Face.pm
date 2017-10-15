@@ -3,11 +3,12 @@ class Font::FreeType::Face {
     constant Px = 64.0;
 
     use NativeCall;
-    use Font::FreeType::Bitmap;
     use Font::FreeType::Error;
-    use Font::FreeType::GlyphSlot;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
+
+    use Font::FreeType::Bitmap;
+    use Font::FreeType::GlyphSlot;
 
     has FT_Face $.struct handles <num-faces face-index face-flags style-flags num-glyphs family-name style-name num-fixed-sizes num-charmaps generic height max-advance-width max-advance-height size charmap>;
     has Font::FreeType::GlyphSlot $!glyph-slot;
@@ -47,12 +48,12 @@ class Font::FreeType::Face {
 
         method string {
             my $len = $.string-len;
-            my buf8 $buf .= allocate($len);
-            with $!struct.string -> $s {
-                $buf[$_] = $s[$_] for 0 ..^ $len;
-            }
+            my $buf = CArray[uint8].new;
+            $buf[$len - 1] = 0
+                if $len;
+            Font::FreeType::Native::memcpy(nativecast(Pointer, $buf), $!struct.string, $len);
             # todo various encoding schemes
-            $buf.decode;
+            buf8.new($buf).decode;
         }
     }
 

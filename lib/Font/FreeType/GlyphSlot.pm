@@ -1,9 +1,10 @@
 class Font::FreeType::GlyphSlot is rw {
 
-    use Font::FreeType::Bitmap;
-    use Font::FreeType::Error;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
+    use Font::FreeType::Error;
+
+    use Font::FreeType::Bitmap;
 
     constant Px = 64.0;
 
@@ -35,5 +36,22 @@ class Font::FreeType::GlyphSlot is rw {
         Font::FreeType::Bitmap.new: :struct($bitmap), :$library, :$left, :$top, :ref;
     }
 
+    method is-outline {
+        $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
+    }
+
+    method outline {
+        die "not an outline font"
+            unless self.is-outline;
+        my $outline  = $!struct.outline;
+        my $library = $!struct.library;
+        (require ::('Font::FreeType::Outline')).new: :struct($outline), :$library, :ref;
+    }
+
+    method postscript {
+        self.outline.decompose;
+        warn "tba postscript";
+        'showpage';
+    }
 }
 

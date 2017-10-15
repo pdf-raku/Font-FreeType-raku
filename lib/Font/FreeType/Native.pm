@@ -83,11 +83,11 @@ class FT_Vector is repr('CStruct') is export {
     has FT_Pos  $.y;
  }
 
-class FT_Outline_Funcs is repr('CStruct') is export {
-  has Pointer   $.move-to;
-  has Pointer   $.line-to;
-  has Pointer  $.conic-to;
-  has Pointer  $.cubic-to;
+class FT_Outline_Funcs is repr('CStruct') is rw is export {
+  has size_t $.move-to;
+  has size_t $.line-to;
+  has size_t $.conic-to;
+  has size_t $.cubic-to;
 
   has int                     $.shift;
   has FT_Pos                  $.delta;
@@ -103,8 +103,8 @@ class FT_Outline is repr('CStruct') is export {
     has int32               $.flags;     #| outline masks
 
     method FT_Outline_Decompose(
-                        Pointer[FT_Outline_Funcs]  $func-interface,
-                        Pointer[void]              $user )
+                        FT_Outline_Funcs  $func-interface,
+                        Pointer[void]     $user )
     returns FT_Error is native($ftlib) {*};
 }
 
@@ -177,7 +177,7 @@ class FT_SfntName is repr('CStruct') is export {
     has FT_UShort  $.language-id;
     has FT_UShort  $.name-id;
 
-    has CArray[FT_Byte]   $.string;      #| this string is *not* null-terminated! */
+    has Pointer[FT_Byte]   $.string;      #| this string is *not* null-terminated! */
     has FT_UInt   $.string-len;  #| in bytes                              */
 }
 
@@ -312,6 +312,11 @@ class FT_Library is export {
         )
     returns FT_Error is native($ftlib) {*};
 
+    method FT_Outline_Done(
+        FT_Outline  $bitmap
+        )
+    returns FT_Error is native($ftlib) {*};
+
     method FT_Library_Version(
         FT_Int $major is rw,
         FT_Int $minor is rw,
@@ -330,5 +335,5 @@ sub FT_Init_FreeType(FT_Library $library is rw)
         is export
         is native($ftlib) {*};
 
-our sub memcpy(Pointer, Pointer, size_t) is native($ftlib) {*};
+our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native($ftlib) {*};
 

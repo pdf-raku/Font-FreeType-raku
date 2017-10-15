@@ -24,18 +24,18 @@ my $vera = Font::FreeType.new.face('t/fonts/Vera.ttf',
                                    :load-flags(FT_LOAD_NO_HINTING));
 
 for @test {
-##    my $test-basename = join('.', .<char>.ord.fmt('%04X'),
-##                                  .<x_sz>,  .<y_sz>, 
-##                             .<x_res>,  .<y_res>,  .<aa>);
-##    note $test-basename;
-##    my $test-filename = "t/fonts/{$test-basename}.pgm";
+    ## Stubbed in Perl 5 as well
+    ##    my $test-basename = join('.', .<char>.ord.fmt('%04X'),
+    ##                                  .<x_sz>,  .<y_sz>, 
+    ##                             .<x_res>,  .<y_res>,  .<aa>);
+    ##    note $test-basename;
+    ##    my $test-filename = "t/fonts/{$test-basename}.pgm";
     ##    my $fh = $test-filename.IO.open(:bin);
     $vera.set-char-size(.<x_sz>, .<y_sz>, .<x_res>, .<y_res>);
     my $glyph = $vera.load-glyph(.<char>);
     my $render-mode = .<aa> ?? FT_RENDER_MODE_NORMAL !! FT_RENDER_MODE_MONO;
     my $bm = $glyph.bitmap: :$render-mode;
     ok defined $bm.Buf;
-    note "\n\n"~$bm.Str;
     ok defined $bm.left;
     ok defined $bm.top;
 }
@@ -43,20 +43,18 @@ for @test {
 # Check that after getting an outline we can still render the bitmap.
 my $glyph = $vera.load-glyph('B');
 
-skip "todo postscript methods", 2;
+skip 'Postscript method, NYI', 2;
 
-=begin pod
+=begin skipped
 
-my $ps = $glyph->postscript;
-my ($bmp, $left, $top) = $glyph->bitmap;
+my $ps = $glyph.postscript;
+my $bmp = $glyph.bitmap;
 ok($ps && $bmp, 'can get both outline and then bitmap from glyph');
 
 # And the other way around.
-$glyph = $vera->glyph_from_char_code(ord 'C');
-($bmp, $left, $top) = $glyph->bitmap;
-$ps = $glyph->postscript;
+$glyph = $vera.load-glyph('C');
+$bmp = $glyph.bitmap;
+$ps = $glyph.postscript;
 ok($ps && $bmp, 'can get both bitmap and then outline from glyph');
 
-# vim:ft=perl ts=4 sw=4 expandtab:
-
-=end pod
+=end skipped
