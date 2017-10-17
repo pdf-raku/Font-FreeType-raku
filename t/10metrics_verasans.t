@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 65 + 256 * 2;
+plan 66 + 256 * 2;
 use Font::FreeType;
 use Font::FreeType::Native::Types;
 
@@ -182,4 +182,6 @@ is $missing-glyph, Mu, "no fallback glyph";
 $missing-glyph = $vera.load-glyph('˗', :fallback );
 ok $missing-glyph.defined, "fallback glyph is defined";
 is $missing-glyph.horizontal-advance, 1229, "missing glyph has horizontal advance";
+
+lives-ok {$vera.set-pixel-sizes(100, 120)}, 'set pixel sizes';
 

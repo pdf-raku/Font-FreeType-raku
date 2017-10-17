@@ -59,12 +59,12 @@ class FT_Generic is repr('CStruct') {
     has Pointer       $.finalizer;
 }
 
-class FT_BBox is repr('CStruct') {
+class FT_BBox is repr('CStruct') is export {
     has FT_Pos  ($.x-min, $.y-min);
     has FT_Pos  ($.x-max, $.y-max);
 }
 
-class FT_Glyph_Metrics  is repr('CStruct') {
+class FT_Glyph_Metrics is repr('CStruct') {
     has FT_Pos  $.width;
     has FT_Pos  $.height;
 
@@ -82,16 +82,6 @@ class FT_Vector is repr('CStruct') is export {
     has FT_Pos  $.y;
  }
 
-class FT_Outline_Funcs is repr('CStruct') is rw is export {
-  has size_t $.move-to;
-  has size_t $.line-to;
-  has size_t $.conic-to;
-  has size_t $.cubic-to;
-
-  has int                     $.shift;
-  has FT_Pos                  $.delta;
-}
-
 class FT_Outline is repr('CStruct') is export {
     has uint16       $.n-contours;       #| number of contours in glyph
     has uint16       $.n-points;         #| number of points in the glyph
@@ -101,10 +91,8 @@ class FT_Outline is repr('CStruct') is export {
     has Pointer[uint16]     $.contours;  #| the contour end points
     has int32               $.flags;     #| outline masks
 
-    method FT_Outline_Decompose(
-                        FT_Outline_Funcs  $func-interface,
-                        Pointer[void]     $user )
-    returns FT_Error is native($ftlib) {*};
+    method FT_Outline_Get_BBox(FT_BBox $bbox)
+        returns FT_Error is native($ftlib) {*};
 }
 
 class FT_SubGlyph is repr('CPointer') { }
@@ -268,6 +256,11 @@ class FT_Face is export {
         FT_F26Dot6  $char-height,
         FT_UInt     $horz-resolution,
         FT_UInt     $vert-resolution )
+    returns FT_Error is native($ftlib) {*};
+
+    method FT_Set_Pixel_Sizes(
+        FT_UInt  $char-width,
+        FT_UInt  $char-height )
     returns FT_Error is native($ftlib) {*};
 
     method FT_Get_Kerning(

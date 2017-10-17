@@ -161,6 +161,12 @@ class Font::FreeType::Face {
             with $!glyph-slot;
     }
 
+    method set-pixel-sizes(UInt $width, UInt $height) {
+        ft-try({ $!struct.FT_Set_Pixel_Sizes($width, $height) });
+        self.load-glyph(.Str)
+            with $!glyph-slot;
+    }
+
     method kerning(Str $left, Str $right, UInt :$mode = 0) {
         my FT_UInt $left-idx = $!struct.FT_Get_Char_Index( $left.ord );
         my FT_UInt $right-idx = $!struct.FT_Get_Char_Index( $right.ord );
