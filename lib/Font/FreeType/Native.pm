@@ -17,7 +17,6 @@ constant FT_Byte   = uint8;
 constant FT_Encoding = uint32;
 constant FT_Fixed  = long;
 constant FT_Long   = long;
-constant FT_Pos    = long;
 constant FT_Short  = int16;
 constant FT_String = Str;
 constant FT_UShort = uint16;
@@ -277,6 +276,11 @@ class FT_Face is export {
         FT_UInt     $kern-mode,
         FT_Vector   $kerning)
     returns FT_Error is native($ftlib) {*};
+
+    method FT_Reference_Face
+        returns FT_Error
+        is export
+        is native($ftlib) {*};
 
     method FT_Done_Face
         returns FT_Error

@@ -10,9 +10,13 @@ class Font::FreeType::Face {
     use Font::FreeType::Bitmap;
     use Font::FreeType::GlyphSlot;
 
-    has FT_Face $.struct handles <num-faces face-index face-flags style-flags num-glyphs family-name style-name num-fixed-sizes num-charmaps generic height max-advance-width max-advance-height size charmap>;
+    has FT_Face $!struct handles <num-faces face-index face-flags style-flags num-glyphs family-name style-name num-fixed-sizes num-charmaps generic height max-advance-width max-advance-height size charmap>;
     has Font::FreeType::GlyphSlot $!glyph-slot;
     has UInt $.load-flags = 0;
+
+    submethod TWEAK( :$!struct! ) {
+        $!struct.FT_Reference_Face;
+    }
 
     method units-per-EM { self.is-scalable ?? $!struct.units-per-EM !! Mu }
     method underline-position { self.is-scalable ?? $!struct.underline-position !! Mu }

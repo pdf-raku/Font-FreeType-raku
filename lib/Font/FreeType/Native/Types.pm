@@ -6,6 +6,7 @@ use NativeCall::Types;
 constant FT_Error  is export = uint32;
 constant FT_Int    is export = int32;
 constant FT_Int32  is export = int32;
+constant FT_Pos    is export = long;
 constant FT_UInt   is export = uint32;
 constant FT_ULong  is export = ulong;
 constant FT_F26Dot6 is export = long;

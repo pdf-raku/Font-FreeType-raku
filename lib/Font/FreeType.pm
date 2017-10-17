@@ -7,7 +7,7 @@ class Font::FreeType {
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
 
-    has FT_Library $.library;
+    has FT_Library $!library;
 
     submethod BUILD {
         my $p = Pointer[$!library].new;

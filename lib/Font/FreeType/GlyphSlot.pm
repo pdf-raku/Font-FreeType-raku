@@ -40,18 +40,14 @@ class Font::FreeType::GlyphSlot is rw {
         $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
     }
 
-    method outline {
+    method outline($class) {
         die "not an outline font"
             unless self.is-outline;
         my $outline  = $!struct.outline;
         my $library = $!struct.library;
-        (require ::('Font::FreeType::Outline')).new: :struct($outline), :$library, :ref;
+        require Font::FreeType::Outline;
+        $class.new: :struct($outline), :$library, :ref;
     }
 
-    method postscript {
-        self.outline.decompose;
-        warn "tba postscript";
-        'showpage';
-    }
 }
 
