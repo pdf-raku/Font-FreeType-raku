@@ -1,0 +1,22 @@
+SRC=src
+
+all : lib
+
+lib : resources/lib/libft_outline%SO%
+
+resources/lib/libft_outline%SO% : $(SRC)/ft_outline%O%
+	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/lib/libft_outline%SO% $(SRC)/ft_outline%O% `freetype-config --libs`
+
+$(SRC)/ft_outline%O% : $(SRC)/ft_outline.c $(SRC)/ft_outline.h
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft_outline%O% $(SRC)/ft_outline.c `freetype-config --cflags`
+
+test : all
+	@prove -e"perl6 -I lib" -v t
+
+clean :
+	@rm -f $(SRC)/*.o resources/lib/libft_outline%SO%
+
+realclean : clean
+	@rm -f Makefile
+
+

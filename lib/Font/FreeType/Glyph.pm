@@ -5,6 +5,7 @@ class Font::FreeType::Glyph is rw {
     use Font::FreeType::Error;
 
     use Font::FreeType::Bitmap;
+    use Font::FreeType::Outline;
 
     constant Px = 64.0;
 
@@ -40,12 +41,12 @@ class Font::FreeType::Glyph is rw {
         $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
     }
 
-    method outline($class = (require ::('Font::FreeType::Outline'))) {
+    method outline {
         die "not an outline font"
             unless self.is-outline;
         my $outline = $!struct.outline;
         my $library = $!struct.library;
-        $class.new: :struct($outline), :$library, :ref;
+        Font::FreeType::Outline.new: :struct($outline), :$library, :ref;
     }
 
 }

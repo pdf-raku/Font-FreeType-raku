@@ -4,7 +4,12 @@
     "version"     : "0.0.1",
     "auth"        : "github:p6-pdf",
     "description" : "read font files and render glyphs using FreeType2",
-    "depends"     : [ ],
+    "depends"     : [ "LibraryMake" ],
+    "resources" : [
+      "lib/libft_outline.so",
+      "lib/libft_outline.dll",
+      "lib/libft_outline.dylib"
+    ],
     "source-url"  : "git://github.com/p6-pdf/Font-FreeType-p6.git",
     "provides"    : {
         "Font::FreeType" : "lib/Font/FreeType.pm",
@@ -12,6 +17,7 @@
         "Font::FreeType::Error" : "lib/Font/FreeType/Error.pm",
         "Font::FreeType::Face" : "lib/Font/FreeType/Face.pm",
         "Font::FreeType::Glyph" : "lib/Font/FreeType/Glyph.pm",
+        "Font::FreeType::Outline" : "lib/Font/FreeType/Outline.pm",
         "Font::FreeType::Native" : "lib/Font/FreeType/Native.pm",
         "Font::FreeType::Native::Types" : "lib/Font/FreeType/Native/Types.pm"
      }
