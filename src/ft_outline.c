@@ -19,58 +19,57 @@ static int add_vec(shape_t *shape, const FT_Vector *v) {
 }
 
 static int
-gather_move_to(const FT_Vector *to, void *user) {
+take_move_to(const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_MOVE_TO);
   return add_vec(shape, to);
 }
 
 static int
-gather_line_to(const FT_Vector *to, void *user) {
+take_line_to(const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_LINE_TO);
   return add_vec(shape, to);
 }
 
 static int
-gather_cubic_to(const FT_Vector *control1, const FT_Vector *control2,
-                   const FT_Vector *to, void *user) {
+take_cubic_to(const FT_Vector *cp1, const FT_Vector *cp2, const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_CUBIC_TO);
-  add_vec(shape, control1);
-  add_vec(shape, control2);
+  add_vec(shape, cp1);
+  add_vec(shape, cp2);
   return add_vec(shape, to);
 }
 
 static int
-gather_conic_to(const FT_Vector *control1, const FT_Vector *to, void *user) {
+take_conic_to(const FT_Vector *cp1, const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_CONIC_TO);
-  add_vec(shape, control1);
+  add_vec(shape, cp1);
   return add_vec(shape, to);
 }
 
-static void _conic_to_cubic(const FT_Vector *cp1, const FT_Vector *to, FT_Vector *cp2) {
+static void conic_to_cubic(const FT_Vector *cp1, const FT_Vector *to, FT_Vector *cp2) {
   cp2->x = cp1->x + 2.0/3.0 * (to->x - cp1->x);
   cp2->y = cp1->y + 2.0/3.0 * (to->y - cp1->y);
 }
 
 static int
-gather_conic_as_cubic(const FT_Vector *control1, const FT_Vector *to, void *user) {
-  FT_Vector control2;
-  _conic_to_cubic(control1, to, &control2);
-  return gather_cubic_to(control1, &control2, to, user);
+take_conic_as_cubic(const FT_Vector *cp1, const FT_Vector *to, void *user) {
+  FT_Vector cp2;
+  conic_to_cubic(cp1, to, &cp2);
+  return take_cubic_to(cp1, &cp2, to, user);
 }
 
 DLLEXPORT FT_Error
 ft_outline_gather(shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt) {
    FT_Outline_Funcs funcs = {
-      gather_move_to,
-      gather_line_to,
+      take_move_to,
+      take_line_to,
       (conic_opt
-           ? gather_conic_to
-           : gather_conic_as_cubic),
-      gather_cubic_to,
+           ? take_conic_to
+           : take_conic_as_cubic),
+      take_cubic_to,
       shift, delta
    };
 
