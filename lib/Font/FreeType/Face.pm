@@ -8,11 +8,11 @@ class Font::FreeType::Face {
     use Font::FreeType::Native::Types;
 
     use Font::FreeType::Bitmap;
-    use Font::FreeType::GlyphSlot;
+    use Font::FreeType::Glyph;
 
     has FT_Face $!struct handles <num-faces face-index face-flags style-flags num-glyphs family-name style-name num-fixed-sizes num-charmaps generic height max-advance-width max-advance-height size charmap>;
-    has Font::FreeType::GlyphSlot $!glyph-slot;
-    has UInt $.load-flags = 0;
+    has Font::FreeType::Glyph $!glyph;
+    has UInt $.load-flags = FT_LOAD_DEFAULT;
 
     submethod TWEAK( :$!struct! ) {
         $!struct.FT_Reference_Face;
@@ -112,18 +112,18 @@ class Font::FreeType::Face {
 
     method !set-glyph(FT_GlyphSlot :$struct!, Int :$char-code!) {
 
-        with $!glyph-slot {
+        with $!glyph {
             .struct = $struct;
             .char-code = $char-code;
         }
         else {
-            $!glyph-slot .= new: :$struct, :$char-code;
+            $!glyph .= new: :$struct, :$char-code;
         }
 
-        $!glyph-slot.name = $_
+        $!glyph.name = $_
             with self.glyph-name($char-code);
 
-        $!glyph-slot;
+        $!glyph;
     }
 
     multi method load-glyph(Str $char, |c) {
@@ -136,7 +136,7 @@ class Font::FreeType::Face {
         self!set-glyph: :$struct, :$char-code;
 
         $fallback || $!struct.FT_Get_Char_Index($char-code)
-            ?? $!glyph-slot
+            ?? $!glyph
             !! Mu;
     }
 
@@ -148,7 +148,7 @@ class Font::FreeType::Face {
             $!struct.FT_Load_Glyph( $glyph-idx, $flags );
             my $struct = $!struct.glyph;
             self!set-glyph: :$struct, :$char-code;
-            &code($!glyph-slot);
+            &code($!glyph);
             $char-code = $!struct.FT_Get_Next_Char( $char-code, $glyph-idx);
         }
     }
@@ -158,13 +158,13 @@ class Font::FreeType::Face {
         my FT_F26Dot6 $h = ($height * Px + 0.5).Int;
         ft-try({ $!struct.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
         self.load-glyph(.Str)
-            with $!glyph-slot;
+            with $!glyph;
     }
 
     method set-pixel-sizes(UInt $width, UInt $height) {
         ft-try({ $!struct.FT_Set_Pixel_Sizes($width, $height) });
         self.load-glyph(.Str)
-            with $!glyph-slot;
+            with $!glyph;
     }
 
     method kerning(Str $left, Str $right, UInt :$mode = 0) {

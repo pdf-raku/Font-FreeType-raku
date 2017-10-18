@@ -1,4 +1,4 @@
-class Font::FreeType::GlyphSlot is rw {
+class Font::FreeType::Glyph is rw {
 
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
@@ -40,12 +40,11 @@ class Font::FreeType::GlyphSlot is rw {
         $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
     }
 
-    method outline($class) {
+    method outline($class = (require ::('Font::FreeType::Outline'))) {
         die "not an outline font"
             unless self.is-outline;
-        my $outline  = $!struct.outline;
+        my $outline = $!struct.outline;
         my $library = $!struct.library;
-        require Font::FreeType::Outline;
         $class.new: :struct($outline), :$library, :ref;
     }
 

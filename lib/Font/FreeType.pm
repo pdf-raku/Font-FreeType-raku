@@ -20,20 +20,22 @@ class Font::FreeType {
         $!library = Nil;
     }
 
-    multi method face(Str $file-path-name, Int :$index = 0) {
+    multi method face(Str $file-path-name, Int :$index = 0, |c) {
         my $p = Pointer[FT_Face].new;
         ft-try({ $!library.FT_New_Face($file-path-name, $index, $p); });
         my FT_Face $struct = $p.deref;
-        Font::FreeType::Face.new: :$struct;
+        Font::FreeType::Face.new: :$struct, |c;
     }
 
     multi method face(buf8 $file-buf,
                       Int :$size = $file-buf.bytes,
-                      Int :$index = 0) {
+                      Int :$index = 0,
+                      |c
+        ) {
         my $p = Pointer[FT_Face].new;
         ft-try({ $!library.FT_New_Memory_Face($file-buf, $size, $index, $p); });
         my FT_Face $struct = $p.deref;
-        Font::FreeType::Face.new: :$struct;
+        Font::FreeType::Face.new: :$struct, |c;
     }
 
     method version returns Version {
