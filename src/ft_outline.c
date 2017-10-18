@@ -19,21 +19,21 @@ static int add_vec(shape_t *shape, const FT_Vector *v) {
 }
 
 static int
-decompose_move_to(const FT_Vector *to, void *user) {
+gather_move_to(const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_MOVE_TO);
   return add_vec(shape, to);
 }
 
 static int
-decompose_line_to(const FT_Vector *to, void *user) {
+gather_line_to(const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_LINE_TO);
   return add_vec(shape, to);
 }
 
 static int
-decompose_cubic_to(const FT_Vector *control1, const FT_Vector *control2,
+gather_cubic_to(const FT_Vector *control1, const FT_Vector *control2,
                    const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_CUBIC_TO);
@@ -43,7 +43,7 @@ decompose_cubic_to(const FT_Vector *control1, const FT_Vector *control2,
 }
 
 static int
-decompose_conic_to(const FT_Vector *control1, const FT_Vector *to, void *user) {
+gather_conic_to(const FT_Vector *control1, const FT_Vector *to, void *user) {
   shape_t *shape = (shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_CONIC_TO);
   add_vec(shape, control1);
@@ -56,21 +56,21 @@ static void _conic_to_cubic(const FT_Vector *cp1, const FT_Vector *to, FT_Vector
 }
 
 static int
-decompose_conic_as_cubic(const FT_Vector *control1, const FT_Vector *to, void *user) {
+gather_conic_as_cubic(const FT_Vector *control1, const FT_Vector *to, void *user) {
   FT_Vector control2;
   _conic_to_cubic(control1, to, &control2);
-  return decompose_cubic_to(control1, &control2, to, user);
+  return gather_cubic_to(control1, &control2, to, user);
 }
 
 DLLEXPORT FT_Error
-ft_outline_decompose(shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt) {
+ft_outline_gather(shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt) {
    FT_Outline_Funcs funcs = {
-      decompose_move_to,
-      decompose_line_to,
+      gather_move_to,
+      gather_line_to,
       (conic_opt
-           ? decompose_conic_to
-           : decompose_conic_as_cubic),
-      decompose_cubic_to,
+           ? gather_conic_to
+           : gather_conic_as_cubic),
+      gather_cubic_to,
       shift, delta
    };
 
@@ -81,7 +81,7 @@ ft_outline_decompose(shape_t *shape, FT_Outline *outline, int shift, FT_Pos delt
 }
 
 DLLEXPORT void
-ft_outline_decompose_done(shape_t *shape) {
+ft_outline_gather_done(shape_t *shape) {
   if (shape->ops) free(shape->ops);
   if (shape->points) free(shape->points);
   shape->ops = NULL;

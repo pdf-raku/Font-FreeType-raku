@@ -247,7 +247,7 @@ The distance from the right edge of the glyph image to the place where
 the origin of the next character should be (i.e., the end of the
 advance width).  Only applies to horizontal layouts.  Usually positive.
 
-=item svg()
+=item outline.svg()
 
 Turn the outline of the glyph into a string in a format suitable
 for including in an SVG graphics file, as the C<d> attribute of

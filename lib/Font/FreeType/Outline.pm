@@ -35,14 +35,14 @@ class Font::FreeType::Outline {
         method ops { nativecast(CArray[uint8], $!ops) }
         method points { nativecast(CArray[num64], $!points) }
 
-        method ft_outline_decompose(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
+        method ft_outline_gather(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
             returns FT_Error is native(libft_outline) {*}
 
-        method ft_outline_decompose_done
+        method ft_outline_gather_done
             is native(libft_outline) {*}
 
         method DESTROY {
-            self.ft_outline_decompose_done;
+            self.ft_outline_gather_done;
         }
     }
 
@@ -56,7 +56,7 @@ class Font::FreeType::Outline {
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
         my int32 $max-points = $!struct.n-points * 6;
         my $shape = Shape.new: :$max-points;
-        ft-try({ $shape.ft_outline_decompose($!struct, $shift, $delta, $conic ?? 1 !! 0); });
+        ft-try({ $shape.ft_outline_gather($!struct, $shift, $delta, $conic ?? 1 !! 0); });
         $shape;
     }
 
