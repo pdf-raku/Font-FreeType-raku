@@ -43,9 +43,7 @@ for @test {
 
 # Check that after getting an outline we can still render the bitmap.
 my $glyph = $vera.load-glyph('B');
-
 my $outline = $glyph.outline;
-$outline.decompose;
 
 my $bbox = $outline.bbox;
 is $bbox.x-max, 11776, 'bbox x-max';
@@ -58,5 +56,6 @@ ok($ps && $bmp, 'can get both outline and then bitmap from glyph');
 # And the other way around.
 $glyph = $vera.load-glyph('C');
 $bmp = $glyph.bitmap;
+$outline = $glyph.outline;
 $ps = $outline.postscript;
 ok($ps && $bmp, 'can get both bitmap and then outline from glyph');

@@ -9,6 +9,7 @@ class Font::FreeType::Glyph is rw {
 
     constant Px = 64.0;
 
+    has $.face is required;
     has FT_GlyphSlot $.struct is required handles <metrics>;
     has FT_ULong     $.char-code;
     has Str          $.name;
@@ -25,7 +26,7 @@ class Font::FreeType::Glyph is rw {
         $.metrics.vertAdvance / Px;
     }
     method width { $.metrics.width / Px }
-    method Str {$!char-code.chr}
+    method Str   { $!char-code.chr }
 
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
         ft-try({ $!struct.FT_Render_Glyph($render-mode) })
@@ -42,10 +43,16 @@ class Font::FreeType::Glyph is rw {
     }
 
     method outline {
+        my $obj = self;
         die "not an outline font"
-            unless self.is-outline;
-        my $outline = $!struct.outline;
-        my $library = $!struct.library;
+            unless $obj.is-outline
+            || do {
+                # could be we've been rendered as a bitmap. try reloading.
+                $obj = self.face.load-glyph($!char-code);
+                $obj.is-outline
+            }
+        my $outline = $obj.struct.outline;
+        my $library = $obj.struct.library;
         Font::FreeType::Outline.new: :struct($outline), :$library, :ref;
     }
 

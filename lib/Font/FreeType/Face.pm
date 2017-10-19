@@ -119,7 +119,7 @@ class Font::FreeType::Face {
             .char-code = $char-code;
         }
         else {
-            $!glyph .= new: :$struct, :$char-code;
+            $!glyph .= new: :$struct, :$char-code, :face(self);
         }
 
         $!glyph.name = $_
