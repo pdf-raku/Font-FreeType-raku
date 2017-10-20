@@ -1,5 +1,6 @@
 class Font::FreeType::Glyph is rw {
 
+    use NativeCall;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
     use Font::FreeType::Error;
@@ -31,11 +32,15 @@ class Font::FreeType::Glyph is rw {
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
         ft-try({ $!struct.FT_Render_Glyph($render-mode) })
             unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
-        my $bitmap  = $!struct.bitmap;
+        my $glyph-bitmap  = $!struct.bitmap;
         my $library = $!struct.library;
+        my FT_Bitmap $bitmap .= new;
+        $bitmap.FT_Bitmap_Init;
+        ft-try({ $library.FT_Bitmap_Copy($glyph-bitmap, $bitmap); });
+
         my $left = $!struct.bitmap-left;
         my $top = $!struct.bitmap-top;
-        Font::FreeType::Bitmap.new: :struct($bitmap), :$library, :$left, :$top, :ref;
+        Font::FreeType::Bitmap.new: :struct($bitmap), :$library, :$left, :$top;
     }
 
     method is-outline {
@@ -51,9 +56,14 @@ class Font::FreeType::Glyph is rw {
                 $obj = self.face.load-glyph($!char-code);
                 $obj.is-outline
             }
-        my $outline = $obj.struct.outline;
+        my $face-outline = $obj.struct.outline;
         my $library = $obj.struct.library;
-        Font::FreeType::Outline.new: :struct($outline), :$library, :ref;
+        my FT_Outline $outline .= new;
+        my $n_contours = $face-outline.n-contours;
+        my $n_points = $face-outline.n-contours;
+        ft-try({ $library.FT_Outline_New( $face-outline.n-points, $face-outline.n-contours, $outline) });
+        ft-try({ $face-outline.FT_Outline_Copy($outline) });
+        Font::FreeType::Outline.new: :struct($outline), :$library;
     }
 
 }

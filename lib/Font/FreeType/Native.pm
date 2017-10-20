@@ -35,6 +35,10 @@ class FT_Bitmap is repr('CStruct') is export {
     has uint8   $.pixel-mode;
     has uint8   $.palette-mode;
     has Pointer $.palette;
+
+    method FT_Bitmap_Init
+        is native($ftlib) {*};
+
 }
 
 class FT_Bitmap_Size is repr('CStruct') is export {
@@ -91,8 +95,12 @@ class FT_Outline is repr('CStruct') is export {
     has Pointer[uint16]     $.contours;  #| the contour end points
     has int32               $.flags;     #| outline masks
 
+    method FT_Outline_Copy(FT_Outline $target)
+        returns FT_Error is native($ftlib) {*};
+
     method FT_Outline_Get_BBox(FT_BBox $bbox)
         returns FT_Error is native($ftlib) {*};
+
 }
 
 class FT_SubGlyph is repr('CPointer') { }
@@ -304,13 +312,26 @@ class FT_Library is export {
         )
     returns FT_Error is native($ftlib) {*};
 
+    method FT_Bitmap_Copy(
+        FT_Bitmap $source,
+        FT_Bitmap $target,
+        )
+        returns FT_Error is native($ftlib) {*};
+
     method FT_Bitmap_Done(
         FT_Bitmap  $bitmap
         )
     returns FT_Error is native($ftlib) {*};
 
+    method FT_Outline_New(
+        FT_UInt    $num-points,
+        FT_Int     $num-contours,
+        FT_Outline $aoutline,
+        )
+    returns FT_Error is native($ftlib) {*};
+
     method FT_Outline_Done(
-        FT_Outline  $bitmap
+        FT_Outline  $outline
         )
     returns FT_Error is native($ftlib) {*};
 
