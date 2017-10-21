@@ -64,6 +64,12 @@ class Font::FreeType::Outline {
         $bbox;
     }
 
+    method Array {
+        my $bbox = self.bbox;
+        [floor($bbox.x-min / 64.0), floor($bbox.y-min / 64.0),
+         ceiling($bbox.x-max / 64.0), ceiling($bbox.y-max / 64.0)]
+    }
+
     method postscript {
         my Str @lines;
         my ft_shape_t $shape = self.decompose;
@@ -82,7 +88,7 @@ class Font::FreeType::Outline {
     }
 
     method svg {
-        my Str @lines;
+        my Str @path;
         my ft_shape_t $shape = self.decompose(:conic);
         my $ops = $shape.ops;
         my $pts = $shape.points;
@@ -92,9 +98,9 @@ class Font::FreeType::Outline {
             my $svg-op = <M L C Q>[$op - 1];
             my $n-args = [2, 2, 6, 4][$op - 1];
             my @args = $pts[$j++] xx $n-args;
-            @lines.push: $svg-op ~ @args>>.fmt('%.2f').join(' ');
+            @path.push: $svg-op ~ @args>>.fmt('%.2f').join(' ');
         }
-        @lines.join: "\n";
+        @path.join: ' ';
     }
 
     method DESTROY {

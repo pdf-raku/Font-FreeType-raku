@@ -22,7 +22,7 @@ for  <bdf fnt> -> $fmt {
     # Load bitmaps from a file and compare them against ones from the font.
     while @lines {
         with (@lines.shift) {
-            /:i^(<xdigit>+)$/
+            /^(<xdigit>+)$/
                 or die "badly formated bitmap test file";
             my $unicode = $0.Str;
             my $charcode = :16($unicode);

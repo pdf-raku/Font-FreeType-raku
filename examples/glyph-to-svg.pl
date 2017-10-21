@@ -1,3 +1,4 @@
+#!/usr/bin/perl -w
 use Font::FreeType;
 use Font::FreeType::Native::Types;
 
@@ -18,14 +19,18 @@ sub MAIN(Str $filename, Str $char is copy) {
     my $outline = $glyph.outline;
     my ($xmin, $ymin, $xmax, $ymax) = $outline.Array;
 
-    print "%\%!PS-Adobe-3.0 EPSF-3.0\n",
-      "%%Creator: $*PROGRAM-NAME\n",
-      "%%BoundingBox: $xmin $ymin $xmax $ymax\n",
-      "%%Pages: 1\n",
-      "%\%EndComments\n\n",
-      "%\%Page: 1 1\n",
-      "gsave newpath\n",
-      $outline.postscript,
-      "closepath fill grestore\n",
-      "%\%EOF\n";
+    my $path = $outline.svg;
+
+    print "<?xml version='1.0' encoding='UTF-8'?>\n",
+      "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\"\n",
+      "    \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n\n",
+      "<svg xmlns='http://www.w3.org/2000/svg' version='1.0'\n",
+      "     width='$xmax' height='$ymax'>\n\n",
+      # Transformation to flip it upside down and move it back down into
+      # the viewport.
+      " <g transform='scale(1 -1) translate(0 -$ymax)'>\n",
+      "  <path d='$path'\n",
+      "        style='fill: #77FFCC; stroke: #000000'/>\n\n",
+      " </g>\n",
+      "</svg>\n";
 }
