@@ -59,8 +59,6 @@ class Font::FreeType::Glyph is rw {
         my $face-outline = $obj.struct.outline;
         my $library = $obj.struct.library;
         my FT_Outline $outline .= new;
-        my $n_contours = $face-outline.n-contours;
-        my $n_points = $face-outline.n-contours;
         ft-try({ $library.FT_Outline_New( $face-outline.n-points, $face-outline.n-contours, $outline) });
         ft-try({ $face-outline.FT_Outline_Copy($outline) });
         Font::FreeType::Outline.new: :struct($outline), :$library;

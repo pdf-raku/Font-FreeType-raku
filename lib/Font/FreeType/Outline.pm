@@ -22,7 +22,7 @@ class Font::FreeType::Outline {
         }
     }
 
-    class Shape is repr('CStruct') {
+    class ft_shape_t is repr('CStruct') {
         has int32 $.n-points;
         has int32 $.n-ops;
         has int32 $!max-points;
@@ -53,7 +53,7 @@ class Font::FreeType::Outline {
 
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
         my int32 $max-points = $!struct.n-points * 6;
-        my $shape = Shape.new: :$max-points;
+        my $shape = ft_shape_t.new: :$max-points;
         ft-try({ $shape.ft_outline_gather($!struct, $shift, $delta, $conic ?? 1 !! 0); });
         $shape;
     }
@@ -66,7 +66,7 @@ class Font::FreeType::Outline {
 
     method postscript {
         my Str @lines;
-        my Shape $shape = self.decompose;
+        my ft_shape_t $shape = self.decompose;
         my $ops = $shape.ops;
         my $pts = $shape.points;
         my int $j = 0;
@@ -77,12 +77,13 @@ class Font::FreeType::Outline {
             my @args = $pts[$j++] xx $n-args;
             @lines.push: @args>>.fmt('%.2f').join(' ') ~ " $ps-op";
         }
+        @lines.push: '';
         @lines.join: "\n";
     }
 
     method svg {
         my Str @lines;
-        my Shape $shape = self.decompose(:conic);
+        my ft_shape_t $shape = self.decompose(:conic);
         my $ops = $shape.ops;
         my $pts = $shape.points;
         my int $j = 0;

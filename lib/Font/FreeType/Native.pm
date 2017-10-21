@@ -66,7 +66,7 @@ class FT_Generic is repr('CStruct') {
 class FT_BBox is repr('CStruct') is export {
     has FT_Pos  ($.x-min, $.y-min);
     has FT_Pos  ($.x-max, $.y-max);
-}
+ }
 
 class FT_Glyph_Metrics is repr('CStruct') {
     has FT_Pos  $.width;

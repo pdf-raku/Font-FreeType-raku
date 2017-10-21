@@ -5,11 +5,11 @@
 /* Get prototype. */
 #include "ft_outline.h"
 
-static int add_op(shape_t *shape, FT_OUTLINE_OP op) {
+static int add_op(ft_shape_t *shape, FT_OUTLINE_OP op) {
   shape->ops[ shape->n_ops++ ] = (uint8_t) op;
 }
 
-static int add_vec(shape_t *shape, const FT_Vector *v) {
+static int add_vec(ft_shape_t *shape, const FT_Vector *v) {
   if ( shape->n_points + 2 > shape->max_points) {
     return FT_Err_Cannot_Render_Glyph;
   }
@@ -20,21 +20,21 @@ static int add_vec(shape_t *shape, const FT_Vector *v) {
 
 static int
 take_move_to(const FT_Vector *to, void *user) {
-  shape_t *shape = (shape_t *) user;
+  ft_shape_t *shape = (ft_shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_MOVE_TO);
   return add_vec(shape, to);
 }
 
 static int
 take_line_to(const FT_Vector *to, void *user) {
-  shape_t *shape = (shape_t *) user;
+  ft_shape_t *shape = (ft_shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_LINE_TO);
   return add_vec(shape, to);
 }
 
 static int
 take_cubic_to(const FT_Vector *cp1, const FT_Vector *cp2, const FT_Vector *to, void *user) {
-  shape_t *shape = (shape_t *) user;
+  ft_shape_t *shape = (ft_shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_CUBIC_TO);
   add_vec(shape, cp1);
   add_vec(shape, cp2);
@@ -43,7 +43,7 @@ take_cubic_to(const FT_Vector *cp1, const FT_Vector *cp2, const FT_Vector *to, v
 
 static int
 take_conic_to(const FT_Vector *cp1, const FT_Vector *to, void *user) {
-  shape_t *shape = (shape_t *) user;
+  ft_shape_t *shape = (ft_shape_t *) user;
   add_op(shape, FT_OUTLINE_OP_CONIC_TO);
   add_vec(shape, cp1);
   return add_vec(shape, to);
@@ -62,7 +62,7 @@ take_conic_as_cubic(const FT_Vector *cp1, const FT_Vector *to, void *user) {
 }
 
 DLLEXPORT FT_Error
-ft_outline_gather(shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt) {
+ft_outline_gather(ft_shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt) {
    FT_Outline_Funcs funcs = {
       take_move_to,
       take_line_to,
@@ -80,7 +80,7 @@ ft_outline_gather(shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, 
 }
 
 DLLEXPORT void
-ft_outline_gather_done(shape_t *shape) {
+ft_outline_gather_done(ft_shape_t *shape) {
   if (shape->ops) free(shape->ops);
   if (shape->points) free(shape->points);
   shape->ops = NULL;
