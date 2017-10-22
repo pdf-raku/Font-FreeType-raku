@@ -10,7 +10,7 @@ class Font::FreeType::Face {
     use Font::FreeType::Bitmap;
     use Font::FreeType::Glyph;
 
-    has FT_Face $!struct handles <num-faces face-index face-flags style-flags
+    has FT_Face $.struct handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
         height max-advance-width max-advance-height size charmap>;
     has Font::FreeType::Glyph $!glyph;
