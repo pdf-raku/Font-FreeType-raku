@@ -28,6 +28,11 @@ class Font::FreeType::Face {
     method ascender { self.is-scalable ?? $!struct.ascender !! Mu }
     method descender { self.is-scalable ?? $!struct.descender !! Mu }
 
+    subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT';
+    method font-format returns FontFormat {
+        $!struct.FT_Get_Font_Format;
+    }
+
     method fixed-sizes {
         my int $n-sizes = self.num-fixed-sizes;
         my $ptr = $!struct.available-sizes;

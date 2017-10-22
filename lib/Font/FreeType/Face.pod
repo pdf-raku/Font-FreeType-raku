@@ -36,6 +36,12 @@ the current size of the face.
 Informs FreeType of an ancillary file needed for reading the font.
 Hasn't been tested yet.
 
+=item font-format()
+
+Return a string describing the format of a given face. Possible values are
+‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’,
+and ‘Windows FNT’.
+
 =item face-index()
 
 The index number of the current font face.  Usually this will be

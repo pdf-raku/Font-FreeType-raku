@@ -13,6 +13,7 @@ die "FreeType2 version $version is too old"
     unless $version >= v2.1.1;
 my Font::FreeType::Face $face;
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from file';
+is $face.font-format, 'TrueType', 'font format';
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Sans', 'face family name';
 is $face.num-glyphs, 6253, 'num-glyphs';

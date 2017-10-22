@@ -278,6 +278,11 @@ class FT_Face is export {
         FT_Vector   $kerning)
     returns FT_Error is native($ftlib) {*};
 
+    method FT_Get_Font_Format
+        returns Str
+        is export
+        is native($ftlib) {*};
+
     method FT_Reference_Face
         returns FT_Error
         is export
