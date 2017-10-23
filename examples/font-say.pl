@@ -4,7 +4,7 @@ use Font::FreeType::Bitmap;
 use Font::FreeType::Glyph;
 use Font::FreeType::Native::Types;
 
-sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$ascend, UInt :$descend) {
+sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$ascend, UInt :$descend, UInt :$char-spacing is copy, UInt :$word-spacing is copy) {
 
     my $load-flags = $hint
         ?? FT_LOAD_DEFAULT
@@ -12,10 +12,10 @@ sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$asc
     my $face = Font::FreeType.new.face($font-file, :$load-flags);
 
     $face.set-char-size(24, 0, $resolution, $resolution);
-    my $spacing =
-        $resolution > 40
-            ?? ($resolution + 20) div 40
-            !! 1;
+    $char-spacing //= $resolution > 40
+        ?? ($resolution + 20) div 40
+        !! 1;
+    $word-spacing //= $char-spacing * 4;
 
     my Font::FreeType::Bitmap @bitmaps = $text.comb\
         .map({ my $glyph = $face.load-glyph($_)})\
@@ -35,10 +35,10 @@ sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$asc
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
                 print scan-line($_, @bufs[$col], $row);
-                print ' ' x $spacing;
+                print ' ' x $char-spacing;
             }
             else {
-                print ' ' x ($spacing * 4);
+                print ' ' x $word-spacing;
             }
         }
         say '';
