@@ -11,7 +11,7 @@ sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$asc
         !! FT_LOAD_NO_HINTING;
     my $face = Font::FreeType.new.face($font-file, :$load-flags);
 
-    $face.set-char-size(24, 0, $resolution, $resolution);
+    try $face.set-char-size(24, 0, $resolution, $resolution);
     $char-spacing //= $resolution > 40
         ?? ($resolution + 20) div 40
         !! 1;
@@ -22,7 +22,7 @@ sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$asc
         .grep({.defined})\
         .map({.bitmap});
 
-    my @bufs = @bitmaps.map: { .defined ?? .Buf !! Buf };
+    my @bufs = @bitmaps.map: { .defined ?? .convert.Buf !! Buf };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
     my $bottom = do with $descend {
         - $_
