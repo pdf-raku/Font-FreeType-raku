@@ -4,10 +4,12 @@ use Font::FreeType::Bitmap;
 use Font::FreeType::Glyph;
 use Font::FreeType::Native::Types;
 
-sub MAIN(Str $font-file, Str $text, Int :$resolution=60) {
+sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$ascend, UInt :$descend) {
 
-    my $face = Font::FreeType.new.face($font-file,
-                                       :load-flags(FT_LOAD_NO_HINTING));
+    my $load-flags = $hint
+        ?? FT_LOAD_DEFAULT
+        !! FT_LOAD_NO_HINTING;
+    my $face = Font::FreeType.new.face($font-file, :$load-flags);
 
     $face.set-char-size(24, 0, $resolution, $resolution);
     my $spacing =
@@ -21,8 +23,14 @@ sub MAIN(Str $font-file, Str $text, Int :$resolution=60) {
         .map({.bitmap});
 
     my @bufs = @bitmaps.map: { .defined ?? .Buf !! Buf };
-    my $top = @bitmaps.map({.defined ?? .top !! 0}).max;
-    my $bottom = @bitmaps.map({.defined ?? .top - .rows !! 0}).min;
+    my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
+    my $bottom = do with $descend {
+        - $_
+    }
+    else {
+        @bitmaps.map({.defined ?? .top - .rows !! 0}).min;
+    }
+
     for $top ...^ $bottom -> $row {
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
