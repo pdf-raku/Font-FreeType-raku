@@ -9,6 +9,8 @@ sub MAIN(Str $filename) {
         with $face.style-name;
     say "PostScript name: ", $_
         with $face.postscript-name;
+    say "Format: ", $_
+        with $face.font-format;
 
     my @properties;
 

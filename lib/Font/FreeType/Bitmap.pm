@@ -51,15 +51,15 @@ class Font::FreeType::Bitmap {
         my $bitmap = $.convert;
         my $buf = $bitmap.Buf;
         my $i = 0;
-        my Str @rows;
+        my Str @lines;
         for ^$bitmap.rows {
             my Str $r = '';
             for ^$bitmap.width {
                 $r ~= $buf[$i++] ?? '#' !! ' ';
             }
-            @rows.push: $r;
+            @lines.push: $r;
         }
-        @rows.join: "\n";
+        @lines.join: "\n";
     }
 
     method DESTROY {

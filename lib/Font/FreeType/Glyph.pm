@@ -32,7 +32,8 @@ class Font::FreeType::Glyph is rw {
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
         ft-try({ $!struct.FT_Render_Glyph($render-mode) })
             unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
-        my $glyph-bitmap  = $!struct.bitmap;
+        my $glyph-bitmap  = $!struct.bitmap
+            or return Font::FreeType::Bitmap;
         my $library = $!struct.library;
         my FT_Bitmap $bitmap .= new;
         $bitmap.FT_Bitmap_Init;
