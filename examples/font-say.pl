@@ -47,15 +47,16 @@ sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$asc
 
 sub scan-line($bitmap, $buf, $row) {
     my $s = '';
-    my $i = $bitmap.top - $row;
+    my int $i = $bitmap.top - $row;
+    my int $width = $bitmap.width;
     if $bitmap.rows > $i >= 0 {
-        my $j = $bitmap.width * $i;
-        for 0 ..^ $bitmap.width {
+        my $j = $width * $i;
+        for 0 ..^ $width {
             $s ~= $buf[$j++] ?? '#' !! ' ';
         }
     }
     else {
-        $s = ' ' x $bitmap.width;
+        $s = ' ' x $width;
     }
     $s;
 }
