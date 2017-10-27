@@ -4,7 +4,15 @@ use Font::FreeType::Bitmap;
 use Font::FreeType::Glyph;
 use Font::FreeType::Native::Types;
 
-sub MAIN(Str $font-file, Str $text, Int :$resolution=60, Bool :$hint, UInt :$ascend, UInt :$descend, UInt :$char-spacing is copy, UInt :$word-spacing is copy) {
+sub MAIN(Str $font-file, Str $text,
+         Int :$resolution=60,
+         Bool :$hint,
+         UInt :$ascend,
+         UInt :$descend,
+         UInt :$char-spacing is copy,
+         UInt :$word-spacing is copy,
+         UInt :$bold = 0,
+    ) {
 
     my $load-flags = $hint
         ?? FT_LOAD_DEFAULT

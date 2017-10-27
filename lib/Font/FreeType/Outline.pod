@@ -34,6 +34,13 @@ should be called as follows:
     my $bbox = $outline.bbox();
     my $xmin = $bbox.x-min;
 
+=item bold(Int $strength)
+
+Embolden an outline. The new outline will be at most 4 times ‘strength’ pixels wider and higher. You may think of the left and bottom borders as unchanged.
+
+Negative ‘strength’ values to reduce the outline thickness are possible also.
+
+
 =item postscript()
 
 Generate PostScript code to draw the outline of the glyph.  More precisely,

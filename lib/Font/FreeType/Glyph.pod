@@ -201,21 +201,6 @@ The distance from the right edge of the glyph image to the place where
 the origin of the next character should be (i.e., the end of the
 advance width).  Only applies to horizontal layouts.  Usually positive.
 
-=item outline.svg()
-
-Turn the outline of the glyph into a string in a format suitable
-for including in an SVG graphics file, as the C<d> attribute of
-a C<path> element.  Note that because SVG's coordinate system has
-its origin in the top left corner the outline will be upside down.
-An SVG transformation can be used to flip it.
-
-The I<glyph-to-svg.pl> example program shows how to wrap the output
-in enough XML to generate a complete SVG file, and one way of
-transforming the outline to be the right way up.
-
-If you pass a file-handle to this method then it will write the path
-string to that file, otherwise it will return it as a string.
-
 =item vertical-advance()
 
 The distance from the origin of the current glyph to the place where

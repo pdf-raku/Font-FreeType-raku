@@ -103,6 +103,10 @@ class Font::FreeType::Outline {
         @path.join: ' ';
     }
 
+    method bold(Int $strength) {
+        $!struct.FT_Outline_Embolden($strength);
+    }
+
     method DESTROY {
         ft-try({ $!library.FT_Outline_Done($!struct) });
         $!struct = Nil;

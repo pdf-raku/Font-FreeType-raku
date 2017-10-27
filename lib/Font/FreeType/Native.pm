@@ -101,6 +101,9 @@ class FT_Outline is repr('CStruct') is export {
     method FT_Outline_Get_BBox(FT_BBox $bbox)
         returns FT_Error is native($ftlib) {*};
 
+    method FT_Outline_Embolden(FT_Pos $strength)
+        returns FT_Error is native($ftlib) {*};
+
 }
 
 class FT_SubGlyph is repr('CPointer') { }

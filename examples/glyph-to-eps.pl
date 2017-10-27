@@ -1,7 +1,7 @@
 use Font::FreeType;
 use Font::FreeType::Native::Types;
 
-sub MAIN(Str $filename, Str $char is copy) {
+sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
 
     my $face = Font::FreeType.new.face($filename,
                                        :load-flags(FT_LOAD_NO_HINTING));
@@ -16,6 +16,7 @@ sub MAIN(Str $filename, Str $char is copy) {
     die "Glyph has no outline.\n" unless $glyph.is-outline;
 
     my $outline = $glyph.outline;
+    $outline.bold($_) with $bold;
     my ($xmin, $ymin, $xmax, $ymax) = $outline.Array;
 
     print "%\%!PS-Adobe-3.0 EPSF-3.0\n",
