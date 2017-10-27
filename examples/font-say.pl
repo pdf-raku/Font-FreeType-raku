@@ -32,12 +32,7 @@ sub MAIN(Str $font-file, Str $text,
 
     my @bufs = @bitmaps.map: { .defined ?? .convert.Buf !! Buf };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
-    my $bottom = do with $descend {
-        - $_
-    }
-    else {
-        @bitmaps.map({.defined ?? .top - .rows !! 0}).min;
-    }
+    my $bottom = - ($descend // @bitmaps.map({.defined ?? .rows - .top !! 0}).max);
 
     for $top ...^ $bottom -> $row {
         for 0 ..^ +@bitmaps -> $col {
