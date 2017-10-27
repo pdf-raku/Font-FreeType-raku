@@ -27,6 +27,7 @@ class Font::FreeType::Glyph is rw {
         $.metrics.vertAdvance / Px;
     }
     method width { $.metrics.width / Px }
+    method height { $.metrics.height / Px }
     method Str   { $!char-code.chr }
 
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {

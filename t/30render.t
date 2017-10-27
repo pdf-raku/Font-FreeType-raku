@@ -46,8 +46,8 @@ my $glyph = $vera.load-glyph('B');
 my $outline = $glyph.outline;
 
 my $bbox = $outline.bbox;
-is $bbox.x-max, 11776, 'bbox x-max';
-is $bbox.y-max, 14016, 'bbox y-max';
+is $bbox.x-max, 11813, 'bbox x-max';
+is $bbox.y-max, 13997, 'bbox y-max';
 
 my $ps = $outline.postscript;
 my $bmp = $glyph.bitmap;
