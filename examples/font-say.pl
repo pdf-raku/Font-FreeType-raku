@@ -4,8 +4,9 @@ use Font::FreeType::Bitmap;
 use Font::FreeType::Glyph;
 use Font::FreeType::Native::Types;
 
-sub MAIN(Str $font-file, Str $text,
-         Int :$resolution=60,
+sub MAIN(Str $font-file,
+         Str $text is copy,
+         Int  :$resolution=60,
          Bool :$hint,
          UInt :$ascend,
          UInt :$descend,
@@ -13,6 +14,12 @@ sub MAIN(Str $font-file, Str $text,
          UInt :$word-spacing is copy,
          UInt :$bold = 0,
     ) {
+
+    unless $text.chars {
+        # handle empty string as a zero width space
+        $text = ' ';
+        $word-spacing //= 0;
+    }
 
     my $load-flags = $hint
         ?? FT_LOAD_DEFAULT
@@ -26,9 +33,9 @@ sub MAIN(Str $font-file, Str $text,
     $word-spacing //= $char-spacing * 4;
 
     my Font::FreeType::Bitmap @bitmaps = $text.comb\
-        .map({ my $glyph = $face.load-glyph($_)})\
-        .grep({.defined})\
-        .map({.bitmap});
+        .map({ $face.load-glyph($_)})\
+        .grep( *.defined )\
+        .map(  *.bitmap);
 
     my @bufs = @bitmaps.map: { .defined ?? .convert.Buf !! Buf };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
