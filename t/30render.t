@@ -13,7 +13,7 @@ my @test = (
     { char => '.', x_sz => 300, y_sz => 300, x_res => 72, y_res => 72, aa => 1 },
 );
 use Test;
-plan +@test * 3 + 4;
+plan +@test * 3 + 7;
 
 # Load the TTF file.
 # Hinting is turned off, because otherwise the compile-time option to turn
@@ -59,3 +59,10 @@ $bmp = $glyph.bitmap;
 $outline = $glyph.outline;
 $ps = $outline.postscript;
 ok($ps && $bmp, 'can get both bitmap and then outline from glyph');
+
+# cloning
+
+my $outline2 = $outline.clone;
+isa-ok $outline2, Font::FreeType::Outline, 'clone';
+ok $outline2.defined, 'clone';
+ok $outline2 !=== $outline, 'clone';
