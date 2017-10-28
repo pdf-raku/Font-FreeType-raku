@@ -15,7 +15,7 @@ sub MAIN(Str $font-file,
          UInt :$bold = 0,
     ) {
 
-    unless $text.chars {
+    if $text eq '' {
         # handle empty string as a zero width space
         $text = ' ';
         $word-spacing //= 0;
@@ -33,7 +33,11 @@ sub MAIN(Str $font-file,
     $word-spacing //= $char-spacing * 4;
 
     my Font::FreeType::Bitmap @bitmaps = $text.comb\
-        .map({ $face.load-glyph($_)})\
+        .map({ my $glyph = $face.load-glyph($_);
+               if $bold {
+                   .bold($bold) with $glyph.outline
+               };
+               $glyph})\
         .grep( *.defined )\
         .map(  *.bitmap);
 
