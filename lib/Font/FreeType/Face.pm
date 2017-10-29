@@ -137,7 +137,6 @@ class Font::FreeType::Face {
         self.load-glyph($char.ord, |c);
     }
     multi method load-glyph(UInt $char-code, Int :$flags = $!load-flags, Bool :$fallback) {
-
         ft-try({$!struct.FT_Load_Char( $char-code, $flags ); });
         my $struct = $!struct.glyph;
         self!set-glyph: :$struct, :$char-code;

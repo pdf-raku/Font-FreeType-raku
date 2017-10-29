@@ -31,6 +31,11 @@ lives-ok { $face = $freetype.face('t/fonts/DejaVuSerif.ttf'.IO.slurp(:bin)) }, '
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Serif', 'face family name';
 
+$face.set-char-size(2048, 2048, 72, 72);
+my $glyph = $face.load-glyph('A');
+ok $glyph, '.load-glyph';
+ok $glyph.outline, '.load-glyph.outline';
+ok $glyph.bitmap, '.bitmap';
 is $face.glyph-name('&'), 'ampersand', 'glyph name';
 
 lives-ok {$face.DESTROY}, 'face DESTROY';
