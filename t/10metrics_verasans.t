@@ -88,7 +88,7 @@ subtest {
     ok $infos;
     ok $infos.elems, 22;
     my $copy-info = $infos[0];
-    like $copy-info.string, rx/'Copyright'.*'Bitstream, Inc.'/;
+    like $copy-info.Str, rx/'Copyright'.*'Bitstream, Inc.'/;
     is $copy-info.language-id, 0;
     is $copy-info.platform-id, 1;
     is $copy-info.name-id, 0;

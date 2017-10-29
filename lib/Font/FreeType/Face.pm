@@ -9,6 +9,7 @@ class Font::FreeType::Face {
 
     use Font::FreeType::Bitmap;
     use Font::FreeType::Glyph;
+    use Font::FreeType::NamedInfo;
 
     has FT_Face $.struct handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
@@ -54,20 +55,6 @@ class Font::FreeType::Face {
         @charmaps;
     }
 
-    class SfntName {
-        has FT_SfntName $.struct handles <platform-id encoding-id language-id name-id string-len>;
-
-        method string {
-            my $len = $.string-len;
-            my $buf = CArray[uint8].new;
-            $buf[$len - 1] = 0
-                if $len;
-            Font::FreeType::Native::memcpy(nativecast(Pointer, $buf), $!struct.string, $len);
-            # todo various encoding schemes
-            buf8.new($buf).decode;
-        }
-    }
-
     my class Vector {
         has FT_Vector $.struct;
         method x { $!struct.x / Px }
@@ -82,7 +69,7 @@ class Font::FreeType::Face {
         (0 ..^ $n-sizes).map: -> $i {
             my FT_SfntName $sfnt .= new;
             ft-try({ $!struct.FT_Get_Sfnt_Name($i, $sfnt); });
-            SfntName.new: :struct($sfnt);
+            Font::FreeType::NamedInfo.new: :struct($sfnt);
         }
     }
 

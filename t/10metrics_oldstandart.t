@@ -76,7 +76,7 @@ subtest {
     ok $infos;
     ok +$infos, 64;
     my $copy-info = $infos[0];
-    like $copy-info.string, rx/'Copyright'.*'Alexey Kryukov'/;
+    like $copy-info.Str, rx/'Copyright'.*'Alexey Kryukov'/;
     is $copy-info.language-id, 0;
     is $copy-info.platform-id, 1;
     is $copy-info.name-id, 0;
