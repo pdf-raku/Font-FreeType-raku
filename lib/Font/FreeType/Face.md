@@ -16,8 +16,7 @@ Usually a face represents all the information in the font file (such as
 a TTF file), although it is possible to have multiple faces in a single
 file.
 
-Never 'use' this module directly; the class is loaded automatically from
-[Font::FreeType](https://metacpan.org/pod/Font::FreeType).  Use the `Font::FreeType->face()`
+Never 'use' this module directly; the class is loaded automatically from Font::FreeType.  Use the `Font::FreeType.face()`
 method to create a new Font::FreeType::Face object from a filename.
 
 # METHODS
@@ -43,7 +42,7 @@ Unless otherwise stated, all methods will die if there is an error.
 - face-index()
 
     The index number of the current font face.  Usually this will be
-    zero, which is the default.  See `Font::FreeType->face()` for how
+    zero, which is the default.  See `Font::FreeType.face()` for how
     to load other faces from the same file.
 
 - descender()
@@ -90,13 +89,13 @@ Unless otherwise stated, all methods will die if there is an error.
     characters are ignored.  There is currently no facility for iterating
     over all glyphs.
 
-    Each time your callback code is called, `$_` will be passed a [Font::FreeType::Glyph](https://metacpan.org/pod/Font::FreeType::Glyph) object for
+    Each time your callback code is called, `$_` will be passed a [Font::FreeType::Glyph](Glyph.md) object for
     the current glyph. For an example see the program _list-characters.pl_ provided in the
     distribution.
 
 - load-glyph(_Str $character_, :fallback)
 
-    Returns a [Font::FreeType::Glyph](https://metacpan.org/pod/Font::FreeType::Glyph) object for the
+    Returns a [Font::FreeType::Glyph](Glyph.md) object for the
     glyph corresponding to the first character in the string provided.
     Note that currently non-ASCII characters are not likely to work with
     this, so you might be better using the `glyph_from_char_code()`
@@ -108,7 +107,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 - load-glyph(_Int char-code_, :fallback)
 
-    Returns a [Font::FreeType::Glyph](https://metacpan.org/pod/Font::FreeType::Glyph) object for the
+    Returns a [Font::FreeType::Glyph](Glyph.md) object for the
     glyph corresponding to Unicode character _char-code_.  FreeType supports
     using other character sets, but this module doesn't yet.
 
@@ -120,7 +119,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
     True if individual glyphs have names.  If so, the names can be
     retrieved with the `name()` method on
-    [Font::FreeType::Glyph](https://metacpan.org/pod/Font::FreeType::Glyph) objects.
+    [Font::FreeType::Glyph](Glyph.md) objects.
 
     See also `has_reliable_glyph_names()` below.
 
@@ -179,7 +178,7 @@ Unless otherwise stated, all methods will die if there is an error.
     Returns a vector for the the suggested kerning adjustment between two glyphs.
 
     For example, assuming `$left` and `$right` are two
-    [Font::FreeType::Glyph](https://metacpan.org/pod/Font::FreeType::Glyph) objects:
+    [Font::FreeType::Glyph](Glyph.md) objects:
 
         my $kern = $face.kerning('A', 'V');
         my $kern-distance = $kern.x;
@@ -206,7 +205,7 @@ Unless otherwise stated, all methods will die if there is an error.
 - number-of-faces()
 
     The number of faces contained in the file from which this one
-    was created.  Usually there is only one.  See `Font::FreeType->face()`
+    was created.  Usually there is only one.  See `Font::FreeType.face()`
     for how to load the others if there are more.
 
 - number-of-glyphs()
@@ -254,21 +253,20 @@ Unless otherwise stated, all methods will die if there is an error.
 
 - charmap()
 
-    The current active [charmap](https://metacpan.org/pod/Font::FreeType::CharMap) for this face.
+    The current active charmap for this face.
 
 - charmaps()
 
-    An array of the [charmaps](https://metacpan.org/pod/Font::FreeType::CharMap) of the face.
+    An array of the charmaps of the face.
 
 - bounding-box()
 
-    The outline's [bounding box](https://metacpan.org/pod/Font::FreeType::BoundingBox) for this face.
+    The outline's bounding box for this face.
 
 # SEE ALSO
 
-[Font::FreeType](https://metacpan.org/pod/Font::FreeType),
-[Font::FreeType::Glyph](https://metacpan.org/pod/Font::FreeType::Glyph)
-[Font::FreeType::CharMap](https://metacpan.org/pod/Font::FreeType::CharMap)
+[Font::FreeType](../../../README.md),
+[Font::FreeType::Glyph](Glyph.md)
 
 # AUTHOR
 
@@ -283,10 +281,3 @@ Ported from Perl 5 to 6 by David Warring Copyright 2017.
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 42:
-
-    Non-ASCII character seen before =encoding in '‘TrueType’,'. Assuming UTF-8

@@ -24,9 +24,8 @@ Font::FreeType::Glyph - glyphs from font typefaces loaded from Font::FreeType
 # DESCRIPTION
 
 This class represents an individual glyph (character image) loaded from
-a font.  See [Font::FreeType::Face](https://metacpan.org/pod/Font::FreeType::Face) for how to
-obtain a glyph object, in particular the `glyph_from_char_code()`
-and `glyph_from_char()` methods.
+a font.  See [Font::FreeType::Face](lib/Font/FreeType/Face.md) for how to
+obtain a glyph object, in particular the `load-glyph` method.
 
 Things you an do with glyphs include:
 
@@ -108,7 +107,7 @@ and the metrics are scaled to the size of the font face.
 - bitmap\_magick(\[_render\_mode_\])   \*\*\*\* NYI \*\*\*\*
 
     A simple wrapper around the `bitmap()` method.  Renders the bitmap as
-    normal and returns it as an [Image::Magick](https://metacpan.org/pod/Image::Magick) object,
+    normal and returns it as an Image::Magick object,
     which can then be composited onto a larger bitmapped image, or manipulated
     using any of the features available in Image::Magick.
 
@@ -174,7 +173,7 @@ and the metrics are scaled to the size of the font face.
 
 - outline()
 
-    Returns an object of type [Font::FreeType::Outline](https://metacpan.org/pod/Font::FreeType::Outline)
+    Returns an object of type [Font::FreeType::Outline](Outline.md)
 
 - right-bearing()
 
@@ -201,8 +200,8 @@ and the metrics are scaled to the size of the font face.
 
 # SEE ALSO
 
-[Font::FreeType](https://metacpan.org/pod/Font::FreeType),
-[Font::FreeType::Face](https://metacpan.org/pod/Font::FreeType::Face)
+[Font::FreeType](../../../README.md),
+[Font::FreeType::Face](Face.md)
 
 # AUTHOR
 
