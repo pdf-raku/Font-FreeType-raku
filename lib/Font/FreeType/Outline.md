@@ -10,8 +10,8 @@ Font::FreeType::Glyph - glyphs from font typefaces loaded from Font::FreeType
     my $face = $freetype.face('Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    $face.for-glyphs, 'A', -> $glyph {
-        my $outline = $glyph.outline;
+    $face.for-glyphs, 'A', -> $gslot {
+        my $outline = $gslot.outline;
         my $result = $outline.decompose;
     }
 

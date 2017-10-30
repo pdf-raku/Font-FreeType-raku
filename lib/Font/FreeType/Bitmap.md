@@ -10,9 +10,9 @@ Font::FreeType::Bitmap - bitmaps from rendered glyphs
     my $face = $freetype.face('Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    $face.for-glyphs, 'A', -> $glyph {
+    $face.for-glyphs, 'A', -> $gslot {
         # Render into an array of strings, one byte per pixel.
-        my $bitmap = $glyph.bitmap;
+        my $bitmap = $gslot.bitmap;
         my $top = $bitmap.top;
         my $left = $bitmap.left;
 

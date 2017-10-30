@@ -37,7 +37,7 @@ class Font::FreeType::Glyph {
         die "not an outline glyph"
             unless self.is-outline;
         my $outline = $!struct.outline;
-        Font::FreeType::Outline.new: :$!library, :struct($outline);
+        Font::FreeType::Outline.new: :$!library, :struct($outline), :ref;
     }
 
     method is-bitmap {
@@ -49,7 +49,7 @@ class Font::FreeType::Glyph {
         my $bitmap = $!struct.bitmap;
         my $left = $!struct.left;
         my $top = $!struct.top;
-        Font::FreeType::Bitmap.new: :$!library, :struct($bitmap), :$left, :$top;
+        Font::FreeType::Bitmap.new: :$!library, :struct($bitmap), :$left, :$top, :ref;
     }
 
     method DESTROY {

@@ -11,8 +11,8 @@ Font::FreeType::GlyphSlot - iterator for font typeface glyphs
     $face.set-char-size(24, 24, 100, 100);
 
     # Render into an array of strings, one byte per pixel.
-    $face.for-glyphs, 'A', -> $glyph {
-        my $bitmap = $glyph.bitmap;
+    $face.for-glyphs, 'A', -> $gslot {
+        my $bitmap = $gslot.bitmap;
         my $top = $bitmap.top;
         my $left = $bitmap.left;
 

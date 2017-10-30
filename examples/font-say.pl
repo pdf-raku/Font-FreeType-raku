@@ -31,11 +31,11 @@ sub MAIN(Str $font-file,
     $word-spacing //= $char-spacing * 4;
     my @bitmaps;
 
-    $face.for-glyphs: $text, -> $glyph {
+    $face.for-glyphs: $text, -> $gslot {
         if $bold {
-            .bold($bold) with $glyph.outline
+            .bold($bold) with $gslot.outline
         };
-        @bitmaps.push: $glyph.bitmap.clone;
+        @bitmaps.push: $gslot.bitmap.clone;
     }
 
     my @bufs = @bitmaps.map: { .defined ?? .convert.Buf !! Buf };

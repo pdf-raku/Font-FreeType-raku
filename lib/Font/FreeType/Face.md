@@ -95,7 +95,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 - for-glyphs(str, _code-ref_)
 
-  Execute a callback for each glyph in a string.
+  Execute a callback for each glyph-slot in a string.
 
 - has-glyph-names()
 
