@@ -25,8 +25,8 @@ for  <bdf fnt> -> $fmt {
             /^(<xdigit>+)$/
                 or die "badly formated bitmap test file";
             my $unicode = $0.Str;
-            my $charcode = :16($unicode);
-            my $desc = "$fmt format font, glyph $unicode";
+            my $char = :16($unicode).chr;
+            my $desc = "$fmt format font, glyph $char";
 
             # Read test bitmap.
             my @expected;
@@ -39,13 +39,14 @@ for  <bdf fnt> -> $fmt {
 
             # FNT doesn't do Unicode, it seems, and in older versions of FreeType
             # char 255 is inaccessible for some reason.
-            next if $fmt eq 'fnt' && $charcode > 254;
+            next if $fmt eq 'fnt' && $char.ord > 254;
 
-            my $glyph = $face.load-glyph($charcode);
-            my $bitmap = $glyph.bitmap;
-            is $bitmap.left, 0, "$desc: bitmap starts 0 pixels to left of origin";
-            is $bitmap.top, 6, "$desc: bitmap starts 6 pixels above origin";
-            is $bitmap.Str, @expected.join("\n"), "{$desc} Str";
+            $face.for-glyphs: $char, -> $glyph {
+                my $bitmap = $glyph.bitmap;
+                is $bitmap.left, 0, "$desc: bitmap starts 0 pixels to left of origin";
+                is $bitmap.top, 6, "$desc: bitmap starts 6 pixels above origin";
+                is $bitmap.Str, @expected.join("\n"), "{$desc} Str";
+            }
         }
     }
 }

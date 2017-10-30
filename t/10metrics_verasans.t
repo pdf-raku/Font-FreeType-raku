@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 66 + 256 * 2;
+plan 63 + 256 * 2;
 use Font::FreeType;
 use Font::FreeType::Native::Types;
 
@@ -114,7 +114,7 @@ subtest "bounding box" => sub {
 my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;
 my $i = 0;
-$vera.foreach-char: -> $_ {
+$vera.forall-chars: -> $_ {
     my $line = @glyph-list[$i++];
     die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;
@@ -144,9 +144,9 @@ my %glyph-metrics = (
 $vera.set-char-size(2048, 2048, 72, 72);
 
 # 5*2 tests.
-for %glyph-metrics.keys.sort -> $char {
-    my $glyph = $vera.load-glyph($char)
-        // die "no glyph for character '$char'";
+my $chars = %glyph-metrics.keys.sort.join;
+$vera.for-glyphs: $chars, -> $glyph {
+    my $char = $glyph.Str;
     with %glyph-metrics{$char} {
         is $glyph.name, .<name>,
            "name of glyph '$char'";
@@ -175,13 +175,6 @@ for %kerning.keys.sort {
     is $kern.x, %kerning{$_}, "horizontal kerning of '$_'";
     is $kern.y, 0, "vertical kerning of '$_'";
 }
-
-my $missing-glyph = $vera.load-glyph('˗');
-is $missing-glyph, Mu, "no fallback glyph";
-
-$missing-glyph = $vera.load-glyph('˗', :fallback );
-ok $missing-glyph.defined, "fallback glyph is defined";
-is $missing-glyph.horizontal-advance, 1229, "missing glyph has horizontal advance";
 
 lives-ok {$vera.set-pixel-sizes(100, 120)}, 'set pixel sizes';
 

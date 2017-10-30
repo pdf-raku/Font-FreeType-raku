@@ -14,7 +14,6 @@ class Font::FreeType::Face {
     has FT_Face $.struct handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
         height max-advance-width max-advance-height size charmap>;
-    has Font::FreeType::Glyph $!glyph;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
 
     submethod TWEAK( :$!struct! ) {
@@ -104,60 +103,37 @@ class Font::FreeType::Face {
             !! Mu;
     }
 
-    method !set-glyph(FT_GlyphSlot :$struct!, Int :$char-code!) {
-
-        with $!glyph {
-            .struct = $struct;
-            .char-code = $char-code;
-        }
-        else {
-            $!glyph .= new: :$struct, :$char-code, :face(self);
-        }
-
-        $!glyph.name = $_
-            with self.glyph-name($char-code);
-
-        $!glyph;
-    }
-
-    multi method load-glyph(Str $char, |c) {
-        self.load-glyph($char.ord, |c);
-    }
-    multi method load-glyph(UInt $char-code, Int :$flags = $!load-flags, Bool :$fallback) {
-        ft-try({$!struct.FT_Load_Char( $char-code, $flags ); });
-        my $struct = $!struct.glyph;
-        self!set-glyph: :$struct, :$char-code;
-
-        $fallback || $!struct.FT_Get_Char_Index($char-code)
-            ?? $!glyph
-            !! Mu;
-    }
-
-    method foreach-char(&code, Int :$flags = $!load-flags) {
-        my FT_ULong $char-code;
+    method forall-chars(&code, Int :$flags = $!load-flags) {
         my FT_UInt  $glyph-idx;
-        $char-code = $!struct.FT_Get_First_Char( $glyph-idx);
+        my $struct = $!struct.glyph;
+        my $glyph-slot = Font::FreeType::Glyph.new: :face(self), :$struct;
+        $glyph-slot.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
+
         while $glyph-idx {
             $!struct.FT_Load_Glyph( $glyph-idx, $flags );
-            my $struct = $!struct.glyph;
-            self!set-glyph: :$struct, :$char-code;
-            &code($!glyph);
-            $char-code = $!struct.FT_Get_Next_Char( $char-code, $glyph-idx);
+            &code($glyph-slot);
+            $glyph-slot.char-code = $!struct.FT_Get_Next_Char( $$glyph-slot.char-code, $glyph-idx);
         }
     }
+
+    method for-glyphs(Str $str, &code, Int :$flags = $!load-flags) {
+        my $struct = $!struct.glyph;
+        my $glyph-slot = Font::FreeType::Glyph.new: :face(self), :$struct;
+        for $str.ords -> $char-code {
+            ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
+            $glyph-slot.char-code = $char-code;
+            &code($glyph-slot);
+        }
+}
 
     method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
         my FT_F26Dot6 $w = ($width * Px + 0.5).Int;
         my FT_F26Dot6 $h = ($height * Px + 0.5).Int;
         ft-try({ $!struct.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
-        self.load-glyph(.Str)
-            with $!glyph;
     }
 
     method set-pixel-sizes(UInt $width, UInt $height) {
         ft-try({ $!struct.FT_Set_Pixel_Sizes($width, $height) });
-        self.load-glyph(.Str)
-            with $!glyph;
     }
 
     method kerning(Str $left, Str $right, UInt :$mode = 0) {

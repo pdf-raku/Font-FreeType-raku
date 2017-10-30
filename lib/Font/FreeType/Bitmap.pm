@@ -8,8 +8,9 @@ class Font::FreeType::Bitmap {
     has FT_Library $!library;
     has Int $.left is required;
     has Int $.top is required;
+    has Bool $!ref;
 
-    submethod TWEAK(:$!struct!, :$!library!) {}
+    submethod TWEAK(:$!struct!, :$!library!, :$ref = False) {}
 
     constant Dpi = 72.0;
     constant Px = 64.0;
@@ -62,8 +63,17 @@ class Font::FreeType::Bitmap {
         @lines.join: "\n";
     }
 
+    method clone {
+        return self unless self.defined;
+        my FT_Bitmap $bitmap .= new;
+        $bitmap.FT_Bitmap_Init;
+        ft-try({ $!library.FT_Bitmap_Copy($!struct, $bitmap); });
+        self.new: :$!library, :struct($bitmap), :$!top, :$!left; 
+    }
+
     method DESTROY {
-        ft-try({ $!library.FT_Bitmap_Done($!struct) });
+        ft-try({ $!library.FT_Bitmap_Done($!struct) })
+            unless $!ref;
         $!struct = Nil;
         $!library = Nil;
     }

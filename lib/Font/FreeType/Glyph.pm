@@ -13,8 +13,9 @@ class Font::FreeType::Glyph is rw {
     has $.face is required;
     has FT_GlyphSlot $.struct is required handles <metrics>;
     has FT_ULong     $.char-code;
-    has Str          $.name;
 
+
+    method name { $!face.glyph-name: $!char-code }
     method left-bearing { $.metrics.horiBearingX / Px; }
     method right-bearing {
         (.horiAdvance - .horiBearingX - .width) / Px
@@ -33,16 +34,12 @@ class Font::FreeType::Glyph is rw {
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
         ft-try({ $!struct.FT_Render_Glyph($render-mode) })
             unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
-        my $glyph-bitmap  = $!struct.bitmap
+        my $bitmap  = $!struct.bitmap
             or return Font::FreeType::Bitmap;
         my $library = $!struct.library;
-        my FT_Bitmap $bitmap .= new;
-        $bitmap.FT_Bitmap_Init;
-        ft-try({ $library.FT_Bitmap_Copy($glyph-bitmap, $bitmap); });
-
         my $left = $!struct.bitmap-left;
         my $top = $!struct.bitmap-top;
-        Font::FreeType::Bitmap.new: :struct($bitmap), :$library, :$left, :$top;
+        Font::FreeType::Bitmap.new: :struct($bitmap), :$library, :$left, :$top, :ref;
     }
 
     method is-outline {

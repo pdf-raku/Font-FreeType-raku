@@ -82,7 +82,7 @@ Unless otherwise stated, all methods will die if there is an error.
         Resolution the bitmaps were designed for, in pixels per em.
         Only available with Freetype 2.1.5 or newer.
 
-- foreach-char(_code-ref_)
+- forall-chars(_code-ref_)
 
     Iterates through all the characters in the font, and calls _code-ref_
     for each of them in turn.  Glyphs which don't correspond to Unicode
@@ -93,27 +93,9 @@ Unless otherwise stated, all methods will die if there is an error.
     the current glyph. For an example see the program _list-characters.pl_ provided in the
     distribution.
 
-- load-glyph(_Str $character_, :fallback)
+- for-glyphs(str, _code-ref_)
 
-    Returns a [Font::FreeType::Glyph](Glyph.md) object for the
-    glyph corresponding to the first character in the string provided.
-    Note that currently non-ASCII characters are not likely to work with
-    this, so you might be better using the `glyph_from_char_code()`
-    method below and the Perl `ord` function.
-
-    Returns _undef_ if the glyph is not available in the font and
-    _fallback_ isn't defined; otherwise, i.e. if _fallback = true_
-    returns fonts _missing glyph_.
-
-- load-glyph(_Int char-code_, :fallback)
-
-    Returns a [Font::FreeType::Glyph](Glyph.md) object for the
-    glyph corresponding to Unicode character _char-code_.  FreeType supports
-    using other character sets, but this module doesn't yet.
-
-    Returns _undef_ if the glyph is not available in the font and
-    _fallback_ isn't defined; otherwise, i.e. if _fallback = true_
-    returns fonts _missing glyph_.
+  Execute a callback for each glyph in a string.
 
 - has-glyph-names()
 

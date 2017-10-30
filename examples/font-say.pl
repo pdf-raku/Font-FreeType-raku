@@ -31,15 +31,14 @@ sub MAIN(Str $font-file,
         ?? ($resolution + 20) div 40
         !! 1;
     $word-spacing //= $char-spacing * 4;
+    my @bitmaps;
 
-    my Font::FreeType::Bitmap @bitmaps = $text.comb\
-        .map({ my $glyph = $face.load-glyph($_);
-               if $bold {
-                   .bold($bold) with $glyph.outline
-               };
-               $glyph})\
-        .grep( *.defined )\
-        .map(  *.bitmap);
+    $face.for-glyphs: $text, -> $glyph {
+        if $bold {
+            .bold($bold) with $glyph.outline
+        };
+        @bitmaps.push: $glyph.bitmap.clone;
+    }
 
     my @bufs = @bitmaps.map: { .defined ?? .convert.Buf !! Buf };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
