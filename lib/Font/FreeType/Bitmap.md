@@ -10,16 +10,15 @@ Font::FreeType::Bitmap - bitmaps from rendered glyphs
     my $face = $freetype.face('Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    my $glyph = $face.load-glyph('A');
-    my $glyph = $face.load-glyph('A'.ord);
+    $face.for-glyphs, 'A', -> $glyph {
+        # Render into an array of strings, one byte per pixel.
+        my $bitmap = $glyph.bitmap;
+        my $top = $bitmap.top;
+        my $left = $bitmap.left;
 
-    # Render into an array of strings, one byte per pixel.
-    my $bitmap = $glyph.bitmap;
-    my $top = $bitmap.top;
-    my $left = $bitmap.left;
-
-    # print a string representation
-    print $bitmap.Str;
+        # print a string representation
+        print $bitmap.Str;
+    }
 
 # DESCRIPTION
 

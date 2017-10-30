@@ -10,7 +10,11 @@ Font::FreeType - read font files and render glyphs from Perl using FreeType2
     my $face = $freetype.face('Vera.ttf');
 
     $face.set-char-size(24, 24, 100, 100);
-    my $glyph = $face.load-glyph('A');
+    $face.for-glyphs, 'ABc', -> $glyph {
+        my $bitmap = $glyph.bitmap;
+        my $outline = $glyph.outline;
+        # ...
+    }
 
 # DESCRIPTION
 
@@ -48,16 +52,13 @@ and resolution you want to see it at, for example 24pt at 100dpi:
 
     $face.set-char-size(24, 24, 100, 100);
 
-Then load a particular glyph (an image of a character), either by
-character code (in Unicode) or the actual character:
+Then load particular glyphs (an image of a character):
 
-    my $glyph = $face.load-glyph('A');
-    my $glyph = $face.load-glyph('A'.ord);
-
-Glyphs can be rendered to bitmap images, among other things:
-
-    my $bitmap = $glyph.bitmap;
-    say $bitmap.Str;
+    $face.for-glyphs('ABC', -> $glyph {
+        # Glyphs can be rendered to bitmap images, among other things:
+        my $bitmap = $glyph.bitmap;
+        say $bitmap.Str;
+    }
 
 # METHODS
 

@@ -52,7 +52,7 @@ class Font::FreeType::Glyph is rw {
             unless $obj.is-outline
             || do {
                 # could be we've been rendered as a bitmap. try reloading.
-                $obj = self.face.load-glyph($!char-code);
+                $obj = self.face.struct.FT_Load_Char($!char-code, self.face.load-flags);
                 $obj.is-outline
             }
         my $face-outline = $obj.struct.outline;

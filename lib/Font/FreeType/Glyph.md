@@ -10,22 +10,21 @@ Font::FreeType::Glyph - glyphs from font typefaces loaded from Font::FreeType
     my $face = $freetype.face('Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    my $glyph = $face.load-glyph('A');
-    my $glyph = $face.load-glyph('A'.ord);
-
     # Render into an array of strings, one byte per pixel.
-    my $bitmap = $glyph.bitmap;
-    my $top = $bitmap.top;
-    my $left = $bitmap.left;
+    $face.for-glyphs, 'A', -> $glyph {
+        my $bitmap = $glyph.bitmap;
+        my $top = $bitmap.top;
+        my $left = $bitmap.left;
 
-    # Read vector outline.
-    my $result = $glyph.outline.decompose;
+        # Read vector outline.
+        my $result = $glyph.outline.decompose;
+    }
 
 # DESCRIPTION
 
 This class represents an individual glyph (character image) loaded from
 a font.  See [Font::FreeType::Face](lib/Font/FreeType/Face.md) for how to
-obtain a glyph object, in particular the `load-glyph` method.
+obtain glyph objects, in particular the `for-glyphs` method.
 
 Things you an do with glyphs include:
 
