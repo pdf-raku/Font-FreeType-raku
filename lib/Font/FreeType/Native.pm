@@ -130,6 +130,26 @@ class FT_Size is repr('CStruct') {
     has FT_Size_Internal  $.internal;
 }
 
+class FT_Glyph is repr('CStruct') is export {
+    has FT_Library        $.library;
+    has Pointer           $.class;
+    has FT_Glyph_Format   $.format;
+    has FT_Vector         $.advance;
+
+    method FT_Done_Glyph
+        returns FT_Error is native($ftlib) {*};
+}
+
+class FT_BitmapGlyph is FT_Glyph is repr('CStruct') is export {
+    has FT_Int            $.left;
+    has FT_Int            $.top;
+    has FT_Bitmap         $.bitmap;
+}
+
+class FT_OutlineGlyph is FT_Glyph is repr('CStruct') is export {
+    has FT_Outline        $.outline;
+}
+
 class FT_GlyphSlot is repr('CStruct') is export {
     has FT_Library        $.library;
     has FT_Face           $.face;
@@ -165,6 +185,10 @@ class FT_GlyphSlot is repr('CStruct') is export {
 
     method FT_Render_Glyph(
         FT_Render_Mode $render-mode )
+    returns FT_Error is native($ftlib) {*};
+
+    method FT_Get_Glyph(
+        Pointer[FT_Glyph] $glyph-p is rw )
     returns FT_Error is native($ftlib) {*};
 
 }

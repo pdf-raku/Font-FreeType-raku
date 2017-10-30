@@ -1,7 +1,5 @@
 # prints an ascii banner, using the supplied font
 use Font::FreeType;
-use Font::FreeType::Bitmap;
-use Font::FreeType::Glyph;
 use Font::FreeType::Native::Types;
 
 sub MAIN(Str $font-file,

@@ -8,7 +8,7 @@ class Font::FreeType::Face {
     use Font::FreeType::Native::Types;
 
     use Font::FreeType::Bitmap;
-    use Font::FreeType::Glyph;
+    use Font::FreeType::GlyphSlot;
     use Font::FreeType::NamedInfo;
 
     has FT_Face $.struct handles <num-faces face-index face-flags style-flags
@@ -106,7 +106,7 @@ class Font::FreeType::Face {
     method forall-chars(&code, Int :$flags = $!load-flags) {
         my FT_UInt  $glyph-idx;
         my $struct = $!struct.glyph;
-        my $glyph-slot = Font::FreeType::Glyph.new: :face(self), :$struct;
+        my $glyph-slot = Font::FreeType::GlyphSlot.new: :face(self), :$struct;
         $glyph-slot.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
 
         while $glyph-idx {
@@ -118,7 +118,7 @@ class Font::FreeType::Face {
 
     method for-glyphs(Str $str, &code, Int :$flags = $!load-flags) {
         my $struct = $!struct.glyph;
-        my $glyph-slot = Font::FreeType::Glyph.new: :face(self), :$struct;
+        my $glyph-slot = Font::FreeType::GlyphSlot.new: :face(self), :$struct;
         for $str.ords -> $char-code {
             ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
             $glyph-slot.char-code = $char-code;

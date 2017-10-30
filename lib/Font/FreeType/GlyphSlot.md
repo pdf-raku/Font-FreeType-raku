@@ -1,6 +1,6 @@
 # NAME
 
-Font::FreeType::Glyph - glyphs from font typefaces loaded from Font::FreeType
+Font::FreeType::GlyphSlot - iterator for font typeface glyphs
 
 # SYNOPSIS
 
@@ -22,7 +22,7 @@ Font::FreeType::Glyph - glyphs from font typefaces loaded from Font::FreeType
 
 # DESCRIPTION
 
-This class represents an individual glyph (character image) loaded from
+This class represents individual glyphs (character image) loaded from
 a font.  See [Font::FreeType::Face](lib/Font/FreeType/Face.md) for how to
 obtain glyph objects, in particular the `for-glyphs` method.
 

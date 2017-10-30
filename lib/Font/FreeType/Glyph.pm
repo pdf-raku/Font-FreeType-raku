@@ -1,66 +1,58 @@
-class Font::FreeType::Glyph is rw {
+class Font::FreeType::Glyph {
 
     use NativeCall;
+    use Font::FreeType::Error;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
-    use Font::FreeType::Error;
 
     use Font::FreeType::Bitmap;
     use Font::FreeType::Outline;
 
-    constant Px = 64.0;
+    has FT_Glyph $.struct handles <format top left>;
+    has FT_Library $!library;
 
-    has $.face is required;
-    has FT_GlyphSlot $.struct is required handles <metrics>;
-    has FT_ULong     $.char-code;
+    submethod TWEAK(FT_GlyphSlot :$glyph-slot!) {
+        my $glyph-p = Pointer[FT_Glyph].new;
+        ft-try({ $glyph-slot.FT_Get_Glyph($glyph-p) });
+        my FT_Glyph $glyph = $glyph-p.deref;;
 
-
-    method name { $!face.glyph-name: $!char-code }
-    method left-bearing { $.metrics.horiBearingX / Px; }
-    method right-bearing {
-        (.horiAdvance - .horiBearingX - .width) / Px
-            with $.metrics
-    }
-    method horizontal-advance {
-        $.metrics.horiAdvance / Px;
-    }
-    method vertical-advance {
-        $.metrics.vertAdvance / Px;
-    }
-    method width { $.metrics.width / Px }
-    method height { $.metrics.height / Px }
-    method Str   { $!char-code.chr }
-
-    method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
-        ft-try({ $!struct.FT_Render_Glyph($render-mode) })
-            unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
-        my $bitmap  = $!struct.bitmap
-            or return Font::FreeType::Bitmap;
-        my $library = $!struct.library;
-        my $left = $!struct.bitmap-left;
-        my $top = $!struct.bitmap-top;
-        Font::FreeType::Bitmap.new: :struct($bitmap), :$library, :$left, :$top, :ref;
-    }
-
-    method is-outline {
-        $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
-    }
-
-    method outline {
-        my $obj = self;
-        die "not an outline font"
-            unless $obj.is-outline
-            || do {
-                # could be we've been rendered as a bitmap. try reloading.
-                $obj = self.face.struct.FT_Load_Char($!char-code, self.face.load-flags);
-                $obj.is-outline
+        with $glyph {
+            given .format {
+                when FT_GLYPH_FORMAT_OUTLINE {
+                    $glyph = nativecast(FT_OutlineGlyph, $glyph);
+                }
+                when FT_GLYPH_FORMAT_BITMAP {
+                    $glyph = nativecast(FT_BitmapGlyph, $glyph);
+                }
             }
-        my $face-outline = $obj.struct.outline;
-        return Mu
-            without $face-outline;
-        my $library = $obj.struct.library;
-        Font::FreeType::Outline.new: :struct($face-outline), :$library, :ref;
+        }
+
+        $!library = $glyph-slot.library;
+        $!struct := $glyph;
+    }
+    method is-outline {
+        .format == FT_GLYPH_FORMAT_OUTLINE with $!struct;
+    }
+    method outline {
+        die "not an outline glyph"
+            unless self.is-outline;
+        my $outline = $!struct.outline;
+        Font::FreeType::Outline.new: :$!library, :struct($outline);
     }
 
-}
+    method is-bitmap {
+        .format == FT_GLYPH_FORMAT_BITMAP with $!struct;
+    }
+    method bitmap {
+        die "not a bitmap glyph"
+            unless self.is-bitmap;
+        my $bitmap = $!struct.bitmap;
+        my $left = $!struct.left;
+        my $top = $!struct.top;
+        Font::FreeType::Bitmap.new: :$!library, :struct($bitmap), :$left, :$top;
+    }
 
+    method DESTROY {
+        $!struct.FT_Glyph_Done;
+    }
+}
