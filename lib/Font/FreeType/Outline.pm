@@ -1,7 +1,6 @@
 class Font::FreeType::Outline {
 
     use NativeCall;
-    use LibraryMake;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
@@ -13,14 +12,6 @@ class Font::FreeType::Outline {
         :FT_OUTLINE_OP_CUBIC_TO
         :FT_OUTLINE_OP_CONIC_TO
         »;
-
-    # Find our compiled library.
-    sub libft_outline is export(:libft_outline) {
-        state $ = do {
-            my $so = get-vars('')<SO>;
-            ~(%?RESOURCES{"lib/libft_outline$so"});
-        }
-    }
 
     class ft_shape_t is repr('CStruct') {
         has int32 $.n-points;
@@ -36,10 +27,10 @@ class Font::FreeType::Outline {
         method points { nativecast(CArray[num64], $!points) }
 
         method ft_outline_gather(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
-            returns FT_Error is native(libft_outline) {*}
+            returns FT_Error is native($Font::FreeType::Native::ft-p6-lib) {*}
 
         method ft_outline_gather_done
-            is native(libft_outline) {*}
+            is native($Font::FreeType::Native::ft-p6-lib) {*}
 
         method DESTROY {
             self.ft_outline_gather_done;

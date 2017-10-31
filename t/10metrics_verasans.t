@@ -114,7 +114,7 @@ subtest "bounding box" => sub {
 my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;
 my $i = 0;
-$vera.forall-chars: -> $_ {
+$vera.forall-char-slots: -> $_ {
     my $line = @glyph-list[$i++];
     die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;
@@ -145,7 +145,7 @@ $vera.set-char-size(2048, 2048, 72, 72);
 
 # 5*2 tests.
 my $chars = %glyph-metrics.keys.sort.join;
-$vera.for-glyphs: $chars, -> $glyph {
+$vera.for-glyph-slots: $chars, -> $glyph {
     my $char = $glyph.Str;
     with %glyph-metrics{$char} {
         is $glyph.name, .<name>,

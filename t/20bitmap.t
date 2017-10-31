@@ -41,7 +41,7 @@ for  <bdf fnt> -> $fmt {
             # char 255 is inaccessible for some reason.
             next if $fmt eq 'fnt' && $char.ord > 254;
 
-            $face.for-glyphs: $char, -> $glyph {
+            $face.for-glyph-slots: $char, -> $glyph {
                 my $bitmap = $glyph.bitmap;
                 is $bitmap.left, 0, "$desc: bitmap starts 0 pixels to left of origin";
                 is $bitmap.top, 6, "$desc: bitmap starts 6 pixels above origin";

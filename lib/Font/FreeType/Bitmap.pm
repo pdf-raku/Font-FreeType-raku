@@ -3,6 +3,7 @@ class Font::FreeType::Bitmap {
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
+    use Font::FreeType::Native::Types;
 
     has FT_Bitmap $!struct handles <rows width pitch num-grays pixel-mode pallette>;
     has FT_Library $!library;
@@ -28,17 +29,15 @@ class Font::FreeType::Bitmap {
     }
 
     method depth {
-        constant @BitsPerPixel = [1, 8, 2, 4, 8, 8, 24];
+        constant @BitsPerPixel = [Mu, 1, 8, 2, 4, 8, 8, 24];
         with $!struct.pixel-mode {
-            $_ > 0 ?? @BitsPerPixel[$_ - 1] !! Mu;
+            @BitsPerPixel[$_];
         }
     }
 
     method Buf {
         my \bits-per-row = $.depth * $!struct.width;
-        my $bytes = $!struct.rows
-            ?? bits-per-row * $!struct.rows  +  $!struct.pitch * ($!struct.rows - 1)
-            !! 0;
+        my $bytes = ($!struct.rows * bits-per-row  +  7) div 8;
         my $cbuf = CArray[uint8].new;
         if $bytes {
             $cbuf[$bytes-1] = 0;
@@ -48,17 +47,47 @@ class Font::FreeType::Bitmap {
         buf8.new: $cbuf;
     }
 
-    method Str {
-        my $bitmap = $.convert;
-        my $buf = $bitmap.Buf;
-        my $i = 0;
-        my Str @lines;
-        for ^$bitmap.rows {
-            my Str $r = '';
-            for ^$bitmap.width {
-                $r ~= $buf[$i++] ?? '#' !! ' ';
+    method pixels {
+        my $buf = $!struct.buffer;
+        my uint8 @pixels[$.width;$.rows];
+        my int $i = 0;
+        my uint32 $bits;
+        given $.pixel-mode {
+            when 1 { # mono
+                for ^$.rows -> int $y {
+                    for ^$.width -> int $x {
+                        $bits = $buf[$i++]
+                            if $x %% 8;
+                        @pixels[$x;$y] = $bits +& 0x80 ?? 0xFF !! 0x00;
+                        $bits +<= 1;
+                    }
+                }
             }
-            @lines.push: $r;
+            when 2 { # gray 8
+                for ^$.rows -> int $y {
+                    for ^$.width -> int $x {
+                        @pixels[$x;$y] = $buf[$i++];
+                    }
+                }
+            }
+            default {
+                die "unsupported pixel mode: $_";
+            }
+        }
+        @pixels;
+    }
+
+    method Str {
+        return "\n" x $.height
+            unless $.width;
+        my $pixbuf = $.convert.pixels;
+        my Str @r[$.width];
+        my Str @lines;
+        for ^$.rows -> $y {
+            for ^$.width -> $x {
+                @r[$x] = $pixbuf[$x;$y] ?? '#' !! ' ';
+            }
+            @lines.push: @r.join;
         }
         @lines.join: "\n";
     }

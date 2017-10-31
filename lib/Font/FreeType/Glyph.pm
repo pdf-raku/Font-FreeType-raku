@@ -14,7 +14,7 @@ class Font::FreeType::Glyph {
     submethod TWEAK(FT_GlyphSlot :$glyph-slot!) {
         my $glyph-p = Pointer[FT_Glyph].new;
         ft-try({ $glyph-slot.FT_Get_Glyph($glyph-p) });
-        my FT_Glyph $glyph = $glyph-p.deref;;
+        my FT_Glyph $glyph = $glyph-p.deref;
 
         with $glyph {
             given .format {
@@ -36,23 +36,34 @@ class Font::FreeType::Glyph {
     method outline {
         die "not an outline glyph"
             unless self.is-outline;
-        my $outline = $!struct.outline;
+        my $outline = $!struct.outline-pointer.deref;
         Font::FreeType::Outline.new: :$!library, :struct($outline), :ref;
     }
 
     method is-bitmap {
         .format == FT_GLYPH_FORMAT_BITMAP with $!struct;
     }
+    method to-bitmap(
+        :$render-mode = FT_RENDER_MODE_NORMAL,
+        :$origin = FT_Vector.new,
+        Bool :$destroy = True,
+        )  {
+        my FT_BBox $bbox .= new;
+        $!struct.FT_Glyph_Get_CBox(FT_GLYPH_BBOX_PIXELS, $bbox);
+        my $struct-p = nativecast(Pointer[FT_Glyph], $!struct);
+        ft-try({ FT_Glyph_To_Bitmap($struct-p, $render-mode, $origin, $destroy); });
+        $!struct = nativecast(FT_BitmapGlyph, $struct-p.deref);
+        $.left = $bbox.x-min;     
+        $.top  = $bbox.y-max;     
+    }
     method bitmap {
-        die "not a bitmap glyph"
+        self.to-bitmap
             unless self.is-bitmap;
-        my $bitmap = $!struct.bitmap;
-        my $left = $!struct.left;
-        my $top = $!struct.top;
-        Font::FreeType::Bitmap.new: :$!library, :struct($bitmap), :$left, :$top, :ref;
+        my FT_Bitmap:D $bitmap = $!struct.bitmap-pointer.deref;
+        Font::FreeType::Bitmap.new: :$!library, :struct($bitmap), :$.left, :$.top, :ref;
     }
 
     method DESTROY {
-        $!struct.FT_Glyph_Done;
+        $!struct.FT_Done_Glyph;
     }
 }

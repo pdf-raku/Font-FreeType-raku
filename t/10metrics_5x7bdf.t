@@ -68,7 +68,7 @@ is $bdf.bounding-box, Mu, "no bounding box for fixed size font";
 my $glyph-list-filename = 't/fonts/bdf_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;
 my $i = 0;
-$bdf.forall-chars: -> $_ {
+$bdf.forall-char-slots: -> $_ {
     my $line = @glyph-list[$i++];
     die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;
@@ -118,7 +118,7 @@ my %glyph-metrics = (
 
 # 4*2 tests.
 my $str = %glyph-metrics.keys.sort .join;
-$bdf.for-glyphs: $str, -> $glyph {
+$bdf.for-glyph-slots: $str, -> $glyph {
     my $char = $glyph.Str;
     with %glyph-metrics{$char} {
         # Can't do names until it's implemented in FreeType.

@@ -69,6 +69,18 @@ This class represents the bitmap image of a rendered glyph.
 
   Returns the raw pixel buf for the rendered glyph.
 
+- pixels
+
+    Returns a numeric shaped array of dimensions $.width and $height.
+    Each item represents one pixel of the image, starting from the
+    top left.  A value of 0 indicates background (outside the
+    glyph outline), and 255 represents a point inside the outline.
+
+    If antialiasing is used then shades of grey between 0 and 255 may occur.
+    Antialiasing is performed by default, but can be turned off by passing
+    the `FT_RENDER_MODE_MONO` option.
+
+
 - Str()
 
 Returns an ascii display representation of the rendered glyph.

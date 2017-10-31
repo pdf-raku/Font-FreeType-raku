@@ -3,6 +3,7 @@ unit module Font::FreeType::Native::Types;
 use NativeCall;
 use NativeCall::Types;
 
+constant FT_Bool   is export = uint8;
 constant FT_Error  is export = uint32;
 constant FT_Int    is export = int32;
 constant FT_Int32  is export = int32;
@@ -64,25 +65,33 @@ enum FT_GLYPH_FORMAT is export «
     »;
 
 enum FT_LOAD is export «
-	:FT_LOAD_DEFAULT(0x0)
-	:FT_LOAD_NO_SCALE(1 +< 0)
-	:FT_LOAD_NO_HINTING(1 +< 1)
-	:FT_LOAD_RENDER(1 +< 2)
-	:FT_LOAD_NO_BITMAP(1 +< 3)
-	:FT_LOAD_VERTICAL_LAYOUT(1 +< 4)
-	:FT_LOAD_FORCE_AUTOHINT(1 +< 5)
-	:FT_LOAD_CROP_BITMAP(1 +< 6)
-	:FT_LOAD_PEDANTIC(1 +< 7)
-	:FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH(1 +< 9)
-	:FT_LOAD_NO_RECURSE(1 +< 10)
-	:FT_LOAD_IGNORE_TRANSFORM(1 +< 11)
-	:FT_LOAD_MONOCHROME(1 +< 12)
-	:FT_LOAD_LINEAR_DESIGN(1 +< 13)
-	:FT_LOAD_NO_AUTOHINT(1 +< 15)
+    :FT_LOAD_DEFAULT(0x0)
+    :FT_LOAD_NO_SCALE(1 +< 0)
+    :FT_LOAD_NO_HINTING(1 +< 1)
+    :FT_LOAD_RENDER(1 +< 2)
+    :FT_LOAD_NO_BITMAP(1 +< 3)
+    :FT_LOAD_VERTICAL_LAYOUT(1 +< 4)
+    :FT_LOAD_FORCE_AUTOHINT(1 +< 5)
+    :FT_LOAD_CROP_BITMAP(1 +< 6)
+    :FT_LOAD_PEDANTIC(1 +< 7)
+    :FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH(1 +< 9)
+    :FT_LOAD_NO_RECURSE(1 +< 10)
+    :FT_LOAD_IGNORE_TRANSFORM(1 +< 11)
+    :FT_LOAD_MONOCHROME(1 +< 12)
+    :FT_LOAD_LINEAR_DESIGN(1 +< 13)
+    :FT_LOAD_NO_AUTOHINT(1 +< 15)
   # Bits 16-19 are used by `FT_LOAD_TARGET_'
-	:FT_LOAD_COLOR(1 +< 20)
-	:FT_LOAD_COMPUTE_METRICS(1 +< 21)
-	:FT_LOAD_BITMAP_METRICS_ONLY(1 +< 22)
+    :FT_LOAD_COLOR(1 +< 20)
+    :FT_LOAD_COMPUTE_METRICS(1 +< 21)
+    :FT_LOAD_BITMAP_METRICS_ONLY(1 +< 22)
+    »;
+
+enum FT_GLYPH_BBOX_MODE is export «
+    :FT_GLYPH_BBOX_UNSCALED(0)
+    :FT_GLYPH_BBOX_SUBPIXELS(0)
+    :FT_GLYPH_BBOX_GRIDFIT(1)
+    :FT_GLYPH_BBOX_TRUNCATE(2)
+    :FT_GLYPH_BBOX_PIXELS(3)
     »;
 
 enum FT_PIXEL_MODE is export «

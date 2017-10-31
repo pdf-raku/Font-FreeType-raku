@@ -103,7 +103,7 @@ class Font::FreeType::Face {
             !! Mu;
     }
 
-    method forall-chars(&code, Int :$flags = $!load-flags) {
+    method forall-char-slots(&code, Int :$flags = $!load-flags) {
         my FT_UInt  $glyph-idx;
         my $struct = $!struct.glyph;
         my $glyph-slot = Font::FreeType::GlyphSlot.new: :face(self), :$struct;
@@ -116,7 +116,7 @@ class Font::FreeType::Face {
         }
     }
 
-    method for-glyphs(Str $str, &code, Int :$flags = $!load-flags) {
+    method for-glyph-slots(Str $str, &code, Int :$flags = $!load-flags) {
         my $struct = $!struct.glyph;
         my $glyph-slot = Font::FreeType::GlyphSlot.new: :face(self), :$struct;
         for $str.ords -> $char-code {
@@ -124,7 +124,15 @@ class Font::FreeType::Face {
             $glyph-slot.char-code = $char-code;
             &code($glyph-slot);
         }
-}
+    }
+
+    method glyphs(Str $str, Int :$flags = $!load-flags) {
+        my Font::FreeType::Glyph @glyphs;
+        self.for-glyph-slots($str, {
+            @glyphs.push: .glyph;
+        }, :$flags);
+        @glyphs;
+    }
 
     method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
         my FT_F26Dot6 $w = ($width * Px + 0.5).Int;

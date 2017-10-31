@@ -2,8 +2,10 @@ unit module Font::FreeType::Native;
 
 use NativeCall;
 use NativeCall::Types;
+use LibraryMake;
 use Font::FreeType::Native::Types;
 
+# library bindings
 our $ftlib;
 BEGIN {
     if $*VM.config<dll> ~~ /dll/ {
@@ -11,6 +13,13 @@ BEGIN {
     } else {
         $ftlib = ('freetype', v6);
     }
+}
+
+# additional C bindings
+our $ft-p6-lib;
+BEGIN {
+    my $so = get-vars('')<SO>;
+    $ft-p6-lib = ~(%?RESOURCES{"lib/libft6$so"});
 }
 
 constant FT_Byte   = uint8;
@@ -136,18 +145,34 @@ class FT_Glyph is repr('CStruct') is export {
     has FT_Glyph_Format   $.format;
     has FT_Vector         $.advance;
 
+    method FT_Glyph_Get_CBox(
+        FT_UInt $bbox-mode,
+        FT_BBox $bbox
+        )
+        is native($ftlib) {*};
+
     method FT_Done_Glyph
         returns FT_Error is native($ftlib) {*};
 }
 
-class FT_BitmapGlyph is FT_Glyph is repr('CStruct') is export {
+class FT_BitmapGlyph is repr('CStruct') is FT_Glyph is export is rw {
     has FT_Int            $.left;
     has FT_Int            $.top;
-    has FT_Bitmap         $.bitmap;
+    HAS FT_Bitmap         $.bitmap;
+    method bitmap-pointer
+        is native($ft-p6-lib)
+        is symbol('ft_glyph_bitmap')
+        returns Pointer[FT_Bitmap]
+    {*}
 }
 
 class FT_OutlineGlyph is FT_Glyph is repr('CStruct') is export {
-    has FT_Outline        $.outline;
+    HAS FT_Outline        $.outline;
+    method outline-pointer
+        is native($ft-p6-lib)
+        is symbol('ft_glyph_outline')
+        returns Pointer[FT_Outline]
+    {*}
 }
 
 class FT_GlyphSlot is repr('CStruct') is export {
@@ -379,6 +404,15 @@ class FT_Library is export {
         is export
         is native($ftlib) {*};
 }
+
+sub FT_Glyph_To_Bitmap(
+    Pointer[FT_Glyph] $the-glyph is rw,
+    FT_Render_Mode $mode,
+    FT_Vector $origin,
+    FT_Bool $destroy,
+    ) returns FT_Error
+        is export
+        is native($ftlib) {*};
 
 sub FT_Init_FreeType(FT_Library $library is rw)
     returns FT_Error

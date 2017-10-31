@@ -6,9 +6,9 @@
     "description" : "read font files and render glyphs using FreeType2",
     "depends"     : [ "LibraryMake" ],
     "resources" : [
-      "lib/libft_outline.so",
-      "lib/libft_outline.dll",
-      "lib/libft_outline.dylib"
+      "lib/libft6.so",
+      "lib/libft6.dll",
+      "lib/libft6.dylib"
     ],
     "source-url"  : "git://github.com/p6-pdf/Font-FreeType-p6.git",
     "provides"    : {

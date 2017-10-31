@@ -13,7 +13,7 @@ my @test = (
     { char => '.', x_sz => 300, y_sz => 300, x_res => 72, y_res => 72, aa => 1 },
 );
 use Test;
-plan +@test * 3 + 6;
+plan +@test * 3 + 3;
 
 # Load the TTF file.
 # Hinting is turned off, because otherwise the compile-time option to turn
@@ -34,7 +34,7 @@ for @test {
     ##    my $fh = $test-filename.IO.open(:bin);
     $vera.set-char-size(.<x_sz>, .<y_sz>, .<x_res>, .<y_res>);
     my $render-mode = .<aa> ?? FT_RENDER_MODE_NORMAL !! FT_RENDER_MODE_MONO;
-    $vera.for-glyphs: .<char>, -> $glyph {
+    for $vera.glyphs(.<char>) -> $glyph {
         my $bm = $glyph.bitmap: :$render-mode;
         ok defined $bm.Buf;
         ok defined $bm.left;
@@ -43,8 +43,7 @@ for @test {
 }
 
 # Check that after getting an outline we can still render the bitmap.
-my $outline2;
-$vera.for-glyphs: 'B', -> $glyph {
+for $vera.glyphs('B') -> $glyph {
     my $outline = $glyph.outline;
 
     my $bbox = $outline.bbox;
@@ -54,11 +53,5 @@ $vera.for-glyphs: 'B', -> $glyph {
     my $ps = $outline.postscript;
     my $bmp = $glyph.bitmap;
     ok($ps && $bmp, 'can get both outline and then bitmap from glyph');
-    $outline2 = $outline.clone;
-    ok $outline2 !=== $outline, 'clone';
 }
 
-# cloning
-
-isa-ok $outline2, Font::FreeType::Outline, 'clone';
-ok $outline2.defined, 'clone';

@@ -33,7 +33,7 @@ is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Serif', 'face family name';
 
 $face.set-char-size(2048, 2048, 72, 72);
-$face.for-glyphs: 'AI', -> $gslot {
+$face.for-glyph-slots: 'AI', -> $gslot {
     ok $gslot, '.for-glyphs';
 
     ok $gslot.outline, '.load-glyph.outline';

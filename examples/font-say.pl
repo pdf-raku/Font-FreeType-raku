@@ -29,16 +29,14 @@ sub MAIN(Str $font-file,
         ?? ($resolution + 20) div 40
         !! 1;
     $word-spacing //= $char-spacing * 4;
-    my @bitmaps;
-
-    $face.for-glyphs: $text, -> $gslot {
+    my @bitmaps = $face.glyphs($text).map: {
         if $bold {
-            .bold($bold) with $gslot.outline
+            .bold($bold) with .outline
         };
-        @bitmaps.push: $gslot.bitmap.clone;
+        .bitmap;
     }
 
-    my @bufs = @bitmaps.map: { .defined ?? .convert.Buf !! Buf };
+    my @bufs = @bitmaps.map: { .defined ?? .Buf !! Buf };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
     my $bottom = - ($descend // @bitmaps.map({.defined ?? .rows - .top !! 0}).max);
 
