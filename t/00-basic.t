@@ -33,22 +33,22 @@ is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Serif', 'face family name';
 
 $face.set-char-size(2048, 2048, 72, 72);
-$face.for-glyph-slots: 'AI', -> $gslot {
+$face.for-glyphs: 'AI', -> $gslot {
     ok $gslot, '.for-glyphs';
 
     ok $gslot.outline, '.load-glyph.outline';
-    my $glyph1 = $gslot.glyph;
+    my $g-image1 = $gslot.glyph-image;
 
     ok $gslot.bitmap, '.bitmap';
-    my $glyph2 = $gslot.glyph;
+    my $g-image2 = $gslot.glyph-image;
 
-    ok $glyph1.is-outline, 'outline glyph 1';
-    nok $glyph1.is-bitmap, 'outline glyph 2';
-    isa-ok $glyph1.outline, Font::FreeType::Outline, 'outline glyph 3';
+    ok $g-image1.is-outline, 'outline glyph 1';
+    nok $g-image1.is-bitmap, 'outline glyph 2';
+    isa-ok $g-image1.outline, Font::FreeType::Outline, 'outline glyph 3';
 
-    nok $glyph2.is-outline, 'bitmap glyph 1';
-    ok $glyph2.is-bitmap, 'bitmap glyph 2';
-    isa-ok $glyph2.bitmap, Font::FreeType::Bitmap, 'bitmap glyph 3';
+    nok $g-image2.is-outline, 'bitmap glyph 1';
+    ok $g-image2.is-bitmap, 'bitmap glyph 2';
+    isa-ok $g-image2.bitmap, Font::FreeType::BitMap, 'bitmap glyph 3';
 }
 
 is $face.glyph-name('&'), 'ampersand', 'glyph name';

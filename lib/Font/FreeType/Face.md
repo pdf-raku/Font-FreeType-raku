@@ -17,7 +17,7 @@ a TTF file), although it is possible to have multiple faces in a single
 file.
 
 Never 'use' this module directly; the class is loaded automatically from Font::FreeType.  Use the `Font::FreeType.face()`
-method to create a new Font::FreeType::Face object from a filename.
+method to create a new Font::FreeType::Face object from a filename and then use the `forall-chars()` or `for-glyphs()` methods to iterate through the glyphs.
 
 # METHODS
 
@@ -28,7 +28,7 @@ Unless otherwise stated, all methods will die if there is an error.
     The height above the baseline of the 'top' of the font's glyphs, scaled to
     the current size of the face.
 
-- attach\_file(_filename_)
+- attach-file(_filename_)   *** NYI ***
 
     Informs FreeType of an ancillary file needed for reading the font.
     Hasn't been tested yet.
@@ -57,7 +57,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 - fixed-sizes()
 
-    Returns an array of Font::FreeType::Bitmap::Size objects which
+    Returns an array of Font::FreeType::BitMap::Size objects which
     detail sizes.  Each object has the following available methods:
 
     - size
@@ -82,24 +82,24 @@ Unless otherwise stated, all methods will die if there is an error.
         Resolution the bitmaps were designed for, in pixels per em.
         Only available with Freetype 2.1.5 or newer.
 
-- glyphs(str)
+- glyph-images(str)
 
-  Returns an array of glyphs for the unicode string.
+  Returns an array of [glyphs-images](Images.md) for the unicode string.
 
-- forall-char-slots(_code-ref_)
+- forall-chars(_code-ref_)
 
-    Low level method. Iterates through all the characters in the font, and calls _code-ref_
+    Iterates through all the characters in the font, and calls _code-ref_
     for each of them in turn.  Glyphs which don't correspond to Unicode
     characters are ignored.  There is currently no facility for iterating
     over all glyphs.
 
-    Each time your callback code is called, `$_` will be passed a [Font::FreeType::GlyphSlot](GlyphSlot.md) object for
+    Each time your callback code is called, `$_` will be passed a [Font::FreeType::Glyph](Glyph.md) object for
     the current glyph. For an example see the program _list-characters.pl_ provided in the
     distribution.
 
-- for-glyph-slots(str, _code-ref_)
+- for-glyphs(str, _code-ref_)
 
-    Low level method. Execute a callback for each glyph-slot in a string.
+    Execute a callback for each glyph in a string.
 
 - has-glyph-names()
 
@@ -107,7 +107,7 @@ Unless otherwise stated, all methods will die if there is an error.
     retrieved with the `name()` method on
     [Font::FreeType::Glyph](Glyph.md) objects.
 
-    See also `has_reliable_glyph_names()` below.
+    See also `has-reliable-glyph-names()` below.
 
 - has-horizontal-metrics()
 - has-vertical-metrics()
@@ -159,12 +159,11 @@ Unless otherwise stated, all methods will die if there is an error.
     either TrueType or OpenType.  This isn't much use yet, but future versions
     of this library might provide access to extra information about sfnt fonts.
 
-- kerning(_left-glyph-index_, _right-glyph-index_, \[_:mode_\])
+- kerning(_left-char_, _right-char_, \[_:mode_\])
 
     Returns a vector for the the suggested kerning adjustment between two glyphs.
 
-    For example, assuming `$left` and `$right` are two
-    [Font::FreeType::Glyph](Glyph.md) objects:
+    For example:
 
         my $kern = $face.kerning('A', 'V');
         my $kern-distance = $kern.x;
@@ -239,11 +238,11 @@ Unless otherwise stated, all methods will die if there is an error.
 
 - charmap()
 
-    The current active charmap for this face.
+    The current active [charmap](CharMap.md) for this face.
 
 - charmaps()
 
-    An array of the charmaps of the face.
+    An array of the [charmaps](CharMap.md) of the face.
 
 - bounding-box()
 
@@ -253,6 +252,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 [Font::FreeType](../../../README.md),
 [Font::FreeType::Glyph](Glyph.md)
+[Font::FreeType::GlyphImage](GlyphImage.md)
 
 # AUTHOR
 

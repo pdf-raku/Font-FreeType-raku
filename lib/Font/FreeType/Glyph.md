@@ -1,6 +1,6 @@
 # NAME
 
-Font::FreeType::Glyph - glyphs from font typefaces
+Font::FreeType::Glyph - iterator for font typeface glyphs
 
 # SYNOPSIS
 
@@ -10,30 +10,45 @@ Font::FreeType::Glyph - glyphs from font typefaces
     my $face = $freetype.face('Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    for $face.glyphs('ABC') -> $glyph {
-        # Read vector outline.
-        my $result = $glyph.outline.decompose;
-        my $bitmap = $glyph.bitmap;
+    # Render into an array of strings, one byte per pixel.
+    $face.for-glyphs, 'A' {
+        my $bitmap = .glyph-image.bitmap;
+        my $top = $bitmap.top;
+        my $left = $bitmap.left;
 
+        # Read vector outline as svg.
+        my $result = .outline.svg;
     }
 
 # DESCRIPTION
 
-This class represents individual glyph images (character image) loaded from
-a font.
+This is an iterator class that represents individual glyphs loaded from a font.
 
-Unlike [Font::FreeType::GlyphSlot](GlyphSlot.md), which is an iterator class
-only, this class can be used for persistant glyph objects.
+See [Font::FreeType::Face](Face.md) for how to obtain glyph objects, in particular the `for-glyph-slots` method.
+
+Things you an do with glyph slots include:
+
+- Get metadata about the glyph, such as the size of its image and other
+metrics.
+- Extract an [outline](Outline.md) that contains  precise description of the lines and curves that make up
+the glyph's outline, using the `outline.decompose()` method.
+- Obtain a [glyph-image](GlyphImage.md) via the `.glyph-image()` method. It can then be rendered
+as  a bitmap image (if it's from a vector font) or extracted from  the existing bitmap (if it's from a bitmap font), using the `bitmap()` method.
+
+For a detailed description of the meaning of glyph metrics, and
+the structure of vectorial outlines,
+see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sourceforge.net/freetype2/docs/glyphs/)
+
+# METHODS
+
+Unless otherwise stated, all methods will die if there is an error,
+and the metrics are scaled to the size of the font face.
 
 - bitmap(\[_:render-mode_\])
 
     If the glyph is from a bitmap font, the bitmap image is returned.  If
     it is from a vector font, then the outline is rendered into a bitmap
     at the face's current size.
-
-    If antialiasing is used then shades of grey between 0 and 255 may occur.
-    Antialiasing is performed by default, but can be turned off by passing
-    the `FT_RENDER_MODE_MONO` option.
 
     The size of the bitmap can be obtained as follows:
 
@@ -170,6 +185,7 @@ only, this class can be used for persistant glyph objects.
 
 [Font::FreeType](../../../README.md),
 [Font::FreeType::Face](Face.md)
+[Font::FreeType::GlyphImage](GlyphImage.md)
 
 # AUTHOR
 

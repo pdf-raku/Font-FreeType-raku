@@ -29,21 +29,21 @@ sub MAIN(Str $font-file,
         ?? ($resolution + 20) div 40
         !! 1;
     $word-spacing //= $char-spacing * 4;
-    my @bitmaps = $face.glyphs($text).map: {
+    my @bitmaps = $face.glyph-images($text).map: {
         if $bold {
             .bold($bold) with .outline
         };
         .bitmap;
     }
 
-    my @bufs = @bitmaps.map: { .defined ?? .Buf !! Buf };
+    my @pix-bufs = @bitmaps.map: { .defined && .width ?? .pixels !! Any };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
     my $bottom = - ($descend // @bitmaps.map({.defined ?? .rows - .top !! 0}).max);
 
     for $top ...^ $bottom -> $row {
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
-                print scan-line($_, @bufs[$col], $row);
+                print scan-line($_, @pix-bufs[$col], $row);
                 print ' ' x $char-spacing;
             }
             else {
@@ -54,18 +54,16 @@ sub MAIN(Str $font-file,
     }
 }
 
-sub scan-line($bitmap, $buf, $row) {
+sub scan-line($bitmap, $pix-buf, $row) {
     my $s = '';
-    my int $i = $bitmap.top - $row;
-    my int $width = $bitmap.width;
-    if $bitmap.rows > $i >= 0 {
-        my $j = $width * $i;
-        for 0 ..^ $width {
-            $s ~= $buf[$j++] ?? '#' !! ' ';
+    my int $y = $bitmap.top - $row;
+    if $bitmap.rows > $y >= 0 {
+        for ^$bitmap.width -> int $x {
+            $s ~= $pix-buf[$x;$y] ?? '#' !! ' ';
         }
     }
     else {
-        $s = ' ' x $width;
+        $s = ' ' x $bitmap.width;
     }
     $s;
 }

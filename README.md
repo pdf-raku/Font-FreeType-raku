@@ -167,16 +167,19 @@ Unless otherwise stated, all methods will die if there is an error.
 
 # SEE ALSO
 
-- [Font::FreeType::Bitmap](lib/Font/FreeType/Bitmap.md)
+- [Font::FreeType::BitMap](lib/Font/FreeType/BitMap.md)
+- [Font::FreeType::CharMap](lib/Font/FreeType/CharMap.md)
 - [Font::FreeType::Face](lib/Font/FreeType/Face.md)
 - [Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md)
-- [Font::FreeType::GlyphSlot](lib/Font/FreeType/GlyphSlot.md)
-- [Font::FreeType::NamedInfos](lib/Font/FreeType/NamedInfos.md)
+- [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md)
+- [Font::FreeType::NamedInfo](lib/Font/FreeType/NamedInfo.md)
 - [Font::FreeType::Outline](lib/Font/FreeType/Outline.md)
 
-# AUTHOR
+# AUTHORS
 
 Geoff Richards <qef@laxan.com>
+
+David Warring <david.warring@gmail>.com
 
 # COPYRIGHT
 

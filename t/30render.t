@@ -34,24 +34,24 @@ for @test {
     ##    my $fh = $test-filename.IO.open(:bin);
     $vera.set-char-size(.<x_sz>, .<y_sz>, .<x_res>, .<y_res>);
     my $render-mode = .<aa> ?? FT_RENDER_MODE_NORMAL !! FT_RENDER_MODE_MONO;
-    for $vera.glyphs(.<char>) -> $glyph {
-        my $bm = $glyph.bitmap: :$render-mode;
-        ok defined $bm.Buf;
+    for $vera.glyph-images(.<char>) -> $g-image {
+        my $bm = $g-image.bitmap: :$render-mode;
+        ok defined $bm.pixels;
         ok defined $bm.left;
         ok defined $bm.top;
     }
 }
 
 # Check that after getting an outline we can still render the bitmap.
-for $vera.glyphs('B') -> $glyph {
-    my $outline = $glyph.outline;
+for $vera.glyph-images('B') {
+    my $outline = .outline;
 
     my $bbox = $outline.bbox;
     is $bbox.x-max, 11813, 'bbox x-max';
     is $bbox.y-max, 13997, 'bbox y-max';
 
     my $ps = $outline.postscript;
-    my $bmp = $glyph.bitmap;
+    my $bmp = .bitmap;
     ok($ps && $bmp, 'can get both outline and then bitmap from glyph');
 }
 

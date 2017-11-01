@@ -1,6 +1,6 @@
 # NAME
 
-Font::FreeType::Glyph - glyphs from font typefaces loaded from Font::FreeType
+Font::FreeType::Outline - glyph outlines from font typefaces loaded from Font::FreeType
 
 # SYNOPSIS
 
@@ -10,9 +10,9 @@ Font::FreeType::Glyph - glyphs from font typefaces loaded from Font::FreeType
     my $face = $freetype.face('Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    $face.for-glyphs, 'A', -> $gslot {
-        my $outline = $gslot.outline;
-        my $result = $outline.decompose;
+    $face.for-glyphs, 'A', {
+        my $outline = .outline;
+        say $outline.svg;
     }
 
 # DESCRIPTION
@@ -80,16 +80,3 @@ This class represents scalable glyph images; known as outlines.
     likely want to pass the `FT_LOAD_NO_HINTING` option when creating
     the face object, or the hinting will distort the outline.
 
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 24:
-
-    '=item' outside of any '=over'
-
-    &#x3d;over without closing =back
-
-- Around line 39:
-
-    Non-ASCII character seen before =encoding in '‘strength’'. Assuming UTF-8

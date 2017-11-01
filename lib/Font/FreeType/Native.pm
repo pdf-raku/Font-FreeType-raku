@@ -60,7 +60,7 @@ class FT_Bitmap_Size is repr('CStruct') is export {
     has FT_Pos    $.y-ppem;
 }
 
-class FT_CharMap is export is repr('CStruct') {
+class FT_Charmap is export is repr('CStruct') is export {
     has FT_Face      $.face;
     has FT_Encoding  $.encoding;
     has FT_UShort    $.platform-id;
@@ -244,7 +244,7 @@ class FT_Face is export {
     has Pointer[FT_Bitmap_Size]   $.available-sizes;
 
     has FT_Int            $.num-charmaps;
-    has Pointer[FT_CharMap]       $.charmaps;
+    has Pointer[FT_Charmap]       $.charmaps;
 
     HAS FT_Generic        $.generic;
 ##
@@ -266,7 +266,7 @@ class FT_Face is export {
 
     has FT_GlyphSlot      $.glyph;
     has FT_Size           $.size;
-    has FT_CharMap        $.charmap;
+    has FT_Charmap        $.charmap;
 
     method FT_Has_PS_Glyph_Names(  )
         returns FT_Int is native($ftlib) {*};

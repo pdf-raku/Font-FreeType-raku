@@ -7,13 +7,14 @@ class Font::FreeType::Face {
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
 
-    use Font::FreeType::Bitmap;
-    use Font::FreeType::GlyphSlot;
+    use Font::FreeType::BitMap;
+    use Font::FreeType::Glyph;
     use Font::FreeType::NamedInfo;
+    use Font::FreeType::CharMap;
 
     has FT_Face $.struct handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
-        height max-advance-width max-advance-height size charmap>;
+        height max-advance-width max-advance-height size>;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
 
     submethod TWEAK( :$!struct! ) {
@@ -36,20 +37,24 @@ class Font::FreeType::Face {
     method fixed-sizes {
         my int $n-sizes = self.num-fixed-sizes;
         my $ptr = $!struct.available-sizes;
-        my Font::FreeType::Bitmap::Size @fixed-sizes;
+        my Font::FreeType::BitMap::Size @fixed-sizes;
         (0 ..^ $n-sizes).map: {
             my $struct = $ptr[$_];
-            @fixed-sizes.push: Font::FreeType::Bitmap::Size.new: :$struct;
+            @fixed-sizes.push: Font::FreeType::BitMap::Size.new: :$struct;
         }
         @fixed-sizes;
+    }
+
+    method charmap {
+        Font::FreeType::CharMap.new: :struct($!struct.charmap);
     }
 
     method charmaps {
         my int $n-sizes = self.num-charmaps;
         my $ptr = $!struct.charmaps;
-        my FT_CharMap @charmaps;
+        my Font::FreeType::CharMap @charmaps;
         (0 ..^ $n-sizes).map: {
-            @charmaps.push: $ptr[$_];
+            @charmaps.push: Font::FreeType::CharMap.new: :struct($ptr[$_]);
         }
         @charmaps;
     }
@@ -103,35 +108,35 @@ class Font::FreeType::Face {
             !! Mu;
     }
 
-    method forall-char-slots(&code, Int :$flags = $!load-flags) {
+    method forall-chars(&code, Int :$flags = $!load-flags) {
         my FT_UInt  $glyph-idx;
         my $struct = $!struct.glyph;
-        my $glyph-slot = Font::FreeType::GlyphSlot.new: :face(self), :$struct;
-        $glyph-slot.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
+        my $glyph = Font::FreeType::Glyph.new: :face(self), :$struct;
+        $glyph.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
 
         while $glyph-idx {
             $!struct.FT_Load_Glyph( $glyph-idx, $flags );
-            &code($glyph-slot);
-            $glyph-slot.char-code = $!struct.FT_Get_Next_Char( $$glyph-slot.char-code, $glyph-idx);
+            &code($glyph);
+            $glyph.char-code = $!struct.FT_Get_Next_Char( $glyph.char-code, $glyph-idx);
         }
     }
 
-    method for-glyph-slots(Str $str, &code, Int :$flags = $!load-flags) {
+    method for-glyphs(Str $str, &code, Int :$flags = $!load-flags) {
         my $struct = $!struct.glyph;
-        my $glyph-slot = Font::FreeType::GlyphSlot.new: :face(self), :$struct;
+        my $glyph = Font::FreeType::Glyph.new: :face(self), :$struct;
         for $str.ords -> $char-code {
             ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
-            $glyph-slot.char-code = $char-code;
-            &code($glyph-slot);
+            $glyph.char-code = $char-code;
+            &code($glyph);
         }
     }
 
-    method glyphs(Str $str, Int :$flags = $!load-flags) {
-        my Font::FreeType::Glyph @glyphs;
-        self.for-glyph-slots($str, {
-            @glyphs.push: .glyph;
+    method glyph-images(Str $str, Int :$flags = $!load-flags) {
+        my Font::FreeType::GlyphImage @glyphs-images;
+        self.for-glyphs($str, {
+            @glyphs-images.push: .glyph-image;
         }, :$flags);
-        @glyphs;
+        @glyphs-images;
     }
 
     method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {

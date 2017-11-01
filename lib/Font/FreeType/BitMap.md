@@ -1,6 +1,6 @@
 # NAME
 
-Font::FreeType::Bitmap - bitmaps from rendered glyphs
+Font::FreeType::BitMap - bitmaps from rendered glyphs
 
 # SYNOPSIS
 
@@ -10,9 +10,12 @@ Font::FreeType::Bitmap - bitmaps from rendered glyphs
     my $face = $freetype.face('Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    $face.for-glyphs, 'A', -> $gslot {
+    for $face.glyph-images('Hi') {
+        print .outline.svg
+            if .is-outline;
+
         # Render into an array of strings, one byte per pixel.
-        my $bitmap = $gslot.bitmap;
+        my $bitmap = .bitmap;
         my $top = $bitmap.top;
         my $left = $bitmap.left;
 
@@ -49,6 +52,12 @@ This class represents the bitmap image of a rendered glyph.
   - **FT_PIXEL_MODE_LCD** -
   An 8-bit bitmap, representing RGB or BGR decimated glyph images used for display on LCD displays; the bitmap is three times wider than the original glyph image. See also FT_RENDER_MODE_LCD.
 
+  - **FT_PIXEL_MODE_LCD_V** -
+  An 8-bit bitmap, representing RGB or BGR decimated glyph images used for vertical display on LCD displays; the bitmap is three times taller than the original glyph image. See also FT_RENDER_MODE_LCD.
+
+  - **FT_PIXEL_MODE_BGRA** -
+  An 8-bit bitmap, representing BGRA decimated glyph images used for vertical display on LCD displays; the bitmap is three times taller than the original glyph image. See also FT_RENDER_MODE_LCD.
+
 - depth()
 
   The calculated color depth in bits. For example **FT_PIXEL_MODE_GRAY** has a color depth of 8.
@@ -65,10 +74,6 @@ This class represents the bitmap image of a rendered glyph.
 
   Used to calculate the padding at the end of each row.
 
-- Buf()
-
-  Returns the raw pixel buf for the rendered glyph.
-
 - pixels
 
     Returns a numeric shaped array of dimensions $.width and $height.
@@ -80,12 +85,11 @@ This class represents the bitmap image of a rendered glyph.
     Antialiasing is performed by default, but can be turned off by passing
     the `FT_RENDER_MODE_MONO` option.
 
-
 - Str()
 
 Returns an ascii display representation of the rendered glyph.
 
 - convert()
 
-produces a new bitmap, representing the bitmap rerendered as eight bit FT_PIXEL_MODE_GRAY.
+produces a new bitmap, re-rendered as eight bit FT_PIXEL_MODE_GRAY.
 

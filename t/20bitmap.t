@@ -1,9 +1,8 @@
 # Extract bitmaps from a some bitmap fonts and check that they match the
 # images in the 'bdf_bitmaps.txt' file, which were extracted by hand.
 
-constant TESTS_PER_BITMAP_FONT = 4 * 3;
 use Test;
-plan 2 * TESTS_PER_BITMAP_FONT - 3;
+plan 56;
 
 use Font::FreeType;
 use Font::FreeType::Native;
@@ -26,7 +25,7 @@ for  <bdf fnt> -> $fmt {
                 or die "badly formated bitmap test file";
             my $unicode = $0.Str;
             my $char = :16($unicode).chr;
-            my $desc = "$fmt format font, glyph $char";
+            my $desc = "'$fmt' format font, glyph {$char.perl}";
 
             # Read test bitmap.
             my @expected;
@@ -41,11 +40,17 @@ for  <bdf fnt> -> $fmt {
             # char 255 is inaccessible for some reason.
             next if $fmt eq 'fnt' && $char.ord > 254;
 
-            $face.for-glyph-slots: $char, -> $glyph {
-                my $bitmap = $glyph.bitmap;
-                is $bitmap.left, 0, "$desc: bitmap starts 0 pixels to left of origin";
-                is $bitmap.top, 6, "$desc: bitmap starts 6 pixels above origin";
-                is $bitmap.Str, @expected.join("\n"), "{$desc} Str";
+            $face.for-glyphs: $char, -> $glyph {
+                my $bitmap1 = $glyph.glyph-image.bitmap;
+                my $bitmap2 = $glyph.bitmap;
+                my $n = 0;
+                for ($bitmap1, $bitmap2) -> $bitmap {
+                    $n++;
+                    is $bitmap.left, 0, "$desc $n: bitmap starts 0 pixels to left of origin";
+                    is $bitmap.top, 6, "$desc $n: bitmap starts 6 pixels above origin";
+                    is $bitmap.Str, @expected.join("\n"), "$desc $n: Str";
+                    is $bitmap.Str, @expected.join("\n"), "$desc $n: Str";
+                }
             }
         }
     }

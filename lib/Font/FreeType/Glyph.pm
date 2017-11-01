@@ -1,69 +1,72 @@
-class Font::FreeType::Glyph {
+class Font::FreeType::Glyph is rw {
 
     use NativeCall;
-    use Font::FreeType::Error;
+    use Font::FreeType::GlyphImage;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
+    use Font::FreeType::Error;
 
-    use Font::FreeType::Bitmap;
+    use Font::FreeType::BitMap;
     use Font::FreeType::Outline;
 
-    has FT_Glyph $.struct handles <format top left>;
-    has FT_Library $!library;
+    constant Px = 64.0;
 
-    submethod TWEAK(FT_GlyphSlot :$glyph-slot!) {
-        my $glyph-p = Pointer[FT_Glyph].new;
-        ft-try({ $glyph-slot.FT_Get_Glyph($glyph-p) });
-        my FT_Glyph $glyph = $glyph-p.deref;
+    has $.face is required; #| parent object
+    has FT_GlyphSlot $.struct is required handles <metrics>;
+    has FT_ULong     $.char-code;
 
-        with $glyph {
-            given .format {
-                when FT_GLYPH_FORMAT_OUTLINE {
-                    $glyph = nativecast(FT_OutlineGlyph, $glyph);
-                }
-                when FT_GLYPH_FORMAT_BITMAP {
-                    $glyph = nativecast(FT_BitmapGlyph, $glyph);
-                }
-            }
-        }
-
-        $!library = $glyph-slot.library;
-        $!struct := $glyph;
+    method name { $!face.glyph-name: $!char-code }
+    method left-bearing { $.metrics.horiBearingX / Px; }
+    method right-bearing {
+        (.horiAdvance - .horiBearingX - .width) / Px
+            with $.metrics
     }
+    method horizontal-advance {
+        $.metrics.horiAdvance / Px;
+    }
+    method vertical-advance {
+        $.metrics.vertAdvance / Px;
+    }
+    method width { $.metrics.width / Px }
+    method height { $.metrics.height / Px }
+    method Str   { $!char-code.chr }
+
+    method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
+        ft-try({ $!struct.FT_Render_Glyph($render-mode) })
+            unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
+        my $bitmap  = $!struct.bitmap
+            or return Font::FreeType::BitMap;
+        my $library = $!struct.library;
+        my $left = $!struct.bitmap-left;
+        my $top = $!struct.bitmap-top;
+        Font::FreeType::BitMap.new: :struct($bitmap), :$library, :$left, :$top, :ref;
+    }
+
     method is-outline {
-        .format == FT_GLYPH_FORMAT_OUTLINE with $!struct;
+        $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
     }
+
     method outline {
-        die "not an outline glyph"
-            unless self.is-outline;
-        my $outline = $!struct.outline-pointer.deref;
-        Font::FreeType::Outline.new: :$!library, :struct($outline), :ref;
+        my $obj = self;
+        die "not an outline font"
+            unless $obj.is-outline
+            || do {
+                # could be we've been rendered as a bitmap. try reloading.
+                $obj = self.face.struct.FT_Load_Char($!char-code, self.face.load-flags);
+                $obj.is-outline
+            }
+        my $face-outline = $obj.struct.outline;
+        return Mu
+            without $face-outline;
+        my $library = $obj.struct.library;
+        Font::FreeType::Outline.new: :struct($face-outline), :$library, :ref;
     }
 
-    method is-bitmap {
-        .format == FT_GLYPH_FORMAT_BITMAP with $!struct;
-    }
-    method to-bitmap(
-        :$render-mode = FT_RENDER_MODE_NORMAL,
-        :$origin = FT_Vector.new,
-        Bool :$destroy = True,
-        )  {
-        my FT_BBox $bbox .= new;
-        $!struct.FT_Glyph_Get_CBox(FT_GLYPH_BBOX_PIXELS, $bbox);
-        my $struct-p = nativecast(Pointer[FT_Glyph], $!struct);
-        ft-try({ FT_Glyph_To_Bitmap($struct-p, $render-mode, $origin, $destroy); });
-        $!struct = nativecast(FT_BitmapGlyph, $struct-p.deref);
-        $.left = $bbox.x-min;     
-        $.top  = $bbox.y-max;     
-    }
-    method bitmap {
-        self.to-bitmap
-            unless self.is-bitmap;
-        my FT_Bitmap:D $bitmap = $!struct.bitmap-pointer.deref;
-        Font::FreeType::Bitmap.new: :$!library, :struct($bitmap), :$.left, :$.top, :ref;
+    method glyph-image {
+        my $top = $!struct.bitmap-top;
+        my $left = $!struct.bitmap-left;
+        Font::FreeType::GlyphImage.new: :glyph(self.struct), :$left, :$top;
     }
 
-    method DESTROY {
-        $!struct.FT_Done_Glyph;
-    }
 }
+
