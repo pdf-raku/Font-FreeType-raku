@@ -100,9 +100,7 @@ class Font::FreeType::Outline {
     }
 
     method clone {
-        my FT_Outline $outline .= new;
-        ft-try({ $!library.FT_Outline_New( $!struct.n-points, $!struct.n-contours, $outline) });
-        ft-try({ $!struct.FT_Outline_Copy($outline) });
+        my $outline = $!struct.clone($!library);
         self.new: :struct($outline), :$!library;
     }
 

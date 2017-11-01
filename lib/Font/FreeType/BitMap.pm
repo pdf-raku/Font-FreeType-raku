@@ -138,9 +138,7 @@ class Font::FreeType::BitMap {
 
     method clone {
         return self unless self.defined;
-        my FT_Bitmap $bitmap .= new;
-        $bitmap.FT_Bitmap_Init;
-        ft-try({ $!library.FT_Bitmap_Copy($!struct, $bitmap); });
+        my $bitmap = $!struct.clone($!library);
         self.new: :$!library, :struct($bitmap), :$!top, :$!left; 
     }
 

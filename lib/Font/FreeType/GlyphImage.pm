@@ -40,7 +40,8 @@ class Font::FreeType::GlyphImage {
         die "not an outline glyph"
             unless self.is-outline;
         my FT_Outline:D $outline = $!struct.outline-pointer.deref;
-        Font::FreeType::Outline.new: :$!library, :struct($outline), :ref;
+        my FT_Outline $struct = $outline.clone($!library);
+        Font::FreeType::Outline.new: :$!library, :$struct;
     }
 
     method is-bitmap {
@@ -63,7 +64,8 @@ class Font::FreeType::GlyphImage {
         self.to-bitmap
             unless self.is-bitmap;
         my FT_Bitmap:D $bitmap = $!struct.bitmap-pointer.deref;
-        Font::FreeType::BitMap.new: :$!library, :struct($bitmap), :$.left, :$.top, :ref;
+        my FT_Bitmap $struct = $bitmap.clone($!library);
+        Font::FreeType::BitMap.new: :$!library, :$struct, :$.left, :$.top;
     }
 
     method DESTROY {

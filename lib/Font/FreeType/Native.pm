@@ -3,6 +3,7 @@ unit module Font::FreeType::Native;
 use NativeCall;
 use NativeCall::Types;
 use LibraryMake;
+use Font::FreeType::Error;
 use Font::FreeType::Native::Types;
 
 # library bindings
@@ -48,6 +49,12 @@ class FT_Bitmap is repr('CStruct') is export {
     method FT_Bitmap_Init
         is native($ftlib) {*};
 
+    method clone(FT_Library $library) {
+        my FT_Bitmap $bitmap .= new;
+        $bitmap.FT_Bitmap_Init;
+        ft-try({ $library.FT_Bitmap_Copy(self, $bitmap); });
+        $bitmap;
+    }
 }
 
 class FT_Bitmap_Size is repr('CStruct') is export {
@@ -113,6 +120,12 @@ class FT_Outline is repr('CStruct') is export {
     method FT_Outline_Embolden(FT_Pos $strength)
         returns FT_Error is native($ftlib) {*};
 
+    method clone(FT_Library $library) {
+        my FT_Outline $outline .= new;
+        ft-try({ $library.FT_Outline_New( self.n-points, self.n-contours, $outline) });
+        ft-try({ self.FT_Outline_Copy($outline) });
+        $outline;
+    }
 }
 
 class FT_SubGlyph is repr('CPointer') { }
