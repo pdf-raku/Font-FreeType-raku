@@ -333,6 +333,7 @@ class FT_Face is export {
     method FT_Get_Font_Format
         returns Str
         is export
+        is symbol('FT_Get_X11_Font_Format') # for FreeType < v2.0.0 compat
         is native($ftlib) {*};
 
     method FT_Reference_Face
