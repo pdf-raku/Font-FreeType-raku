@@ -389,6 +389,13 @@ class FT_Library is export {
         )
         returns FT_Error is native($ftlib) {*};
 
+    method FT_Bitmap_Embolden(
+        FT_Bitmap $bitmap,
+        FT_Pos $x-strength,
+        FT_Pos $y-strength,
+        )
+        returns FT_Error is native($ftlib) {*};
+
     method FT_Bitmap_Done(
         FT_Bitmap  $bitmap
         )

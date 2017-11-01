@@ -31,6 +31,14 @@ class Font::FreeType::Glyph is rw {
     method height { $.metrics.height / Px }
     method Str   { $!char-code.chr }
 
+    method bold(Int $strength) {
+        if self.is-outline {
+            ft-try({ $!struct.outline.FT_Outline_Embolden($strength); });
+        }
+        else {
+            ft-try({ $!struct.library.FT_Bitmap_Embolden($!struct.bitmap, $strength, $strength); });
+        }
+    }
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
         ft-try({ $!struct.FT_Render_Glyph($render-mode) })
             unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
@@ -39,7 +47,7 @@ class Font::FreeType::Glyph is rw {
         my $library = $!struct.library;
         my $left = $!struct.bitmap-left;
         my $top = $!struct.bitmap-top;
-        Font::FreeType::BitMap.new: :struct($bitmap), :$library, :$left, :$top, :ref;
+        Font::FreeType::BitMap.new: :struct($bitmap.clone($library)), :$library, :$left, :$top;
     }
 
     method is-outline {
@@ -55,11 +63,11 @@ class Font::FreeType::Glyph is rw {
                 $obj = self.face.struct.FT_Load_Char($!char-code, self.face.load-flags);
                 $obj.is-outline
             }
-        my $face-outline = $obj.struct.outline;
+        my $outline = $obj.struct.outline;
         return Mu
-            without $face-outline;
+            without $outline;
         my $library = $obj.struct.library;
-        Font::FreeType::Outline.new: :struct($face-outline), :$library, :ref;
+        Font::FreeType::Outline.new: :struct($outline.clone($library)), :$library;
     }
 
     method glyph-image {

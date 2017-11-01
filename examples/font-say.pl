@@ -30,9 +30,7 @@ sub MAIN(Str $font-file,
         !! 1;
     $word-spacing //= $char-spacing * 4;
     my @bitmaps = $face.glyph-images($text).map: {
-        if $bold {
-            .bold($bold) with .outline
-        };
+        .bold($bold) if $bold;
         .bitmap;
     }
 

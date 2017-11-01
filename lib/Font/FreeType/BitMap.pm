@@ -9,9 +9,8 @@ class Font::FreeType::BitMap {
     has FT_Library $!library;
     has Int $.left is required;
     has Int $.top is required;
-    has Bool $!ref;
 
-    submethod TWEAK(:$!struct!, :$!library!, :$ref = False) {}
+    submethod TWEAK(:$!struct!, :$!library!) {}
 
     constant Dpi = 72.0;
     constant Px = 64.0;
@@ -143,8 +142,7 @@ class Font::FreeType::BitMap {
     }
 
     method DESTROY {
-        ft-try({ $!library.FT_Bitmap_Done($!struct) })
-            unless $!ref;
+        ft-try({ $!library.FT_Bitmap_Done($!struct) });
         $!struct = Nil;
         $!library = Nil;
     }

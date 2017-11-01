@@ -43,6 +43,16 @@ class Font::FreeType::GlyphImage {
         my FT_Outline $struct = $outline.clone($!library);
         Font::FreeType::Outline.new: :$!library, :$struct;
     }
+    method bold(Int $strength) {
+        if self.is-outline {
+            my FT_Outline:D $outline = $!struct.outline-pointer.deref;
+            ft-try({ $outline.FT_Outline_Embolden($strength); });
+        }
+        elsif self.is-bitmap {
+            my FT_Bitmap:D $bitmap = $!struct.bitmap-pointer.deref;
+            ft-try({ $!library.FT_Bitmap_Embolden($bitmap, $strength, $strength); });
+        }
+    }
 
     method is-bitmap {
         .format == FT_GLYPH_FORMAT_BITMAP with $!struct;

@@ -39,9 +39,8 @@ class Font::FreeType::Outline {
 
     has FT_Outline $!struct handles <n-contours n-points points tags contours flags>;
     has FT_Library $!library;
-    has Bool       $!ref;
 
-    submethod TWEAK(:$!struct!, :$!library!, :$!ref = False) { }
+    submethod TWEAK(:$!struct!, :$!library!) { }
 
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
         my int32 $max-points = $!struct.n-points * 6;
@@ -105,8 +104,7 @@ class Font::FreeType::Outline {
     }
 
     method DESTROY {
-        ft-try({ $!library.FT_Outline_Done($!struct) })
-            unless $!ref;
+        ft-try({ $!library.FT_Outline_Done($!struct) });
         $!struct = Nil;
         $!library = Nil;
     }

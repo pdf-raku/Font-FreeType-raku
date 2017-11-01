@@ -21,14 +21,16 @@ Font::FreeType::GlyphImage - glyph images from font typefaces
 This class represents individual glyph images (character image) loaded from
 a font.
 
-Unlike [Font::FreeType::GlyphSlot](GlyphSlot.md), which is an iterator class
-only, this class can be used for persistant glyph objects.
+- bold(int strength)
+
+    Embolden the glyph. This needs to be done before calling either the
+    `bitmap()` or `outline()` methods.
 
 - bitmap(\[_:render-mode_\])
 
     If the glyph is from a bitmap font, the bitmap image is returned.  If
-    it is from a vector font, then the outline is rendered into a bitmap
-    at the face's current size.
+    it is from a vector font, then it is converted into a bitmap glyph. The
+    outline is rendered into a bitmap at the face's current size.
 
     If antialiasing is used then shades of grey between 0 and 255 may occur.
     Antialiasing is performed by default, but can be turned off by passing
@@ -104,66 +106,14 @@ only, this class can be used for persistant glyph objects.
 
     The _render-glyph.pl_ example program uses this method.
 
-- char-code()
-
-    The character code (in Unicode) of the glyph.  Could potentially
-    return codes in other character sets if the font doesn't have a Unicode
-    character mapping, but most modern fonts do.
-
-- has-outline()
+- is-outline()
 
     True if the glyph has a vector outline, in which case it is safe to
-    call `outline_decompose()`.  Otherwise, the glyph only has a bitmap
-    image.
-
-- height()
-
-    The height of the glyph.
-
-- horizontal-advance()
-
-    The distance from the origin of this glyph to the place where the next
-    glyph's origin should be.  Only applies to horizontal layouts.  Always
-    positive, so for right-to-left text (such as Hebrew) it should be
-    subtracted from the current glyph's position.
-
-- left-bearing()
-
-    The left side bearing, which is the distance from the origin to
-    the left of the glyph image.  Usually positive for horizontal layouts
-    and negative for vertical ones.
-
-- name()
-
-    The name of the glyph, if the font format supports glyph names,
-    otherwise _undef_.
+    call `outline`. Otherwise, the glyph only has a bitmap image.
 
 - outline()
 
     Returns an object of type [Font::FreeType::Outline](Outline.md)
-
-- right-bearing()
-
-    The distance from the right edge of the glyph image to the place where
-    the origin of the next character should be (i.e., the end of the
-    advance width).  Only applies to horizontal layouts.  Usually positive.
-
-- vertical-advance()
-
-    The distance from the origin of the current glyph to the place where
-    the next glyph's origin should be, moving down the page.  Only applies
-    to vertical layouts.  Always positive.
-
-- width()
-
-    The width of the glyph.  This is the distance from the left
-    side to the right side, not the amount you should move along before
-    placing the next glyph when typesetting.  For that, see
-    the `horizontal_advance()` method.
-
-- Str()
-
-    The unicode character represeneted by the glyph.
 
 # SEE ALSO
 

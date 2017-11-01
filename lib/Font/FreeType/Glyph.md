@@ -44,11 +44,16 @@ see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sou
 Unless otherwise stated, all methods will die if there is an error,
 and the metrics are scaled to the size of the font face.
 
+- bold(int strength)
+
+    Embolden the glyph. This needs to be done before calling either the
+    `bitmap()` or `outline()` methods.
+
 - bitmap(\[_:render-mode_\])
 
     If the glyph is from a bitmap font, the bitmap image is returned.  If
-    it is from a vector font, then the outline is rendered into a bitmap
-    at the face's current size.
+    it is from a vector font, then it is converted into a bitmap glyph. The
+    outline is rendered into a bitmap at the face's current size.
 
     The size of the bitmap can be obtained as follows:
 
@@ -87,46 +92,13 @@ and the metrics are scaled to the size of the font face.
 
         Only available with Freetype version 2.1.3 or newer.
 
-- bitmap\_magick(\[_render\_mode_\])   \*\*\*\* NYI \*\*\*\*
-
-    A simple wrapper around the `bitmap()` method.  Renders the bitmap as
-    normal and returns it as an Image::Magick object,
-    which can then be composited onto a larger bitmapped image, or manipulated
-    using any of the features available in Image::Magick.
-
-    The image is in the 'gray' format, with a depth of 8 bits.
-
-    The left and top distances in pixels are returned as well, in the
-    same way as for the `bitmap()` method.
-
-    This method, particularly the use of the left and top offsets for
-    correct positioning of the bitmap, is demonstrated in the
-    _magick.pl_ example program.
-
-- bitmap\_pgm(\[_render\_mode_\])   \*\*\*\* NYI \*\*\*\*
-
-    A simple wrapper around the `bitmap()` method.  It renders the bitmap
-    and constructs it into a PGM (portable grey-map) image file, which it
-    returns as a string.  The optional _render-mode_ is passed directly
-    to the `bitmap()` method.
-
-    The PGM image returned is in the 'binary' format, with one byte per
-    pixel.  It is not an efficient format, but can be read by many image
-    manipulation programs.  For a detailed description of the format
-    see [http://netpbm.sourceforge.net/doc/pgm.html](http://netpbm.sourceforge.net/doc/pgm.html)
-
-    The left and top distances in pixels are returned as well, in the
-    same way as for the `bitmap()` method.
-
-    The _render-glyph.pl_ example program uses this method.
-
 - char-code()
 
     The character code (in Unicode) of the glyph.  Could potentially
     return codes in other character sets if the font doesn't have a Unicode
     character mapping, but most modern fonts do.
 
-- has-outline()
+- is-outline()
 
     True if the glyph has a vector outline, in which case it is safe to
     call `outline_decompose()`.  Otherwise, the glyph only has a bitmap

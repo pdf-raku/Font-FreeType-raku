@@ -38,9 +38,11 @@ $face.for-glyphs: 'AI', -> $gslot {
 
     ok $gslot.outline, '.load-glyph.outline';
     my $g-image1 = $gslot.glyph-image;
+    lives-ok {$gslot.bold(1)}, 'outline bold';
 
     ok $gslot.bitmap, '.bitmap';
     my $g-image2 = $gslot.glyph-image;
+    lives-ok {$gslot.bold(1)}, 'bitmap bold';
 
     ok $g-image1.is-outline, 'outline glyph 1';
     nok $g-image1.is-bitmap, 'outline glyph 2';
