@@ -47,7 +47,8 @@ class Font::FreeType::Glyph is rw {
         my $library = $!struct.library;
         my $left = $!struct.bitmap-left;
         my $top = $!struct.bitmap-top;
-        Font::FreeType::BitMap.new: :struct($bitmap.clone($library)), :$library, :$left, :$top;
+        my $struct = $bitmap.clone($library);
+        Font::FreeType::BitMap.new: :$struct, :$library, :$left, :$top;
     }
 
     method is-outline {
@@ -67,7 +68,8 @@ class Font::FreeType::Glyph is rw {
         return Mu
             without $outline;
         my $library = $obj.struct.library;
-        Font::FreeType::Outline.new: :struct($outline.clone($library)), :$library;
+        my $struct = $outline.clone($library);
+        Font::FreeType::Outline.new: :$struct, :$library;
     }
 
     method glyph-image {

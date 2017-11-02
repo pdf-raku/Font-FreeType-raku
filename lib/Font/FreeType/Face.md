@@ -84,7 +84,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 - glyph-images(str)
 
-  Returns an array of [glyphs-images](Images.md) for the unicode string.
+  Returns an array of [glyphs-images](GlyphImage.md) for the unicode string.
 
 - forall-chars(_code-ref_)
 
@@ -93,9 +93,8 @@ Unless otherwise stated, all methods will die if there is an error.
     characters are ignored.  There is currently no facility for iterating
     over all glyphs.
 
-    Each time your callback code is called, `$_` will be passed a [Font::FreeType::Glyph](Glyph.md) object for
-    the current glyph. For an example see the program _list-characters.pl_ provided in the
-    distribution.
+    Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is
+    passed for the current glyph. For an example see the program _list-characters.pl_ provided in the distribution.
 
 - for-glyphs(str, _code-ref_)
 
@@ -257,6 +256,8 @@ Unless otherwise stated, all methods will die if there is an error.
 # AUTHOR
 
 Geoff Richards <qef@laxan.com>
+
+David Warring <david.warring@gmail>.com (Perl 6 Port)
 
 # COPYRIGHT
 

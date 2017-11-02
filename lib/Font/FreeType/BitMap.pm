@@ -42,18 +42,18 @@ class Font::FreeType::BitMap {
                 my \channels = $.pixel-mode == 7
                     ?? 4  # bgra
                     !! 3; # rgb, or bgr
-                my uint8 @pixels[$.width;$.rows;channels];
+                my uint8 @pixels[$.rows;$.width;channels];
                 for ^$.rows -> int $y {
                     for ^$.width -> int $x {
                         for ^channels {
-                            @pixels[$x;$y;$_] = $buf[$i++];
+                            @pixels[$y;$x;$_] = $buf[$i++];
                         }
                     }
                 }
                 @pixels;
             }
             else {
-                my uint8 @pixels[$.width;$.rows];
+                my uint8 @pixels[$.rows;$.width];
                 my \has-alpha = $.pixel-mode == 7;
                 for ^$.rows -> int $y {
                     for ^$.width -> int $x {
@@ -65,14 +65,14 @@ class Font::FreeType::BitMap {
                         }
                         $v = ($v * $buf[$i++]) div 255
                             if has-alpha;
-                        @pixels[$x;$y] = $v div 3;
+                        @pixels[$y;$x] = $v div 3;
                     }
                 }
                 @pixels;
             }
         }
         else {
-            my uint8 @pixels[$.width;$.rows];
+            my uint8 @pixels[$.rows;$.width];
             my uint32 $bits;
             given $.pixel-mode {
                 when 1 { # mono
@@ -80,7 +80,7 @@ class Font::FreeType::BitMap {
                         for ^$.width -> int $x {
                             $bits = $buf[$i++]
                                 if $x %% 8;
-                            @pixels[$x;$y] = $bits +& 0x80 ?? 0xFF !! 0x00;
+                            @pixels[$y;$x] = $bits +& 0x80 ?? 0xFF !! 0x00;
                             $bits +<= 1;
                         }
                     }
@@ -88,7 +88,7 @@ class Font::FreeType::BitMap {
                 when 2 { # gray 8
                     for ^$.rows -> int $y {
                         for ^$.width -> int $x {
-                            @pixels[$x;$y] = $buf[$i++];
+                            @pixels[$y;$x] = $buf[$i++];
                         }
                     }
                 }
@@ -97,7 +97,7 @@ class Font::FreeType::BitMap {
                         for ^$.width -> int $x {
                             $bits = $buf[$i++]
                                 if $x %% 4;
-                            @pixels[$x;$y] = $bits +& 0xC0;
+                            @pixels[$y;$x] = $bits +& 0xC0;
                             $bits +<= 2;
                         }
                     }
@@ -107,7 +107,7 @@ class Font::FreeType::BitMap {
                         for ^$.width -> int $x {
                             $bits = $buf[$i++]
                                 if $x %% 2;
-                            @pixels[$x;$y] = $bits +& 0xF0;
+                            @pixels[$y;$x] = $bits +& 0xF0;
                             $bits +<= 4;
                         }
                     }
@@ -128,11 +128,19 @@ class Font::FreeType::BitMap {
         my Str @lines;
         for ^$.rows -> $y {
             for ^$.width -> $x {
-                @r[$x] = $pixbuf[$x;$y] ?? '#' !! ' ';
+                @r[$x] = $pixbuf[$y;$x] ?? '#' !! ' ';
             }
             @lines.push: @r.join;
         }
         @lines.join: "\n";
+    }
+
+    method pgm returns Buf {
+        my $pixels = self.pixels;
+        my UInt ($ht, $wd) = $pixels.shape.list;
+        my Buf $buf = buf8.new: "P5\n$wd $ht\n255\n".encode('latin-1');
+        $buf.append: $pixels.list;
+        $buf;
     }
 
     method clone {

@@ -1,6 +1,7 @@
 {   "perl"        : "6",
     "name"        : "Font::FreeType",
     "license"     : "Artistic-2.0",
+    "tags"        : ["font", "freetype"],
     "version"     : "0.0.1",
     "auth"        : "github:p6-pdf",
     "description" : "read font files and render glyphs using FreeType2",

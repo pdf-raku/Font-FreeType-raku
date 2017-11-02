@@ -57,7 +57,7 @@ sub scan-line($bitmap, $pix-buf, $row) {
     my int $y = $bitmap.top - $row;
     if $bitmap.rows > $y >= 0 {
         for ^$bitmap.width -> int $x {
-            $s ~= $pix-buf[$x;$y] ?? '#' !! ' ';
+            $s ~= $pix-buf[$y;$x] ?? '#' !! ' ';
         }
     }
     else {

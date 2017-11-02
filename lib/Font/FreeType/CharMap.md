@@ -70,7 +70,7 @@ See [freetype documenation](http://www.freetype.org/freetype2/docs/reference/ft2
 
   - FT\_ENCODING\_MS\_JOHAB
 
-Same as FT\_ENCODING\_JOHAB. Deprecated.
+    Same as FT\_ENCODING\_JOHAB. Deprecated.
 
 # METHODS
 

@@ -85,6 +85,18 @@ This class represents the bitmap image of a rendered glyph.
     Antialiasing is performed by default, but can be turned off by passing
     the `FT_RENDER_MODE_MONO` option.
 
+- pgm
+
+    Renders the bitmap and constructs it into a PGM (portable grey-map) image file,
+    which it returns as a Buf, suitable for output to a binary file.
+
+    The PGM image returned is in the 'binary' format, with one byte per
+    pixel.  It is not an efficient format, but can be read by many image
+    manipulation programs.  For a detailed description of the format
+    see [http://netpbm.sourceforge.net/doc/pgm.html](http://netpbm.sourceforge.net/doc/pgm.html)
+
+    The _render-glyph.pl_ example program uses this method.
+
 - Str()
 
 Returns an ascii display representation of the rendered glyph.

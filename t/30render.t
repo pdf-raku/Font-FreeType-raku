@@ -13,7 +13,7 @@ my @test = (
     { char => '.', x_sz => 300, y_sz => 300, x_res => 72, y_res => 72, aa => 1 },
 );
 use Test;
-plan +@test * 3 + 3;
+plan +@test * 4 + 3;
 
 # Load the TTF file.
 # Hinting is turned off, because otherwise the compile-time option to turn
@@ -36,9 +36,10 @@ for @test {
     my $render-mode = .<aa> ?? FT_RENDER_MODE_NORMAL !! FT_RENDER_MODE_MONO;
     for $vera.glyph-images(.<char>) -> $g-image {
         my $bm = $g-image.bitmap: :$render-mode;
-        ok defined $bm.pixels;
-        ok defined $bm.left;
-        ok defined $bm.top;
+        ok $bm.pixels.defined, 'pixels';
+        ok $bm.pgm.defined, 'pgm';
+        isa-ok $bm.left, Int, 'left';
+        isa-ok $bm.top, Int, 'top';
     }
 }
 

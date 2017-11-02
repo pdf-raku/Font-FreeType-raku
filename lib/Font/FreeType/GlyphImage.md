@@ -89,23 +89,6 @@ a font.
     correct positioning of the bitmap, is demonstrated in the
     _magick.pl_ example program.
 
-- bitmap\_pgm(\[_render\_mode_\])   \*\*\*\* NYI \*\*\*\*
-
-    A simple wrapper around the `bitmap()` method.  It renders the bitmap
-    and constructs it into a PGM (portable grey-map) image file, which it
-    returns as a string.  The optional _render-mode_ is passed directly
-    to the `bitmap()` method.
-
-    The PGM image returned is in the 'binary' format, with one byte per
-    pixel.  It is not an efficient format, but can be read by many image
-    manipulation programs.  For a detailed description of the format
-    see [http://netpbm.sourceforge.net/doc/pgm.html](http://netpbm.sourceforge.net/doc/pgm.html)
-
-    The left and top distances in pixels are returned as well, in the
-    same way as for the `bitmap()` method.
-
-    The _render-glyph.pl_ example program uses this method.
-
 - is-outline()
 
     True if the glyph has a vector outline, in which case it is safe to
