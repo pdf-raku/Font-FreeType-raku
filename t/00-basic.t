@@ -36,8 +36,6 @@ $face.set-char-size(2048, 2048, 72, 72);
 $face.for-glyphs: 'AI', -> $gslot {
     ok $gslot, '.for-glyphs';
 
-    lives-ok {$gslot.bold(1)}, 'gslot bold';
-
     my $g-image1 = $gslot.glyph-image;
     ok $g-image1.outline, '.load-glyph.outline';
     lives-ok {$g-image1.bold(1)}, 'outline bold';

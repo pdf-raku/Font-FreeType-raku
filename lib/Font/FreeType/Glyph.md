@@ -5,20 +5,20 @@ Font::FreeType::Glyph - iterator for font typeface glyphs
 # SYNOPSIS
 
     use Font::FreeType;
+    use Font::FreeType::Glyph;
 
     my Font::FreeType $freetype .= new;
-    my $face = $freetype.face('Vera.ttf');
+    my $face = $freetype.face('t/fonts/Vera.ttf');
     $face.set-char-size(24, 24, 100, 100);
 
-    # Render into an array of strings, one byte per pixel.
-    $face.for-glyphs, 'A' {
-        my $bitmap = .glyph-image.bitmap;
-        my $top = $bitmap.top;
-        my $left = $bitmap.left;
-
-        # Read vector outline as svg.
-        my $result = .outline.svg;
+    # Do some stuff with glyphs
+    $face.for-glyphs: 'ABC', -> Font::FreeType::Glyph $g {
+        say "glyph {$g.name} has size {$g.width} X {$g.height}";
+        # dump the glyph's bitmap to a binary PGM file
+        my $g-image = $g.glyph-image;
+        ($g.name() ~ '.pgm').IO.open(:w, :bin).write: $g-image.bitmap.pgm;
     }
+
 
 # DESCRIPTION
 
@@ -34,10 +34,6 @@ see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sou
 
 Unless otherwise stated, all methods will die if there is an error,
 and the metrics are scaled to the size of the font face.
-
-- bold(int strength)
-
-    Globally embolden the glyph. `strength` can be a positive or negive number.
 
 - char-code()
 
@@ -99,7 +95,7 @@ and the metrics are scaled to the size of the font face.
 
 - Str()
 
-    The unicode character represeneted by the glyph.
+    The unicode character represented by the glyph.
 
 # SEE ALSO
 

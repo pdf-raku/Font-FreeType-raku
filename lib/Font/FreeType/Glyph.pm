@@ -31,15 +31,6 @@ class Font::FreeType::Glyph is rw {
     method height { $.metrics.height / Px }
     method Str   { $!char-code.chr }
 
-    method bold(Int $strength) {
-        if self.is-outline {
-            ft-try({ $!struct.outline.FT_Outline_Embolden($strength); });
-        }
-        else {
-            ft-try({ $!struct.library.FT_Bitmap_Embolden($!struct.bitmap, $strength, $strength); });
-        }
-    }
-
     method is-outline {
         $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
     }

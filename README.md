@@ -7,7 +7,7 @@ Font::FreeType - read font files and render glyphs from Perl using FreeType2
     use Font::FreeType;
 
     my Font::FreeType $freetype .= new;
-    my $face = $freetype.face('Vera.ttf');
+    my $face = $freetype.face('t/fonts/Vera.ttf');
 
     $face.set-char-size(24, 24, 100, 100);
     for $face.glyph-images('ABC') {

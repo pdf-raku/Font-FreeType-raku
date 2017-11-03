@@ -38,7 +38,7 @@ a font.
 
     The size of the bitmap can be obtained as follows:
 
-        my $bitmap = $glyph.bitmap;
+        my $bitmap = $glyph-image.bitmap;
         my $width =  $bitmap.width;
         my $height = $bitmap.height;
 
