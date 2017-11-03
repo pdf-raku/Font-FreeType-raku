@@ -51,7 +51,6 @@ class FT_Bitmap is repr('CStruct') is export {
 
     method clone(FT_Library $library) {
         my FT_Bitmap $bitmap .= new;
-        $bitmap.FT_Bitmap_Init;
         ft-try({ $library.FT_Bitmap_Copy(self, $bitmap); });
         $bitmap;
     }
