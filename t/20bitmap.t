@@ -2,7 +2,7 @@
 # images in the 'bdf_bitmaps.txt' file, which were extracted by hand.
 
 use Test;
-plan 56;
+plan 28;
 
 use Font::FreeType;
 use Font::FreeType::Native;
@@ -41,16 +41,11 @@ for  <bdf fnt> -> $fmt {
             next if $fmt eq 'fnt' && $char.ord > 254;
 
             $face.for-glyphs: $char, -> $glyph {
-                my $bitmap1 = $glyph.glyph-image.bitmap;
-                my $bitmap2 = $glyph.bitmap;
-                my $n = 0;
-                for ($bitmap1, $bitmap2) -> $bitmap {
-                    $n++;
-                    is $bitmap.left, 0, "$desc $n: bitmap starts 0 pixels to left of origin";
-                    is $bitmap.top, 6, "$desc $n: bitmap starts 6 pixels above origin";
-                    is $bitmap.Str, @expected.join("\n"), "$desc $n: Str";
-                    is $bitmap.Str, @expected.join("\n"), "$desc $n: Str";
-                }
+                my $bitmap = $glyph.glyph-image.bitmap;
+                is $bitmap.left, 0, "$desc: bitmap starts 0 pixels to left of origin";
+                is $bitmap.top, 6, "$desc: bitmap starts 6 pixels above origin";
+                is $bitmap.Str, @expected.join("\n"), "$desc: Str";
+                is $bitmap.Str, @expected.join("\n"), "$desc: Str";
             }
         }
     }

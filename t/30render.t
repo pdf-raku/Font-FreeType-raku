@@ -38,8 +38,15 @@ for @test {
         ok $bm.pixels.defined, 'pixels';
         isa-ok $bm.left, Int, 'left';
         isa-ok $bm.top, Int, 'top';
-        todo 'may be platform/freetype version dependant';
-        is-deeply $bm.pgm, $expected-pgm, "$test-basename pgm";
+        # a weak test on exactly matching a previously rendered bitmap;
+        # possibly generated with another plaform and freetype version
+        if $bm.pgm eqv $expected-pgm {
+            pass  "pgm bitmap $test-basename";
+        }
+        else {
+            todo 'may be platform/freetype version dependant';
+            fail "pgm bitmap $test-basename";
+        }
     }
 }
 

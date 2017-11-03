@@ -10,7 +10,7 @@ Font::FreeType - read font files and render glyphs from Perl using FreeType2
     my $face = $freetype.face('Vera.ttf');
 
     $face.set-char-size(24, 24, 100, 100);
-    for $face.glyphs('ABC') {
+    for $face.glyph-images('ABC') {
         my $outline = .outline;
         my $bitmap = .bitmap;
         # ...
@@ -23,14 +23,6 @@ font files.  All the font access is done through the FreeType2 library,
 which supports many formats.  It can render images of characters with
 high-quality hinting and anti-aliasing, extract metrics information, and
 extract the outlines of characters in scalable formats like TrueType.
-
-Warning: this module is currently in 'beta' stage.  It'll be another
-release or two before it stabilizes.  The API may change in ways that
-break programs based on it, but I don't think it will change much.
-Some of the values returned may be wrong, or not scaled correctly.
-See the _TODO_ file to get a handle on how far along this work is.
-Contributions welcome, particularly if you know more than I do (which
-isn't much) about fonts and the FreeType2 library.
 
 The Font::FreeType API is not intended to replicate the C API of the
 FreeType library -- it offers a much more Perl-friendly interface.
@@ -54,7 +46,7 @@ and resolution you want to see it at, for example 24pt at 100dpi:
 
 Then load particular glyphs (an image of a character):
 
-    for $face.glyphs('ABC') {
+    for $face.glyph-images('ABC') {
         # Glyphs can be rendered to bitmap images, among other things:
         my $bitmap = .bitmap;
         say $bitmap.Str;

@@ -39,37 +39,9 @@ class Font::FreeType::Glyph is rw {
             ft-try({ $!struct.library.FT_Bitmap_Embolden($!struct.bitmap, $strength, $strength); });
         }
     }
-    method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
-        ft-try({ $!struct.FT_Render_Glyph(+$render-mode) })
-            unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
-        my $bitmap  = $!struct.bitmap
-            or return Font::FreeType::BitMap;
-        my $library = $!struct.library;
-        my $left = $!struct.bitmap-left;
-        my $top = $!struct.bitmap-top;
-        my $struct = $bitmap.clone($library);
-        Font::FreeType::BitMap.new: :$struct, :$library, :$left, :$top, :$!char-code;
-    }
 
     method is-outline {
         $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
-    }
-
-    method outline {
-        my $obj = self;
-        die "not an outline font"
-            unless $obj.is-outline
-            || do {
-                # could be we've been rendered as a bitmap. try reloading.
-                $obj = self.face.struct.FT_Load_Char($!char-code, self.face.load-flags);
-                $obj.is-outline
-            }
-        my $outline = $obj.struct.outline;
-        return Mu
-            without $outline;
-        my $library = $obj.struct.library;
-        my $struct = $outline.clone($library);
-        Font::FreeType::Outline.new: :$struct, :$library;
     }
 
     method glyph-image {
