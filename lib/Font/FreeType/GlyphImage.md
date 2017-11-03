@@ -62,14 +62,14 @@ a font.
     - FT\_RENDER\_MODE\_LCD
 
         Render in colour for an LCD display, with three times as many pixels
-        across the image as normal.  This mode probably won't work yet.
+        across the image as normal.
 
         Only available with Freetype version 2.1.3 or newer.
 
     - FT\_RENDER\_MODE\_LCD\_V
 
         Render in colour for an LCD display, with three times as many rows
-        down the image as normal.  This mode probably won't work yet.
+        down the image as normal.
 
         Only available with Freetype version 2.1.3 or newer.
 

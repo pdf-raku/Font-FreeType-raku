@@ -149,7 +149,7 @@ class Font::FreeType::Face {
         ft-try({ $!struct.FT_Set_Pixel_Sizes($width, $height) });
     }
 
-    method kerning(Str $left, Str $right, UInt :$mode = 0) {
+    method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_DEFAULT) {
         my FT_UInt $left-idx = $!struct.FT_Get_Char_Index( $left.ord );
         my FT_UInt $right-idx = $!struct.FT_Get_Char_Index( $right.ord );
         my $vec = FT_Vector.new;

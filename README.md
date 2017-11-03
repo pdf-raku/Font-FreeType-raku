@@ -179,7 +179,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com
+David Warring <david.warring@gmail>.com (Perl 6 Port)
 
 # COPYRIGHT
 

@@ -2,15 +2,25 @@
 use Font::FreeType;
 use Font::FreeType::Native::Types;
 
+enum Mode «
+    :normal(0)
+    :light(1)
+    :mono(2)
+    :lcd(3)
+    :lcd-v(4)
+   »; 
+
 sub MAIN(Str $font-file,
          Str $text is copy,
          Int  :$resolution=60,
+         Bool :$kern = True,
          Bool :$hint,
          UInt :$ascend,
          UInt :$descend,
          UInt :$char-spacing is copy,
          UInt :$word-spacing is copy,
          UInt :$bold = 0,
+         Mode :$render-mode = normal,
     ) {
 
     if $text eq '' {
@@ -31,7 +41,7 @@ sub MAIN(Str $font-file,
     $word-spacing //= $char-spacing * 4;
     my @bitmaps = $face.glyph-images($text).map: {
         .bold($bold) if $bold;
-        .bitmap;
+        .bitmap(:$render-mode);
     }
 
     my @pix-bufs = @bitmaps.map: { .defined && .width ?? .pixels !! Any };
@@ -41,8 +51,11 @@ sub MAIN(Str $font-file,
     for $top ...^ $bottom -> $row {
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
+                my $cs = $char-spacing;
+                $cs += do-horiz-kern($face, $_, @bitmaps[$col-1], $render-mode)
+                    if $col && $kern && $face.has-kerning;
                 print scan-line($_, @pix-bufs[$col], $row);
-                print ' ' x $char-spacing;
+                print ' ' x $cs;
             }
             else {
                 print ' ' x $word-spacing;
@@ -64,4 +77,11 @@ sub scan-line($bitmap, $pix-buf, $row) {
         $s = ' ' x $bitmap.width;
     }
     $s;
+}
+
+sub do-horiz-kern($face, $bm1, $bm2, $mode ) {
+    my $vec = $face.kerning($bm1.char-code.chr, $bm2.char-code.chr);
+    my $x = $vec.x;
+    $x *= 3 if $mode == lcd;
+    round($x);
 }

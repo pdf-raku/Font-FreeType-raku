@@ -40,7 +40,7 @@ class Font::FreeType::Glyph is rw {
         }
     }
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
-        ft-try({ $!struct.FT_Render_Glyph($render-mode) })
+        ft-try({ $!struct.FT_Render_Glyph(+$render-mode) })
             unless $!struct.format == FT_GLYPH_FORMAT_BITMAP;
         my $bitmap  = $!struct.bitmap
             or return Font::FreeType::BitMap;
@@ -48,7 +48,7 @@ class Font::FreeType::Glyph is rw {
         my $left = $!struct.bitmap-left;
         my $top = $!struct.bitmap-top;
         my $struct = $bitmap.clone($library);
-        Font::FreeType::BitMap.new: :$struct, :$library, :$left, :$top;
+        Font::FreeType::BitMap.new: :$struct, :$library, :$left, :$top, :$!char-code;
     }
 
     method is-outline {
@@ -75,7 +75,7 @@ class Font::FreeType::Glyph is rw {
     method glyph-image {
         my $top = $!struct.bitmap-top;
         my $left = $!struct.bitmap-left;
-        Font::FreeType::GlyphImage.new: :glyph(self.struct), :$left, :$top;
+        Font::FreeType::GlyphImage.new: :glyph(self.struct), :$left, :$top, :$!char-code;
     }
 
 }

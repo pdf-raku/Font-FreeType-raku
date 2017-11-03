@@ -25,21 +25,21 @@ my $vera = Font::FreeType.new.face('t/fonts/Vera.ttf',
                                    :load-flags(FT_LOAD_NO_HINTING));
 
 for @test {
-    ## Stubbed in Perl 5 as well
-    ##    my $test-basename = join('.', .<char>.ord.fmt('%04X'),
-    ##                                  .<x_sz>,  .<y_sz>, 
-    ##                             .<x_res>,  .<y_res>,  .<aa>);
-    ##    note $test-basename;
-    ##    my $test-filename = "t/fonts/{$test-basename}.pgm";
-    ##    my $fh = $test-filename.IO.open(:bin);
+    my $test-basename = join('.',
+                             .<char>.ord.fmt('%04X'),
+                             .<x_sz>,  .<y_sz>, 
+                             .<x_res>,  .<y_res>,  .<aa>);
+    my $test-filename = "t/fonts/{$test-basename}.pgm";
+    my $expected-pgm = $test-filename.IO.slurp(:bin);
     $vera.set-char-size(.<x_sz>, .<y_sz>, .<x_res>, .<y_res>);
     my $render-mode = .<aa> ?? FT_RENDER_MODE_NORMAL !! FT_RENDER_MODE_MONO;
-    for $vera.glyph-images(.<char>) -> $g-image {
-        my $bm = $g-image.bitmap: :$render-mode;
+    for $vera.glyph-images(.<char>) {
+        my $bm = .bitmap: :$render-mode;
         ok $bm.pixels.defined, 'pixels';
-        ok $bm.pgm.defined, 'pgm';
         isa-ok $bm.left, Int, 'left';
         isa-ok $bm.top, Int, 'top';
+        todo 'may be platform/freetype version dependant';
+        is-deeply $bm.pgm, $expected-pgm, "$test-basename pgm";
     }
 }
 

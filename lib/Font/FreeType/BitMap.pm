@@ -9,8 +9,12 @@ class Font::FreeType::BitMap {
     has FT_Library $!library;
     has Int $.left is required;
     has Int $.top is required;
+    has FT_ULong     $.char-code is required;
 
-    submethod TWEAK(:$!struct!, :$!library!) {}
+    submethod TWEAK(:$!struct!, :$!library!) {
+        $!top *= 3
+            if $!struct.pixel-mode == +FT_PIXEL_MODE_LCD_V;
+    }
 
     constant Dpi = 72.0;
     constant Px = 64.0;
@@ -36,101 +40,72 @@ class Font::FreeType::BitMap {
 
     method pixels(Bool :$color = False) {
         my $buf = $!struct.buffer;
-        my int $i = 0;
-        if $.pixel-mode == 5|6|7 { # rgb, or rgba formats
-            if $color {
-                my \channels = $.pixel-mode == 7
-                    ?? 4  # bgra
-                    !! 3; # rgb, or bgr
-                my uint8 @pixels[$.rows;$.width;channels];
+        my uint8 @pixels[$.rows;$.width];
+        my uint32 $bits;
+        given $.pixel-mode {
+            when FT_PIXEL_MODE_GRAY
+                | FT_PIXEL_MODE_LCD
+                | FT_PIXEL_MODE_LCD_V {
                 for ^$.rows -> int $y {
+                    my int $i = $y * $.pitch;
                     for ^$.width -> int $x {
-                        for ^channels {
-                            @pixels[$y;$x;$_] = $buf[$i++];
-                        }
+                        @pixels[$y;$x] = $buf[$i++];
                     }
                 }
-                @pixels;
             }
-            else {
-                my uint8 @pixels[$.rows;$.width];
-                my \has-alpha = $.pixel-mode == 7;
+            when FT_PIXEL_MODE_MONO {
                 for ^$.rows -> int $y {
+                    my int $i = $y * $.pitch;
                     for ^$.width -> int $x {
-                        my int $v = 0;
-                        # hokey color arithmetic follows
-                        # todo: use proper algorithms for gray conversion
-                        for ^3 {
-                            $v += $buf[$i++];
-                        }
-                        $v = ($v * $buf[$i++]) div 255
-                            if has-alpha;
-                        @pixels[$y;$x] = $v div 3;
+                        $bits = $buf[$i++]
+                            if $x %% 8;
+                        @pixels[$y;$x] = $bits +& 0x80 ?? 0xFF !! 0x00;
+                        $bits +<= 1;
                     }
                 }
-                @pixels;
+            }
+            when FT_PIXEL_MODE_GRAY2 {
+                for ^$.rows -> int $y {
+                    my int $i = $y * $.pitch;
+                    for ^$.width -> int $x {
+                        $bits = $buf[$i++]
+                            if $x %% 4;
+                        @pixels[$y;$x] = $bits +& 0xC0;
+                        $bits +<= 2;
+                    }
+                }
+            }
+            when FT_PIXEL_MODE_GRAY4 {
+                for ^$.rows -> int $y {
+                    my int $i = $y * $.pitch;
+                    for ^$.width -> int $x {
+                        $bits = $buf[$i++]
+                            if $x %% 2;
+                        @pixels[$y;$x] = $bits +& 0xF0;
+                        $bits +<= 4;
+                    }
+                }
+            }
+            default {
+                die "unsupported pixel mode: $_";
             }
         }
-        else {
-            my uint8 @pixels[$.rows;$.width];
-            my uint32 $bits;
-            given $.pixel-mode {
-                when 1 { # mono
-                    for ^$.rows -> int $y {
-                        for ^$.width -> int $x {
-                            $bits = $buf[$i++]
-                                if $x %% 8;
-                            @pixels[$y;$x] = $bits +& 0x80 ?? 0xFF !! 0x00;
-                            $bits +<= 1;
-                        }
-                    }
-                }
-                when 2 { # gray 8
-                    for ^$.rows -> int $y {
-                        for ^$.width -> int $x {
-                            @pixels[$y;$x] = $buf[$i++];
-                        }
-                    }
-                }
-                when 3 { # gray 2
-                    for ^$.rows -> int $y {
-                        for ^$.width -> int $x {
-                            $bits = $buf[$i++]
-                                if $x %% 4;
-                            @pixels[$y;$x] = $bits +& 0xC0;
-                            $bits +<= 2;
-                        }
-                    }
-                }
-                when 4 { # gray 4
-                    for ^$.rows -> int $y {
-                        for ^$.width -> int $x {
-                            $bits = $buf[$i++]
-                                if $x %% 2;
-                            @pixels[$y;$x] = $bits +& 0xF0;
-                            $bits +<= 4;
-                        }
-                    }
-                }
-                default {
-                    die "unsupported pixel mode: $_";
-                }
-            }
-            @pixels;
-        }
+        @pixels;
     }
 
     method Str {
         return "\n" x $.rows
             unless $.width;
-        my Str @r[$.width];
+        constant on  = '#'.ord;
+        constant off = ' '.ord;
+        my buf8 $row .= allocate($.width);
         my $pixbuf = $.pixels;
         my Str @lines;
         for ^$.rows -> $y {
             for ^$.width -> $x {
-                @r[$x] = $pixbuf[$y;$x] ?? '#' !! ' ';
+                $row[$x] = $pixbuf[$y;$x] ?? on !! off;
             }
-            @lines.push: @r.join;
+            @lines.push: $row.decode("latin-1");
         }
         @lines.join: "\n";
     }

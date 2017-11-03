@@ -10,6 +10,7 @@ class Font::FreeType::GlyphImage {
 
     has FT_Glyph $.struct handles <format top left>;
     has FT_Library $!library;
+    has FT_ULong     $.char-code;
 
     submethod TWEAK(FT_GlyphSlot :$glyph!, :$top, :$left,) {
         my $glyph-p = Pointer[FT_Glyph].new;
@@ -65,17 +66,18 @@ class Font::FreeType::GlyphImage {
         my FT_BBox $bbox .= new;
         $!struct.FT_Glyph_Get_CBox(FT_GLYPH_BBOX_PIXELS, $bbox);
         my $struct-p = nativecast(Pointer[FT_Glyph], $!struct);
-        ft-try({ FT_Glyph_To_Bitmap($struct-p, $render-mode, $origin, $destroy); });
+        ft-try({ FT_Glyph_To_Bitmap($struct-p, +$render-mode, $origin, $destroy); });
         $!struct = nativecast(FT_BitmapGlyph, $struct-p.deref);
         $.left = $bbox.x-min;
-        $.top  = $bbox.y-max;     
+        $.top  = $bbox.y-max;
     }
-    method bitmap {
-        self.to-bitmap
+    method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
+        self.to-bitmap(:$render-mode)
             unless self.is-bitmap;
         my FT_Bitmap:D $bitmap = $!struct.bitmap-pointer.deref;
         my FT_Bitmap $struct = $bitmap.clone($!library);
-        Font::FreeType::BitMap.new: :$!library, :$struct, :$.left, :$.top;
+        my $top = $.top;
+        Font::FreeType::BitMap.new: :$!library, :$struct, :$.left, :$top, :$!char-code;
     }
 
     method DESTROY {

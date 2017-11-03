@@ -11,6 +11,7 @@ sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
     # actual character itself.
     $char = :16($char).chr
         if $char ~~ /^(<xdigit>**2..*)$/;
+
     $face.for-glyphs: $char.comb[0], -> $gslot {
         die "Glyph has no outline.\n" unless $gslot.is-outline;
 
