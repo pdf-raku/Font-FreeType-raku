@@ -36,3 +36,15 @@ details please refer to the TrueType or OpenType specification.
 
     Generally speaking, the string is not zero-terminated. Please refer to the
     TrueType specification for details.
+
+# AUTHORS
+
+Geoff Richards <qef@laxan.com>
+
+David Warring <david.warring@gmail>.com (Perl 6 Port)
+
+# COPYRIGHT
+
+Copyright 2004, Geoff Richards.
+
+Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>

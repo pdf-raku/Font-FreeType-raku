@@ -89,3 +89,13 @@ See [freetype documenation](http://www.freetype.org/freetype2/docs/reference/ft2
 - encoding
 
     A FreeType Encoding tag (constant) identifying the charmap.
+
+# COPYRIGHT
+
+Copyright 2004, Geoff Richards.
+
+Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Copyright 2017.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.

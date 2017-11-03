@@ -103,13 +103,12 @@ and the metrics are scaled to the size of the font face.
 [Font::FreeType::Face](Face.md)
 [Font::FreeType::GlyphImage](GlyphImage.md)
 
-# AUTHOR
-
-Geoff Richards <qef@laxan.com>
-
 # COPYRIGHT
 
 Copyright 2004, Geoff Richards.
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Copyright 2017.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.

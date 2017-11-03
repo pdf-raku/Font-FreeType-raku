@@ -105,3 +105,18 @@ Returns an ascii display representation of the rendered glyph.
 
 produces a new bitmap, re-rendered as eight bit FT_PIXEL_MODE_GRAY.
 
+# AUTHORS
+
+Geoff Richards <qef@laxan.com>
+
+David Warring <david.warring@gmail>.com (Perl 6 Port)
+
+# COPYRIGHT
+
+Copyright 2004, Geoff Richards.
+
+Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Copyright 2017.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
