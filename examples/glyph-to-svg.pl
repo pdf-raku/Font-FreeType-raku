@@ -12,10 +12,10 @@ sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
     # actual character itself.
     $char = :16($char).chr
         if $char ~~ /^(<xdigit>**2..*)$/;
-    $face.for-glyphs: $char.comb[0], -> $gslot {
-        die "Glyph has no outline.\n" unless $gslot.is-outline;
+    $face.for-glyphs: $char, {
+        die "Glyph has no outline.\n" unless .is-outline;
 
-        my $outline = $gslot.outline;
+        my $outline = .glyph-image.outline;
         $outline.bold($_) with $bold;
         my ($xmin, $ymin, $xmax, $ymax) = $outline.Array;
 
