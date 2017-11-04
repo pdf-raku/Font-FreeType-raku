@@ -45,7 +45,7 @@ for @test {
         }
         else {
             todo 'may be platform/freetype version dependant';
-            fail "pgm bitmap $test-basename";
+            flunk "pgm bitmap $test-basename";
         }
     }
 }
