@@ -52,12 +52,13 @@ sub MAIN(Str $font-file,
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
                 my $cs = $char-spacing;
-                $cs += do-horiz-kern($face, $_, @bitmaps[$col-1], $render-mode)
-                    if $col && $kern && $face.has-kerning;
+                $cs += do-horiz-kern($face, $_, @bitmaps[$col+1], $render-mode)
+                    if $col && $kern && $face.has-kerning && $col+1 < +@bitmaps;
                 print scan-line($_, @pix-bufs[$col], $row);
                 print ' ' x $cs;
             }
             else {
+                warn "hmm...";
                 print ' ' x $word-spacing;
             }
         }
@@ -83,5 +84,5 @@ sub do-horiz-kern($face, $bm1, $bm2, $mode ) {
     my $vec = $face.kerning($bm1.char-code.chr, $bm2.char-code.chr);
     my $x = $vec.x;
     $x *= 3 if $mode == lcd;
-    round($x);
+    round($x).Int;
 }
