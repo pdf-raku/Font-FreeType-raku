@@ -8,8 +8,7 @@ sub MAIN(Str $filename) {
     -> Font::FreeType::Glyph $_ {
         my $char = .char-code.chr;
         my $is-printable = $char ~~ /<print>/;
-            say (.char-code, .name, $is-printable ?? $char !! Mu)\
-                .map({ .defined ?? ($_) !! '' })\
+            say (.char-code, .name, $char.uniname, $is-printable ?? $char !! '')\
                 .join: "\t";
         }
         
