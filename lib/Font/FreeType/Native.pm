@@ -81,19 +81,20 @@ class FT_Generic is repr('CStruct') {
 class FT_BBox is repr('CStruct') is export {
     has FT_Pos  ($.x-min, $.y-min);
     has FT_Pos  ($.x-max, $.y-max);
+    method Array { [$!x-min, $!y-min, $!x-max, $!y-max] }
  }
 
 class FT_Glyph_Metrics is repr('CStruct') {
     has FT_Pos  $.width;
     has FT_Pos  $.height;
 
-    has FT_Pos  $.horiBearingX;
-    has FT_Pos  $.horiBearingY;
-    has FT_Pos  $.horiAdvance;
+    has FT_Pos  $.hori-bearing-x;
+    has FT_Pos  $.hori-bearing-y;
+    has FT_Pos  $.hori-advance;
 
-    has FT_Pos  $.vertBearingX;
-    has FT_Pos  $.vertBearingY;
-    has FT_Pos  $.vertAdvance;
+    has FT_Pos  $.vert-bearing-x;
+    has FT_Pos  $.vert-bearing-y;
+    has FT_Pos  $.vert-advance;
 }
 
 class FT_Vector is repr('CStruct') is export {
@@ -195,8 +196,8 @@ class FT_GlyphSlot is repr('CStruct') is export {
     HAS FT_Generic        $.generic;
 
     HAS FT_Glyph_Metrics  $.metrics;
-    has FT_Fixed          $.linearHoriAdvance;
-    has FT_Fixed          $.linearVertAdvance;
+    has FT_Fixed          $.linear-hori-advance;
+    has FT_Fixed          $.linear-vert-advance;
     HAS FT_Vector         $.advance;
 
     has FT_Glyph_Format   $.format;

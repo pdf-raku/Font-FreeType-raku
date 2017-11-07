@@ -186,6 +186,11 @@ Unless otherwise stated, all methods will die if there is an error.
 
         Leave the measurements in font units, without scaling, and without hinting.
 
+- measure-text(_str_, _:kern_, _:mode_)
+
+    Measure text with optional kerning adjustments. Returns a _Vector_ giving
+    total _x_ and _y_ displacements.
+
 - number-of-faces()
 
     The number of faces contained in the file from which this one

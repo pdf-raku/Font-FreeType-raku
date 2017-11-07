@@ -121,22 +121,47 @@ class Font::FreeType::Face {
         }
     }
 
-    method for-glyphs(Str $str, &code, Int :$flags = $!load-flags) {
+    method for-glyphs(Str $text, &code, Int :$flags = $!load-flags) {
         my $struct = $!struct.glyph;
         my $glyph = Font::FreeType::Glyph.new: :face(self), :$struct;
-        for $str.ords -> $char-code {
+        for $text.ords -> $char-code {
             ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
             $glyph.char-code = $char-code;
             &code($glyph);
         }
     }
 
-    method glyph-images(Str $str, Int :$flags = $!load-flags) {
+    method glyph-images(Str $text, Int :$flags = $!load-flags) {
         my Font::FreeType::GlyphImage @glyphs-images;
-        self.for-glyphs($str, {
+        self.for-glyphs($text, {
             @glyphs-images.push: .glyph-image;
         }, :$flags);
         @glyphs-images;
+    }
+
+    multi method measure-text(Str $text, Bool :$kern, Int :$flags = $!load-flags, UInt :$mode = FT_KERNING_UNFITTED) {
+        my FT_Pos $x = 0;
+        my FT_Pos $y = 0;
+        my FT_UInt $prev-idx = 0;
+        my $kerning = FT_Vector.new;
+for $text.ords -> $char-code {
+            ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
+        my $glyph-slot = $!struct.glyph;
+            die "todo measure bitmap"
+                unless $glyph-slot.format == FT_GLYPH_FORMAT_OUTLINE;
+            $x += $glyph-slot.metrics.hori-advance;
+            $y += $glyph-slot.metrics.vert-advance;
+            if $kern {
+                my FT_UInt $this-idx =  $!struct.FT_Get_Char_Index( $char-code );
+                if $prev-idx && $this-idx {
+                    ft-try({ $!struct.FT_Get_Kerning($prev-idx, $this-idx, $mode, $kerning); });
+                    $x += $kerning.x;
+                    $y += $kerning.y;
+                }
+                $prev-idx = $this-idx;
+            }
+        }
+        Vector.new: :struct(FT_Vector.new: :$x, :$y);
     }
 
     method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
@@ -149,7 +174,7 @@ class Font::FreeType::Face {
         ft-try({ $!struct.FT_Set_Pixel_Sizes($width, $height) });
     }
 
-    method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_DEFAULT) {
+    method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_UNFITTED) {
         my FT_UInt $left-idx = $!struct.FT_Get_Char_Index( $left.ord );
         my FT_UInt $right-idx = $!struct.FT_Get_Char_Index( $right.ord );
         my $vec = FT_Vector.new;

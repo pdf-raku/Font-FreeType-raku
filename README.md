@@ -65,10 +65,10 @@ Unless otherwise stated, all methods will die if there is an error.
 
         my $face = Font::FreeType.new.face('Vera.ttf');
 
-- face(_filename_, :$index, :load-flags)
+- face(_filename_|_blob_, :$index, :load-flags)
 
     Return a Font::FreeType::Face object representing
-    a font face from the specified file.
+    a font face from the specified file or Blob.
 
     The :index option specifies which face to load from the file.  It
     defaults to 0, and since most fonts only contain one face it rarely

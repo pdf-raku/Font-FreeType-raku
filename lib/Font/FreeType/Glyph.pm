@@ -16,16 +16,16 @@ class Font::FreeType::Glyph is rw {
     has FT_ULong     $.char-code;
 
     method name { $!face.glyph-name: $!char-code }
-    method left-bearing { $.metrics.horiBearingX / Px; }
+    method left-bearing { $.metrics.hori-bearing-x / Px; }
     method right-bearing {
-        (.horiAdvance - .horiBearingX - .width) / Px
+        (.hori-advance - .hori-bearing-x - .width) / Px
             with $.metrics
     }
     method horizontal-advance {
-        $.metrics.horiAdvance / Px;
+        $.metrics.hori-advance / Px;
     }
     method vertical-advance {
-        $.metrics.vertAdvance / Px;
+        $.metrics.vert-advance / Px;
     }
     method width { $.metrics.width / Px }
     method height { $.metrics.height / Px }

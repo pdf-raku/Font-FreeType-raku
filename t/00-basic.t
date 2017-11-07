@@ -4,6 +4,7 @@ use Font::FreeType;
 use Font::FreeType::Face;
 use Font::FreeType::Error;
 use Font::FreeType::Native;
+use Font::FreeType::Native::Types;
 
 my Font::FreeType $freetype;
 lives-ok { $freetype .= new }, 'font freetype creation';
@@ -54,6 +55,11 @@ $face.for-glyphs: 'AI', -> $gslot {
 }
 
 is $face.glyph-name('&'), 'ampersand', 'glyph name';
+$face.set-char-size(24, 24, 72, 72);
+my $size = $face.measure-text("AV Wa");
+is $size.x, 81, 'measure-text';
+$size = $face.measure-text("AV Wa", :kern, :mode(FT_KERNING_DEFAULT) );
+is $size.x, 78, 'measure-text: :kern';
 
 lives-ok {$face.DESTROY}, 'face DESTROY';
 lives-ok {$freetype.DESTROY}, 'freetype DESTROY';

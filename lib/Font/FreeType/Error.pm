@@ -139,6 +139,7 @@ class Font::FreeType::Error is Exception {
         my FT_Error $error = &sub();
         Font::FreeType::Error.new(:$error).throw
             if $error;
+        True;
     }
 }
 
