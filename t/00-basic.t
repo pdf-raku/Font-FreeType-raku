@@ -56,10 +56,15 @@ $face.for-glyphs: 'AI', -> $gslot {
 
 is $face.glyph-name('&'), 'ampersand', 'glyph name';
 $face.set-char-size(24, 24, 72, 72);
-my $size = $face.measure-text("AV Wa");
+my $size = $face.measure-text("AV Wa", :mode(FT_KERNING_DEFAULT) );
 is $size.x, 81, 'measure-text';
 $size = $face.measure-text("AV Wa", :kern, :mode(FT_KERNING_DEFAULT) );
 is $size.x, 78, 'measure-text: :kern';
+
+$face.for-glyphs('A', {
+    is .index, 36, '.index';
+    is .char-code, 65, '.char-code';
+});
 
 lives-ok {$face.DESTROY}, 'face DESTROY';
 lives-ok {$freetype.DESTROY}, 'freetype DESTROY';

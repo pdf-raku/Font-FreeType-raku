@@ -41,6 +41,10 @@ and the metrics are scaled to the size of the font face.
     return codes in other character sets if the font doesn't have a Unicode
     character mapping, but most modern fonts do.
 
+- index()
+
+    The index number of the glyph in the font face.
+
 - is-outline()
 
     True if the glyph has a vector outline, in which case it is safe to

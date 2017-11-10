@@ -20,7 +20,7 @@ sub MAIN(Str $font-file,
          UInt :$char-spacing is copy,
          UInt :$word-spacing is copy,
          UInt :$bold = 0,
-         Mode :$render-mode = normal,
+         Mode :$mode = normal,
     ) {
 
     if $text eq '' {
@@ -41,7 +41,7 @@ sub MAIN(Str $font-file,
     $word-spacing //= $char-spacing * 4;
     my @bitmaps = $face.glyph-images($text).map: {
         .bold($bold) if $bold;
-        .bitmap(:$render-mode);
+        .bitmap(:render-mode($mode));
     }
 
     my @pix-bufs = @bitmaps.map: { .defined && .width ?? .pixels !! Any };
@@ -52,7 +52,7 @@ sub MAIN(Str $font-file,
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
                 my $cs = $char-spacing;
-                $cs += do-horiz-kern($face, $_, @bitmaps[$col+1], $render-mode)
+                $cs += do-horiz-kern($face, $_, @bitmaps[$col+1], $mode)
                     if $col && $kern && $face.has-kerning && $col+1 < +@bitmaps;
                 print scan-line($_, @pix-bufs[$col], $row);
                 print ' ' x $cs;

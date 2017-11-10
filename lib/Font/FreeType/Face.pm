@@ -144,11 +144,10 @@ class Font::FreeType::Face {
         my FT_Pos $y = 0;
         my FT_UInt $prev-idx = 0;
         my $kerning = FT_Vector.new;
-for $text.ords -> $char-code {
-            ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
         my $glyph-slot = $!struct.glyph;
-            die "todo measure bitmap"
-                unless $glyph-slot.format == FT_GLYPH_FORMAT_OUTLINE;
+
+        for $text.ords -> $char-code {
+            ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
             $x += $glyph-slot.metrics.hori-advance;
             $y += $glyph-slot.metrics.vert-advance;
             if $kern {

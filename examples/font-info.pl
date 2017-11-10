@@ -28,6 +28,8 @@ sub MAIN(Str $filename) {
     @properties.push: 'SFNT'        if $face.is-sfnt;
     @properties.push: 'Horizontal'  if $face.has-horizontal-metrics;
     @properties.push: 'Vertical'    if $face.has-vertical-metrics;
+    @properties.push: 'enc:' ~ .key.subst(/^FT_ENCODING_/, '').lc
+        with $face.charmap.encoding;
     say @properties.join: '  ' if @properties;
 
     say "Units per em: ", $face.units-per-EM if $face.units-per-EM;

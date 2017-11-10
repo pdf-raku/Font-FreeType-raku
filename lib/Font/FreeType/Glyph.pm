@@ -16,6 +16,7 @@ class Font::FreeType::Glyph is rw {
     has FT_ULong     $.char-code;
 
     method name { $!face.glyph-name: $!char-code }
+    method index { $!face.struct.FT_Get_Char_Index: $!char-code }
     method left-bearing { $.metrics.hori-bearing-x / Px; }
     method right-bearing {
         (.hori-advance - .hori-bearing-x - .width) / Px
@@ -30,9 +31,10 @@ class Font::FreeType::Glyph is rw {
     method width { $.metrics.width / Px }
     method height { $.metrics.height / Px }
     method Str   { $!char-code.chr }
+    method format { FT_GLYPH_FORMAT($!struct.format) }
 
     method is-outline {
-        $!struct.format == FT_GLYPH_FORMAT_OUTLINE;
+        $.format == FT_GLYPH_FORMAT_OUTLINE;
     }
 
     method glyph-image {

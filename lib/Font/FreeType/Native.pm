@@ -435,7 +435,7 @@ sub FT_Glyph_To_Bitmap(
         is export
         is native($ftlib) {*};
 
-sub FT_Init_FreeType(FT_Library $library is rw)
+sub FT_Init_FreeType(Pointer[FT_Library] $library is rw)
     returns FT_Error
         is export
         is native($ftlib) {*};

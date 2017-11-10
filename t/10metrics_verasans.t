@@ -70,7 +70,7 @@ subtest {
         ok $default-cm;
         is $default-cm.platform-id, 3;
         is $default-cm.encoding-id, 1;
-        is $default-cm.encoding, +FT_ENCODING_UNICODE;
+        is $default-cm.encoding, FT_ENCODING_UNICODE;
     }, "default charmap";
 
     subtest {

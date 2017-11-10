@@ -8,9 +8,11 @@ class Font::FreeType::GlyphImage {
     use Font::FreeType::BitMap;
     use Font::FreeType::Outline;
 
-    has FT_Glyph $.struct handles <format top left>;
+    has FT_Glyph $.struct handles <top left>;
     has FT_Library $!library;
     has FT_ULong     $.char-code;
+
+    method format { FT_GLYPH_FORMAT($!struct.format) }
 
     submethod TWEAK(FT_GlyphSlot :$glyph!, :$top, :$left,) {
         my $glyph-p = Pointer[FT_Glyph].new;

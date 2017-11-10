@@ -10,7 +10,7 @@ class Font::FreeType {
     has FT_Library $!library;
 
     submethod BUILD {
-        my $p = Pointer[$!library].new;
+        my $p = Pointer[FT_Library].new;
         ft-try({ FT_Init_FreeType( $p ); });
         $!library = $p.deref;
     }
