@@ -139,7 +139,7 @@ class Font::FreeType::Face {
         @glyphs-images;
     }
 
-    multi method measure-text(Str $text, Bool :$kern, Int :$flags = $!load-flags, UInt :$mode = FT_KERNING_UNFITTED) {
+    method measure-text(Str $text, Bool :$kern, Int :$flags = $!load-flags, UInt :$mode = FT_KERNING_UNFITTED) {
         my FT_Pos $x = 0;
         my FT_Pos $y = 0;
         my FT_UInt $prev-idx = 0;
@@ -147,18 +147,18 @@ class Font::FreeType::Face {
         my $glyph-slot = $!struct.glyph;
 
         for $text.ords -> $char-code {
-            ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
-            $x += $glyph-slot.metrics.hori-advance;
-            $y += $glyph-slot.metrics.vert-advance;
-            if $kern {
-                my FT_UInt $this-idx =  $!struct.FT_Get_Char_Index( $char-code );
-                if $prev-idx && $this-idx {
+            my FT_UInt $this-idx =  $!struct.FT_Get_Char_Index( $char-code );
+            if $this-idx {
+                ft-try({ $!struct.FT_Load_Glyph( $this-idx, $flags ); });
+                $x += $glyph-slot.metrics.hori-advance;
+                $y += $glyph-slot.metrics.vert-advance;
+                if $kern && $prev-idx {
                     ft-try({ $!struct.FT_Get_Kerning($prev-idx, $this-idx, $mode, $kerning); });
                     $x += $kerning.x;
                     $y += $kerning.y;
                 }
-                $prev-idx = $this-idx;
             }
+            $prev-idx = $this-idx;
         }
         Vector.new: :struct(FT_Vector.new: :$x, :$y);
     }
