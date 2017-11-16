@@ -24,9 +24,6 @@ which supports many formats.  It can render images of characters with
 high-quality hinting and anti-aliasing, extract metrics information, and
 extract the outlines of characters in scalable formats like TrueType.
 
-The Font::FreeType API is not intended to replicate the C API of the
-FreeType library -- it offers a much more Perl-friendly interface.
-
 The quickest way to get started with this library is to look at the
 examples in the _examples_ directory of the distribution.  Full
 details of the API are contained in this documentation, and (more

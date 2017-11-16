@@ -139,28 +139,29 @@ class Font::FreeType::Face {
         @glyphs-images;
     }
 
-    method measure-text(Str $text, Bool :$kern, Int :$flags = $!load-flags, UInt :$mode = FT_KERNING_UNFITTED) {
+    method measure-text(Str $text, Numeric $pointsize = 1000, Bool :$kern) {
         my FT_Pos $x = 0;
         my FT_Pos $y = 0;
         my FT_UInt $prev-idx = 0;
         my $kerning = FT_Vector.new;
         my $glyph-slot = $!struct.glyph;
+        my $scale = Px * $pointsize / $!struct.units-per-EM;
 
         for $text.ords -> $char-code {
             my FT_UInt $this-idx =  $!struct.FT_Get_Char_Index( $char-code );
             if $this-idx {
-                ft-try({ $!struct.FT_Load_Glyph( $this-idx, $flags ); });
+                ft-try({ $!struct.FT_Load_Glyph( $this-idx, FT_LOAD_NO_SCALE ); });
                 $x += $glyph-slot.metrics.hori-advance;
                 $y += $glyph-slot.metrics.vert-advance;
                 if $kern && $prev-idx {
-                    ft-try({ $!struct.FT_Get_Kerning($prev-idx, $this-idx, $mode, $kerning); });
+                    ft-try({ $!struct.FT_Get_Kerning($prev-idx, $this-idx, FT_KERNING_UNSCALED, $kerning); });
                     $x += $kerning.x;
                     $y += $kerning.y;
                 }
             }
             $prev-idx = $this-idx;
         }
-        Vector.new: :struct(FT_Vector.new: :$x, :$y);
+        Vector.new: :struct(FT_Vector.new: :x(($x * $scale).round), :y(($y * $scale).round));
     }
 
     method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
