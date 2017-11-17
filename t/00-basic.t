@@ -55,10 +55,6 @@ $face.for-glyphs: 'AI', -> $gslot {
 }
 
 is $face.glyph-name('&'), 'ampersand', 'glyph name';
-my $size = $face.measure-text("AV Wa", 24);
-is $size.x.round, 81, 'measure-text';
-$size = $face.measure-text("AV Wa", 24, :kern);
-is $size.x.round, 78, 'measure-text: :kern';
 
 $face.for-glyphs('A', {
     is .index, 36, '.index';
