@@ -196,6 +196,8 @@ class FT_GlyphSlot is repr('CStruct') is export {
     HAS FT_Generic        $.generic;
 
     HAS FT_Glyph_Metrics  $.metrics;
+    # work-around for Rakudo RT #132222
+    method metrics { $!metrics := .new without $!metrics; $!metrics}
     has FT_Fixed          $.linear-hori-advance;
     has FT_Fixed          $.linear-vert-advance;
     HAS FT_Vector         $.advance;
@@ -220,7 +222,6 @@ class FT_GlyphSlot is repr('CStruct') is export {
     has Pointer           $.other;
 
     has FT_Slot_Internal  $.internal;
-
     method FT_Render_Glyph(
         FT_Render_Mode $render-mode )
     returns FT_Error is native($ftlib) {*};
@@ -228,7 +229,6 @@ class FT_GlyphSlot is repr('CStruct') is export {
     method FT_Get_Glyph(
         Pointer[FT_Glyph] $glyph-p is rw )
     returns FT_Error is native($ftlib) {*};
-
 }
 
 class FT_SfntName is repr('CStruct') is export {
