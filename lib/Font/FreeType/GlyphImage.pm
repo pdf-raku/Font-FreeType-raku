@@ -42,17 +42,17 @@ class Font::FreeType::GlyphImage {
     method outline {
         die "not an outline glyph"
             unless self.is-outline;
-        my FT_Outline:D $outline = $!struct.outline-pointer.deref;
+        my FT_Outline:D $outline = $!struct.outline;
         my FT_Outline $struct = $outline.clone($!library);
         Font::FreeType::Outline.new: :$!library, :$struct;
     }
     method bold(Int $strength) {
         if self.is-outline {
-            my FT_Outline:D $outline = $!struct.outline-pointer.deref;
+            my FT_Outline:D $outline = $!struct.outline;
             ft-try({ $outline.FT_Outline_Embolden($strength); });
         }
         elsif self.is-bitmap {
-            my FT_Bitmap:D $bitmap = $!struct.bitmap-pointer.deref;
+            my FT_Bitmap:D $bitmap = $!struct.bitmap;
             ft-try({ $!library.FT_Bitmap_Embolden($bitmap, $strength, $strength); });
         }
     }
@@ -76,7 +76,7 @@ class Font::FreeType::GlyphImage {
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
         self.to-bitmap(:$render-mode)
             unless self.is-bitmap;
-        my FT_Bitmap:D $bitmap = $!struct.bitmap-pointer.deref;
+        my FT_Bitmap:D $bitmap = $!struct.bitmap;
         my FT_Bitmap $struct = $bitmap.clone($!library);
         my $top = $.top;
         Font::FreeType::BitMap.new: :$!library, :$struct, :$.left, :$top, :$!char-code;
