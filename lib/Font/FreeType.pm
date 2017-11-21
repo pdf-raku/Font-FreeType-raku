@@ -8,6 +8,7 @@ class Font::FreeType {
     use Font::FreeType::Native::Types;
 
     has FT_Library $!library;
+    our $lock = Lock.new;
 
     submethod BUILD {
         my $p = Pointer[FT_Library].new;
@@ -16,13 +17,17 @@ class Font::FreeType {
     }
 
     submethod DESTROY {
-        ft-try: $!library.FT_Done_FreeType;
-        $!library = Nil;
+        $lock.protect: {
+            ft-try({ $!library.FT_Done_FreeType });
+            $!library = Nil;
+        }
     }
 
     multi method face(Str $file-path-name, Int :$index = 0, |c) {
         my $p = Pointer[FT_Face].new;
-        ft-try({ $!library.FT_New_Face($file-path-name, $index, $p); });
+        $lock.protect: {
+            ft-try({ $!library.FT_New_Face($file-path-name, $index, $p); });
+        }
         my FT_Face $struct = $p.deref;
         Font::FreeType::Face.new: :$struct, |c;
     }
@@ -207,11 +212,13 @@ Unless otherwise stated, all methods will die if there is an error.
 =head1 SEE ALSO
 
 =item [Font::FreeType::Face](lib/Font/FreeType/Face.md) - Font Properties
-=item [Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
-=item [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
-=item2     [Font::FreeType::Outline](lib/Font/FreeType/Outline.md) - Scalable glyph images
-=item2     [Font::FreeType::BitMap](lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
+=item  Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
+=item2    [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
+=item2    [Font::FreeType::Outline](lib/Font/FreeType/Outline.md) - Scalable glyph images
+=item2    [Font::FreeType::BitMap](lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
 =item [Font::FreeType::CharMap](lib/Font/FreeType/CharMap.md) - Font Encodings
+=item [Font::FreeType::Native](lib/Font/FreeType/Native.md) - Bindings to the FreeType library
+=item2   [Font::FreeType::Native::Types](lib/Font/FreeType/Native/Types.md) - Data types and enumerations
 
 =head1 AUTHORS
 
