@@ -155,15 +155,19 @@ SEE ALSO
 
   * [Font::FreeType::Face](lib/Font/FreeType/Face.md) - Font Properties
 
-  * [Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
+  * Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
 
-  * [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
+    * [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
 
     * [Font::FreeType::Outline](lib/Font/FreeType/Outline.md) - Scalable glyph images
 
     * [Font::FreeType::BitMap](lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
 
   * [Font::FreeType::CharMap](lib/Font/FreeType/CharMap.md) - Font Encodings
+
+  * [Font::FreeType::Native](lib/Font/FreeType/Native.md) - Bindings to the FreeType library
+
+    * [Font::FreeType::Native::Types](lib/Font/FreeType/Native/Types.md) - Data types and enumerations
 
 AUTHORS
 =======
