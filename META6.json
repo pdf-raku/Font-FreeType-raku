@@ -1,5 +1,5 @@
 {
-  "auth" : "github:p6-pdf",
+  "auth" : "cpan:p6-pdf",
   "authors" : [
     "David Warring"
   ],

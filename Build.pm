@@ -23,7 +23,7 @@ class Build {
     method build($workdir) {
         my $destdir = 'resources/lib';
         mkdir $destdir;
-        make($workdir, "$destdir", :libname<ft-outline>);
+        make($workdir, "$destdir", :libname<ft6>);
     }
 }
 
