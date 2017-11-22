@@ -208,7 +208,7 @@ Returns an object of type [Font::FreeType::Outline](Outline.md)
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 =head1 COPYRIGHT
 

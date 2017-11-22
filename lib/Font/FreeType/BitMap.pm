@@ -277,7 +277,7 @@ produces a new bitmap, re-rendered as eight bit FT_PIXEL_MODE_GRAY.
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 =head1 COPYRIGHT
 
