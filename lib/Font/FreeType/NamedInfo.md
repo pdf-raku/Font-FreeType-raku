@@ -1,8 +1,10 @@
-# NAME
+NAME
+====
 
 Font::FreeType::NamedInfo - information from 'names table' in font file
 
-# SYNOPSIS
+SYNOPSIS
+========
 
     use Font::FreeType;
 
@@ -13,37 +15,37 @@ Font::FreeType::NamedInfo - information from 'names table' in font file
       say .Str for @$infos;
     }
 
-# DESCRIPTION
+DESCRIPTION
+===========
 
-The TrueType and OpenType specifications allow the inclusion of a special
-_names table_ in font files. This table contains textual (and internationalized)
-information regarding the font, like family name, copyright, version, etc.
+The TrueType and OpenType specifications allow the inclusion of a special _names table_ in font files. This table contains textual (and internationalized) information regarding the font, like family name, copyright, version, etc.
 
-Possible values for _platform-id_, _encoding-id_, _language-id_, and
-_name\_id_ are given in the file _ttnameid.h_ from FreeType distribution. For
-details please refer to the TrueType or OpenType specification.
+Possible values for _platform-id_, _encoding-id_, _language-id_, and _name\_id_ are given in the file _ttnameid.h_ from FreeType distribution. For details please refer to the TrueType or OpenType specification.
 
-# METHODS
+METHODS
+=======
 
-- platform-id
-- encoding-id
-- language-id
-- name-id
-- Str
+### platform-id
 
-    The _name_ string. Note that its format differs depending on the (platform,
-     encoding) pair. It can be a Pascal String, a UTF-16 one, etc.
+### encoding-id
 
-    Generally speaking, the string is not zero-terminated. Please refer to the
-    TrueType specification for details.
+### language-id
 
-# AUTHORS
+### name-id
+
+### Str
+
+The _name_ string. Note that its format differs depending on the (platform, encoding) pair. It can be a Pascal String, a UTF-16 one, etc.
+
+AUTHORS
+=======
 
 Geoff Richards <qef@laxan.com>
 
 David Warring <david.warring@gmail>.com (Perl 6 Port)
 
-# COPYRIGHT
+COPYRIGHT
+=========
 
 Copyright 2004, Geoff Richards.
 

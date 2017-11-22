@@ -20,7 +20,7 @@ Font::FreeType::Native - bindings to the freetype library
         while $glyph-idx {
             @to-unicode[ $glyph-idx ] = $char-code;
             $char-code = $struct.FT_Get_Next_Char( $char-code, $glyph-idx);
-        }  
+        }
     }
 
 =head1 DESCRIPTION
@@ -41,6 +41,11 @@ used, if needed, to gain access to native objects from this library:
   Font::FreeType::Outline | L<FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html> | A scalable glyph outline
 
 =end pod
+
+#`{{
+
+=cut
+}}
 
 use NativeCall;
 use NativeCall::Types;

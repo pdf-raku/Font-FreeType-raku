@@ -8,7 +8,7 @@ class Font::FreeType::Error is Exception {
     our enum FT_ERROR is export(:FT_ERROR) (
 
   # generic errors
-        
+
         Ok => error-def(0x00, "no error"),
         Cannot_Open_Resource => error-def(0x01, "cannot open resource"),
         Unknown_File_Format => error-def(0x02, "unknown file format"),

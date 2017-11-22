@@ -1,5 +1,30 @@
 unit module Font::FreeType::Native::Types;
 
+=begin pod
+
+=head1 NAME
+
+Font::FreeType::Native - type and enumeration declarations
+
+=head1 SYNOPSIS
+
+    # E.g. build a map of glyphs number to unicode
+    use Font::FreeType::Native::Types;
+    my FT_ULong $char-code;
+    my FT_UInt $render-mode = FT_RENDER_MODE_LCD;
+
+=head1 DESCRIPTION
+
+This class contains datatye and enumerations for the FreeType library.
+
+=end pod
+
+#`{{
+
+=cut
+}}
+
+
 use NativeCall;
 use NativeCall::Types;
 
@@ -21,6 +46,7 @@ sub ft-code(Str $s) {
     $enc;
 }
 
+# FT_ENCODING - An enumeration to specify character sets supported by charmaps.
 enum FT_ENCODING is export «
     :FT_ENCODING_NONE(0)
     :FT_ENCODING_SYMBOL(ft-code("symb"))
@@ -38,6 +64,7 @@ enum FT_ENCODING is export «
     :FT_ENCODING_APPLE_ROMAN(ft-code("armn"))
     »;
 
+# FT_FACE - A list of bit flags used in the ‘face-flags’ field of the FT_FaceRec structure. They inform client applications of properties of the corresponding face.
 enum FT_FACE_FLAG is export «
     :FT_FACE_FLAG_SCALABLE(1 +<  0)
     :FT_FACE_FLAG_FIXED_SIZES(1 +<  1)
@@ -56,12 +83,14 @@ enum FT_FACE_FLAG is export «
     :FT_FACE_FLAG_COLOR(1 +< 14)
     »;
 
+# FT_KERNING - An enumeration to specify the format of kerning values returned by FT_Get_Kerning.
 enum FT_KERNING is export «
     :FT_KERNING_DEFAULT(0x0)
     :FT_KERNING_UNFITTED(0x1)
     :FT_KERNING_UNSCALED(0x2)
     »;
 
+# FT_GLYPH_FORMAT - An enumeration type used to describe the format of a given glyph image. 
 enum FT_GLYPH_FORMAT is export «
     :FT_GLYPH_FORMAT_NONE(0)
     :FT_GLYPH_FORMAT_COMPOSITE(ft-code('comp'))
@@ -70,6 +99,7 @@ enum FT_GLYPH_FORMAT is export «
     :FT_GLYPH_FORMAT_PLOT(ft-code('plot'))
     »;
 
+# FT_LOAD - A list of bit field constants for FT_Load_Glyph to indicate what kind of operations to perform during glyph loading.
 enum FT_LOAD is export «
     :FT_LOAD_DEFAULT(0x0)
     :FT_LOAD_NO_SCALE(1 +< 0)
@@ -92,6 +122,7 @@ enum FT_LOAD is export «
     :FT_LOAD_BITMAP_METRICS_ONLY(1 +< 22)
     »;
 
+# FT_GLYPH_BBOX_MODE - The mode how the values of FT_Glyph_Get_CBox are returned.
 enum FT_GLYPH_BBOX_MODE is export «
     :FT_GLYPH_BBOX_UNSCALED(0)
     :FT_GLYPH_BBOX_SUBPIXELS(0)
@@ -100,6 +131,7 @@ enum FT_GLYPH_BBOX_MODE is export «
     :FT_GLYPH_BBOX_PIXELS(3)
     »;
 
+# FT_PIXEL_MODE - An enumeration type used to describe the format of pixels in a given bitmap. Note that additional formats may be added in the future.
 enum FT_PIXEL_MODE is export «
     :FT_PIXEL_MODE_NONE(0)
     :FT_PIXEL_MODE_MONO(1)
@@ -111,6 +143,7 @@ enum FT_PIXEL_MODE is export «
     :FT_PIXEL_MODE_BGRA(7)
     »;
 
+# FT_RENDER_MODE - Render modes supported by FreeType 2. Each mode corresponds to a specific type of scanline conversion performed on the outline.
 enum FT_RENDER_MODE is export «
     :FT_RENDER_MODE_NORMAL(0)
     :FT_RENDER_MODE_LIGHT(1)
@@ -120,6 +153,7 @@ enum FT_RENDER_MODE is export «
     :FT_RENDER_MODE_MAX(5)
     »;
 
+# FT_STYLE_FLAG - A list of bit flags to indicate the style of a given face. These are used in the ‘style_flags’ field of FT_FaceRec.
 enum FT_STYLE_FLAG is export «
     :FT_STYLE_FLAG_ITALIC(1 +< 0)
     :FT_STYLE_FLAG_BOLD(1 +< 1)

@@ -106,113 +106,135 @@ Then load particular glyphs (an image of a character):
 
 Unless otherwise stated, all methods will die if there is an error.
 
-=item new()
+=head3 new()
 
-    Create a new 'instance' of the freetype library and return the object.
-    This is a class method, which doesn't take any arguments.  If you only
-    want to load one face, then it's probably not even worth saving the
-    object to a variable:
+Create a new 'instance' of the freetype library and return the object.
+This is a class method, which doesn't take any arguments.  If you only
+want to load one face, then it's probably not even worth saving the
+object to a variable:
 
-        my $face = Font::FreeType.new.face('Vera.ttf');
+    my $face = Font::FreeType.new.face('Vera.ttf');
 
-=item face(_filename_|_blob_, :$index, :load-flags)
+=head3 face(_filename_|_blob_, :$index, :load-flags)
 
-    Return a Font::FreeType::Face object representing
-    a font face from the specified file or Blob.
+Return a Font::FreeType::Face object representing
+a font face from the specified file or Blob.
 
-    The :index option specifies which face to load from the file.  It
-    defaults to 0, and since most fonts only contain one face it rarely
-    needs to be provided.
+The :index option specifies which face to load from the file.  It
+defaults to 0, and since most fonts only contain one face it rarely
+needs to be provided.
 
-    The :load-flags option takes various flags which alter the way
-    glyphs are loaded.  The default is usually OK for rendering fonts
-    to bitmap images.  When extracting outlines from fonts, be sure to
-    set the FT\_LOAD\_NO\_HINTING flag.
+The :load-flags option takes various flags which alter the way
+glyphs are loaded.  The default is usually OK for rendering fonts
+to bitmap images.  When extracting outlines from fonts, be sure to
+set the FT\_LOAD\_NO\_HINTING flag.
 
-    The following load flags are available.  They can be combined with
-    the bit-wise OR operator (`|`).  The symbols are exported by the
-    module and so will be available once you do `use Font::FreeType`.
+The following load flags are available.  They can be combined with
+the bit-wise OR operator (`|`).  The symbols are exported by the
+module and so will be available once you do `use Font::FreeType`.
 
+    =begin item
+    I<FT_LOAD_DEFAULT>
 
-=item2	FT_LOAD_DEFAULT
+    The same as doing nothing special.
+    =end item
 
-	The same as doing nothing special.
+    =begin item
+    I<FT_LOAD_CROP_BITMAP>
 
-=item2	FT_LOAD_CROP_BITMAP
+    Remove extraneous black bits round the edges of bitmaps when loading
+    embedded bitmaps.
+    =end item
 
-	Remove extraneous black bits round the edges of bitmaps when loading
-	embedded bitmaps.
+    =begin item
+    I<FT_LOAD_FORCE_AUTOHINT>
 
-=item2	FT_LOAD_FORCE_AUTOHINT
+    Use FreeType's own automatic hinting algorithm rather than the normal
+    TrueType one.  Probably only useful for testing the FreeType library.
+    =end item
 
-	Use FreeType's own automatic hinting algorithm rather than the normal
-	TrueType one.  Probably only useful for testing the FreeType library.
+    =begin item
+    I<FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH>
 
-=item2	FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH
+    Probably only useful for loading fonts with wrong metrics.
+    =end item
 
-	Probably only useful for loading fonts with wrong metrics.
+    =begin item
+    I<FT_LOAD_IGNORE_TRANSFORM>
 
-=item2	FT_LOAD_IGNORE_TRANSFORM
+    Don't transform glyphs.  This module doesn't yet have support for
+    transformations.
+    =end item
 
-	Don't transform glyphs.  This module doesn't yet have support for
-	transformations.
+    =begin item
+    I<FT_LOAD_LINEAR_DESIGN>
 
-=item2	FT_LOAD_LINEAR_DESIGN
+    Don't scale the metrics.
+    =end item
 
-	Don't scale the metrics.
+    =begin item
+    I<FT_LOAD_NO_AUTOHINT>
 
-=item2	FT_LOAD_NO_AUTOHINT
+    Don't use the FreeType auto-hinting algorithm.  Hinting with other
+    algorithms (such as the TrueType one) will still be done if possible.
+    Apparently some fonts look worse with the auto-hinter than without
+    any hinting.
 
-	Don't use the FreeType auto-hinting algorithm.  Hinting with other
-	algorithms (such as the TrueType one) will still be done if possible.
-	Apparently some fonts look worse with the auto-hinter than without
-	any hinting.
+    This option is only available with FreeType 2.1.3 or newer.
+    =end item
 
-	This option is only available with FreeType 2.1.3 or newer.
+    =begin item
+    I<FT_LOAD_NO_BITMAP>
 
-=item2	FT_LOAD_NO_BITMAP
+    Don't load embedded bitmaps provided with scalable fonts.  Bitmap
+    fonts are still loaded normally.  This probably doesn't make much
+    difference in the current version of this module, as embedded
+    bitmaps aren't deliberately used.
+    =end item
 
-	Don't load embedded bitmaps provided with scalable fonts.  Bitmap
-	fonts are still loaded normally.  This probably doesn't make much
-	difference in the current version of this module, as embedded
-	bitmaps aren't deliberately used.
+    =begin item
+    I<FT_LOAD_NO_HINTING>
 
-=item2	FT_LOAD_NO_HINTING
+    Prevents the coordinates of the outline from being adjusted ('grid
+    fitted') to the current size.  Hinting should be turned on when rendering
+    bitmap images of glyphs, and off when extracting the outline
+    information if you don't know at what resolution it will be rendered.
+    For example, when converting glyphs to PostScript or PDF, use this
+    to turn the hinting off.
+    =end item
 
-	Prevents the coordinates of the outline from being adjusted ('grid
-	fitted') to the current size.  Hinting should be turned on when rendering
-	bitmap images of glyphs, and off when extracting the outline
-	information if you don't know at what resolution it will be rendered.
-	For example, when converting glyphs to PostScript or PDF, use this
-	to turn the hinting off.
+    =begin item
+    I<FT_LOAD_NO_SCALE>
 
-=item2	FT_LOAD_NO_SCALE
+    Don't scale the font's outline or metrics to the right size.  This
+    will currently generate bad numbers.  To be fixed in a later version.
+    =end item
 
-	Don't scale the font's outline or metrics to the right size.  This
-	will currently generate bad numbers.  To be fixed in a later version.
+    =begin item
+    I<FT_LOAD_PEDANTIC>
 
-=item2	FT_LOAD_PEDANTIC
+    Raise errors when a font file is broken, rather than trying to work
+    around it.
+    =end item
 
-	Raise errors when a font file is broken, rather than trying to work
-	around it.
+    =begin item
+    I<FT_LOAD_VERTICAL_LAYOUT>
 
-=item2	FT_LOAD_VERTICAL_LAYOUT
+    Return metrics and glyphs suitable for vertical layout.  This module
+    doesn't yet provide any intentional support for vertical layout, so
+    this probably won't be much use.
+    =end item
 
-	Return metrics and glyphs suitable for vertical layout.  This module
-	doesn't yet provide any intentional support for vertical layout, so
-	this probably won't be much use.
+=head3 version()
 
-
-=item version()
-
-    Returns the version number of the underlying FreeType library being
-    used.  If called in scalar context returns a Version consisting of
-    a number in the format "major.minor.patch".
+Returns the version number of the underlying FreeType library being
+used.  If called in scalar context returns a Version consisting of
+a number in the format "major.minor.patch".
 
 =head1 SEE ALSO
 
 =item [Font::FreeType::Face](lib/Font/FreeType/Face.md) - Font Properties
-=item  Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
+=item  [Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
 =item2    [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
 =item2    [Font::FreeType::Outline](lib/Font/FreeType/Outline.md) - Scalable glyph images
 =item2    [Font::FreeType::BitMap](lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
@@ -236,6 +258,5 @@ Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 201
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
-
 
 =end pod

@@ -18,7 +18,7 @@ SYNOPSIS
         while $glyph-idx {
             @to-unicode[ $glyph-idx ] = $char-code;
             $char-code = $struct.FT_Get_Next_Char( $char-code, $glyph-idx);
-        }  
+        }
     }
 
 DESCRIPTION
