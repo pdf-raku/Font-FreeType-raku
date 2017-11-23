@@ -47,37 +47,38 @@ sub MAIN(Str $font-file,
     my @pix-bufs = @bitmaps.map: { .defined && .width ?? .pixels !! Any };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
     my $bottom = - ($descend // @bitmaps.map({.defined ?? .rows - .top !! 0}).max);
-
     for $top ...^ $bottom -> $row {
+        my Str @line;
+        my int16 $pos = 0;
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
-                my $cs = $char-spacing;
-                $cs += do-horiz-kern($face, $_, @bitmaps[$col+1], $mode)
-                    if $col && $kern && $face.has-kerning && $col+1 < +@bitmaps;
-                print scan-line($_, @pix-bufs[$col], $row);
-                print ' ' x $cs;
+                $pos += do-horiz-kern($face, @bitmaps[$col-1], $_, $mode)
+                    if $col && $kern && $face.has-kerning;
+                my @chars = scan-line($_, @pix-bufs[$col], $row);
+                @line[$pos..($pos += +@chars)] = @chars;
+                $pos += $char-spacing;
             }
             else {
-                warn "hmm...";
-                print ' ' x $word-spacing;
+                @line = ' ' xx $word-spacing;
             }
         }
-        say '';
+        $_ //= ' ' for @line;
+        say @line.join;
     }
 }
 
 sub scan-line($bitmap, $pix-buf, $row) {
-    my $s = '';
+    my Str @chars;
     my int $y = $bitmap.top - $row;
     if $bitmap.rows > $y >= 0 {
         for ^$bitmap.width -> int $x {
-            $s ~= $pix-buf[$y;$x] ?? '#' !! ' ';
+            @chars.push: $pix-buf[$y;$x] ?? '#' !! ' ';
         }
     }
     else {
-        $s = ' ' x $bitmap.width;
+        @chars = ' ' xx $bitmap.width;
     }
-    $s;
+    @chars;
 }
 
 sub do-horiz-kern($face, $bm1, $bm2, $mode ) {
