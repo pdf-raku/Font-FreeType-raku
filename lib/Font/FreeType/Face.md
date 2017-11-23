@@ -214,7 +214,7 @@ Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 COPYRIGHT
 =========
