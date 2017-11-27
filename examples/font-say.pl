@@ -8,7 +8,7 @@ enum Mode «
     :mono(2)
     :lcd(3)
     :lcd-v(4)
-   »; 
+   »;
 
 sub MAIN(Str $font-file,
          Str $text is copy,
@@ -21,6 +21,7 @@ sub MAIN(Str $font-file,
          UInt :$word-spacing is copy,
          UInt :$bold = 0,
          Mode :$mode = normal,
+         Bool :$verbose,
     ) {
 
     if $text eq '' {
@@ -41,7 +42,10 @@ sub MAIN(Str $font-file,
     $word-spacing //= $char-spacing * 4;
     my @bitmaps = $face.glyph-images($text).map: {
         .bold($bold) if $bold;
-        .bitmap(:render-mode($mode));
+        my $bitmap = .bitmap(:render-mode($mode));
+        note "{.char-code.chr} U+{.char-code.fmt('%06X')} [{.index}]: {$bitmap.width} X {$bitmap.rows}"
+            if $verbose;
+        $bitmap;
     }
 
     my @pix-bufs = @bitmaps.map: { .defined && .width ?? .pixels !! Any };
@@ -54,12 +58,14 @@ sub MAIN(Str $font-file,
             with @bitmaps[$col] {
                 $pos += do-horiz-kern($face, @bitmaps[$col-1], $_, $mode)
                     if $col && $kern && $face.has-kerning;
-                my @chars = scan-line($_, @pix-bufs[$col], $row);
-                @line[$pos..($pos += +@chars)] = @chars;
+                for scan-line($_, @pix-bufs[$col], $row) -> $pix {
+                    @line[$pos] = '#' if $pix;
+                    $pos++;
+                }
                 $pos += $char-spacing;
             }
             else {
-                @line = ' ' xx $word-spacing;
+                $pos += $word-spacing;
             }
         }
         $_ //= ' ' for @line;
@@ -68,17 +74,17 @@ sub MAIN(Str $font-file,
 }
 
 sub scan-line($bitmap, $pix-buf, $row) {
-    my Str @chars;
+    my uint8 @pix[$bitmap.width];
     my int $y = $bitmap.top - $row;
     if $bitmap.rows > $y >= 0 {
+        my int $i = 0;
         for ^$bitmap.width -> int $x {
-            @chars.push: $pix-buf[$y;$x] ?? '#' !! ' ';
+            @pix[$i] = 1
+                if $pix-buf[$y;$x];
+            $i++;
         }
     }
-    else {
-        @chars = ' ' xx $bitmap.width;
-    }
-    @chars;
+    @pix;
 }
 
 sub do-horiz-kern($face, $bm1, $bm2, $mode ) {
