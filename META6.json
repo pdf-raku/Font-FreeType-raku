@@ -6,8 +6,7 @@
   "build-depends" : [
     "LibraryMake"
   ],
-  "depends" : [
-  ],
+  "depends" : [ ],
   "description" : "read font files and render glyphs from Perl using FreeType2",
   "license" : "Artistic-2.0",
   "name" : "Font::FreeType",
