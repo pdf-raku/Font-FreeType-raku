@@ -3,9 +3,10 @@
   "authors" : [
     "David Warring"
   ],
-  "build-depends" : [ ],
-  "depends" : [
+  "build-depends" : [
     "LibraryMake"
+  ],
+  "depends" : [
   ],
   "description" : "read font files and render glyphs from Perl using FreeType2",
   "license" : "Artistic-2.0",
@@ -36,5 +37,5 @@
     "freetype"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }
