@@ -37,7 +37,7 @@ class Font::FreeType {
         Font::FreeType::Face.new: :$struct, |c;
     }
 
-    multi method face(buf8 $file-buf,
+    multi method face(Blob $file-buf,
                       Int :$size = $file-buf.bytes,
                       Int :$index = 0,
                       |c
