@@ -36,9 +36,8 @@ class Font::FreeType::Face {
         my Font::FreeType::BitMap::Size @fixed-sizes;
         (0 ..^ $n-sizes).map: {
             my $struct = $ptr[$_];
-            @fixed-sizes.push: Font::FreeType::BitMap::Size.new: :$struct;
+            Font::FreeType::BitMap::Size.new: :$struct;
         }
-        @fixed-sizes;
     }
 
     method charmap {
