@@ -4,7 +4,8 @@
     "David Warring"
   ],
   "build-depends" : [
-    "LibraryMake"
+    "LibraryMake",
+    "Pod::To::Markdown"
   ],
   "depends" : [ ],
   "description" : "read font files and render glyphs from Perl using FreeType2",
