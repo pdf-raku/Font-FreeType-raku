@@ -33,9 +33,8 @@ class Font::FreeType::Face {
     method fixed-sizes {
         my int $n-sizes = self.num-fixed-sizes;
         my $ptr = $!struct.available-sizes;
-        my Font::FreeType::BitMap::Size @fixed-sizes;
         (0 ..^ $n-sizes).map: {
-            my $struct = $ptr[$_];
+            my FT_Bitmap_Size $struct = $ptr[$_];
             Font::FreeType::BitMap::Size.new: :$struct;
         }
     }
@@ -48,7 +47,8 @@ class Font::FreeType::Face {
         my int $n-sizes = self.num-charmaps;
         my $ptr = $!struct.charmaps;
         (0 ..^ $n-sizes).map: {
-            Font::FreeType::CharMap.new: :struct($ptr[$_]);
+            my FT_CharMap $struct = $ptr[$_];
+            Font::FreeType::CharMap.new: :$struct;
         }
     }
 

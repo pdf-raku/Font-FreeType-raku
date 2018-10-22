@@ -152,7 +152,7 @@ This script displays text as bitmapped characters, using a given font. For examp
 INSTALL
 =======
 
-Font::FreeType depends on the [freetype](https://www.freetype.org/download.html), so you must install that prior to using this module.
+Font::FreeType depends on the [freetype](https://www.freetype.org/download.html) native library, so you must install that prior to using this module.
 
 SEE ALSO
 ========
