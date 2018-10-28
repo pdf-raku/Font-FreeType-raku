@@ -1,3 +1,5 @@
+0.1.0
+    - Perl 6.d syntax fix
 0.0.9
     - $face.charmaps now returns a Slip (was Array)
 0.0.8
