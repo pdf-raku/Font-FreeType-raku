@@ -53,7 +53,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 Create a new 'instance' of the freetype library and return the object. This is a class method, which doesn't take any arguments. If you only want to load one face, then it's probably not even worth saving the object to a variable:
 
-    my Font::FreeType::Face $face = Font::FreeType.new.face('Vera.ttf');
+    my $face = Font::FreeType.new.face('Vera.ttf');
 
 ### face(_filename_|_blob_, :$index, :load-flags)
 

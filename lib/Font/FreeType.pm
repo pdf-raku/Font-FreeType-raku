@@ -266,6 +266,9 @@ This script displays text as bitmapped characters, using a given font. For examp
                                                               ###          ###
 
 
+=head1 INSTALL
+
+Font::FreeType depends on the [freetype](https://www.freetype.org/download.html) native library, so you must install that prior to using this module.
 
 =head1 SEE ALSO
 
