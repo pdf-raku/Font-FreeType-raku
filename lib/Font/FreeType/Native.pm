@@ -54,22 +54,13 @@ use LibraryMake;
 use Font::FreeType::Error;
 use Font::FreeType::Native::Types;
 
+constant $SO = get-vars('')<SO>;
+
 # library bindings
-our $ftlib;
-BEGIN {
-    if $*VM.config<dll> ~~ /dll/ {
-        $ftlib = 'libfreetype';
-    } else {
-        $ftlib = ('freetype', v6);
-    }
-}
+constant $ftlib = $SO ~~ /dll/ ?? 'libfreetype' !! ('freetype', v6);
 
 # additional C bindings
-our $ft-p6-lib;
-BEGIN {
-    my $so = get-vars('')<SO>;
-    $ft-p6-lib = ~(%?RESOURCES{"lib/libft6$so"});
-}
+constant $ft-p6-lib = ~(%?RESOURCES{"lib/libft6$SO"});
 
 constant FT_Byte   = uint8;
 constant FT_Encoding = uint32;

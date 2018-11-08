@@ -13,7 +13,7 @@ SYNOPSIS
 
     sub face-unicode-map(Font::FreeType::Face $face) {
         my uint16 @to-unicode[$face.num-glyphs];
-        my FT_Face $struct = $face.struct;  # get the native face object
+        my FT_Face  $struct = $face.struct;  # get the native face object
         my FT_UInt  $glyph-idx;
         my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
         while $glyph-idx {
