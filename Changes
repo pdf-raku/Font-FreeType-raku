@@ -1,3 +1,6 @@
+0.1.1
+    - Move resources/lib to resources/libraries. Build improvements.
+      See https://gist.github.com/ugexe/ec5fe910d3187c46a4f8e634423cb4ea
 0.1.0
     - Perl 6.d syntax fix
 0.0.9

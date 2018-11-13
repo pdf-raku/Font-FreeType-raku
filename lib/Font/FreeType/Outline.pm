@@ -27,10 +27,10 @@ class Font::FreeType::Outline {
         method points { nativecast(CArray[num64], $!points) }
 
         method ft_outline_gather(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
-            returns FT_Error is native($Font::FreeType::Native::ft-p6-lib) {*}
+            returns FT_Error is native(Font::FreeType::Native::FT-WRAPPER-LIB) {*}
 
         method ft_outline_gather_done
-            is native($Font::FreeType::Native::ft-p6-lib) {*}
+            is native(Font::FreeType::Native::FT-WRAPPER-LIB) {*}
 
         method DESTROY {
             self.ft_outline_gather_done;

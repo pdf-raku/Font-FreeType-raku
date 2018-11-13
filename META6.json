@@ -27,9 +27,7 @@
     "Font::FreeType::Outline" : "lib/Font/FreeType/Outline.pm"
   },
   "resources" : [
-    "lib/libft6.so",
-    "lib/libft6.dll",
-    "lib/libft6.dylib"
+    "libraries/ft6"
   ],
   "source-url" : "git://github.com/p6-pdf/Font-FreeType-p6.git",
   "tags" : [
@@ -37,5 +35,5 @@
     "freetype"
   ],
   "test-depends" : [ ],
-  "version" : "0.1.0"
+  "version" : "0.1.1"
 }
