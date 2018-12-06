@@ -1,3 +1,5 @@
+0.1.2
+    - Fixed Font::FreeType::Native.Str on Rakudo bleed 2018.11+
 0.1.1
     - Move resources/lib to resources/libraries. Build improvements.
       See https://gist.github.com/ugexe/ec5fe910d3187c46a4f8e634423cb4ea

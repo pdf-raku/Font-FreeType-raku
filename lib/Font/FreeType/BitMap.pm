@@ -115,7 +115,7 @@ class Font::FreeType::BitMap {
     method pgm returns Buf {
         my $pixels = self.pixels;
         my UInt ($ht, $wd) = $pixels.shape.list;
-        my Buf $buf = buf8.new: "P5\n$wd $ht\n255\n".encode('latin-1');
+        my buf8 $buf .= new: "P5\n$wd $ht\n255\n".encode('latin-1');
         $buf.append: $pixels.list;
         $buf;
     }

@@ -61,8 +61,6 @@ class Font::FreeType::Face {
     method named-infos {
         return Mu unless self.is-scalable;
         my int $n-sizes = $!struct.FT_Get_Sfnt_Name_Count;
-        my buf8 $buf .= allocate(256);
-
         (0 ..^ $n-sizes).map: -> $i {
             my FT_SfntName $sfnt .= new;
             ft-try({ $!struct.FT_Get_Sfnt_Name($i, $sfnt); });
@@ -104,7 +102,7 @@ class Font::FreeType::Face {
     method forall-chars(&code, Int :$flags = $!load-flags) {
         my FT_UInt  $glyph-idx;
         my $struct = $!struct.glyph;
-        my $glyph = Font::FreeType::Glyph.new: :face(self), :$struct;
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
         $glyph.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
 
         while $glyph-idx {
@@ -116,7 +114,7 @@ class Font::FreeType::Face {
 
     method for-glyphs(Str $text, &code, Int :$flags = $!load-flags) {
         my $struct = $!struct.glyph;
-        my $glyph = Font::FreeType::Glyph.new: :face(self), :$struct;
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
         for $text.ords -> $char-code {
             ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
             $glyph.char-code = $char-code;
@@ -145,7 +143,7 @@ class Font::FreeType::Face {
     method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_UNFITTED) {
         my FT_UInt $left-idx = $!struct.FT_Get_Char_Index( $left.ord );
         my FT_UInt $right-idx = $!struct.FT_Get_Char_Index( $right.ord );
-        my $vec = FT_Vector.new;
+        my FT_Vector $vec .= new;
         ft-try({ $!struct.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); });
         Vector.new: :struct($vec);
     }

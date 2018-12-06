@@ -44,7 +44,7 @@ class Font::FreeType::Outline {
 
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
         my int32 $max-points = $!struct.n-points * 6;
-        my $shape = ft_shape_t.new: :$max-points;
+        my ft_shape_t $shape .= new: :$max-points;
         ft-try({ $shape.ft_outline_gather($!struct, $shift, $delta, $conic ?? 1 !! 0); });
         $shape;
     }
