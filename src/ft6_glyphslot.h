@@ -1,5 +1,5 @@
-#ifndef __FT_GLYPHSLOT_H
-#define __FT_GLYPHSLOT_H
+#ifndef __FT6_GLYPHSLOT_H
+#define __FT6_GLYPHSLOT_H
 
 #ifdef _WIN32
 #define DLLEXPORT __declspec(dllexport)
@@ -14,4 +14,4 @@
 DLLEXPORT FT_Glyph_Metrics
 *ft6_glyphslot_metrics(FT_GlyphSlot glyphslot);
 
-#endif /* __FT_GLYPHSLOT_H */
+#endif /* __FT6_GLYPHSLOT_H */

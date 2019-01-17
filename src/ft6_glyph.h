@@ -1,5 +1,5 @@
-#ifndef __FT_GLYPH_H
-#define __FT_GLYPH_H
+#ifndef __FT6_GLYPH_H
+#define __FT6_GLYPH_H
 
 #ifdef _WIN32
 #define DLLEXPORT __declspec(dllexport)
@@ -16,4 +16,4 @@
 DLLEXPORT FT_Bitmap
 *ft6_glyph_bitmap(FT_BitmapGlyph bm_glyph);
 
-#endif /* __FT_GLYPH_H */
+#endif /* __FT6_GLYPH_H */

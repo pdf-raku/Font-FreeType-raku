@@ -32,7 +32,7 @@ class Font::FreeType::Outline {
         method ft6_outline_gather_done
             is native(Font::FreeType::Native::FT-WRAPPER-LIB) {*}
 
-        method DESTROY {
+        submethod DESTROY {
             self.ft6_outline_gather_done;
         }
     }

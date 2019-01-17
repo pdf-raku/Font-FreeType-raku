@@ -1,5 +1,5 @@
-#ifndef __FT_OUTLINE_H
-#define __FT_OUTLINE_H
+#ifndef __FT6_OUTLINE_H
+#define __FT6_OUTLINE_H
 
 #ifdef _WIN32
 #define DLLEXPORT __declspec(dllexport)
@@ -34,4 +34,4 @@ DLLEXPORT FT_Error ft6_outline_gather(ft_shape_t *data, FT_Outline *outline, int
 DLLEXPORT void
 ft6_outline_gather_done(ft_shape_t *shape);
 
-#endif /* __FT_OUTLINE_H */
+#endif /* __FT6_OUTLINE_H */
