@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 /* Get prototype. */
-#include "ft_outline.h"
+#include "ft6_outline.h"
 
 static int add_op(ft_shape_t *shape, FT_OUTLINE_OP op) {
   shape->ops[ shape->n_ops++ ] = (uint8_t) op;
@@ -62,7 +62,7 @@ take_conic_as_cubic(const FT_Vector *cp1, const FT_Vector *to, void *user) {
 }
 
 DLLEXPORT FT_Error
-ft_outline_gather(ft_shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt) {
+ft6_outline_gather(ft_shape_t *shape, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt) {
    FT_Outline_Funcs funcs = {
       take_move_to,
       take_line_to,
@@ -80,7 +80,7 @@ ft_outline_gather(ft_shape_t *shape, FT_Outline *outline, int shift, FT_Pos delt
 }
 
 DLLEXPORT void
-ft_outline_gather_done(ft_shape_t *shape) {
+ft6_outline_gather_done(ft_shape_t *shape) {
   if (shape->ops) free(shape->ops);
   if (shape->points) free(shape->points);
   shape->ops = NULL;

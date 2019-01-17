@@ -1,3 +1,5 @@
+0.1.3
+    - Renamed C wrapper functions and sources ft_* -> ft6_*.
 0.1.2
     - Fixed Font::FreeType::Native.Str on Rakudo bleed 2018.11+
 0.1.1

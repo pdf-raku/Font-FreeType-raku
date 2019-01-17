@@ -26,14 +26,14 @@ class Font::FreeType::Outline {
         method ops { nativecast(CArray[uint8], $!ops) }
         method points { nativecast(CArray[num64], $!points) }
 
-        method ft_outline_gather(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
-            returns FT_Error is native(Font::FreeType::Native::FT-WRAPPER-LIB) {*}
+        method gather_outlines(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
+            returns FT_Error is native(Font::FreeType::Native::FT-WRAPPER-LIB) is symbol('ft6_outline_gather') {*}
 
-        method ft_outline_gather_done
+        method ft6_outline_gather_done
             is native(Font::FreeType::Native::FT-WRAPPER-LIB) {*}
 
         method DESTROY {
-            self.ft_outline_gather_done;
+            self.ft6_outline_gather_done;
         }
     }
 
@@ -45,7 +45,7 @@ class Font::FreeType::Outline {
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
         my int32 $max-points = $!struct.n-points * 6;
         my ft_shape_t $shape .= new: :$max-points;
-        ft-try({ $shape.ft_outline_gather($!struct, $shift, $delta, $conic ?? 1 !! 0); });
+        ft-try({ $shape.gather_outlines($!struct, $shift, $delta, $conic ?? 1 !! 0); });
         $shape;
     }
 

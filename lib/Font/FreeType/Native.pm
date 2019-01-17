@@ -231,7 +231,7 @@ class FT_BitmapGlyph is repr('CStruct') is FT_Glyph is export is rw {
     HAS FT_Bitmap         $.bitmap;
     method !bitmap-pointer
         is native(FT-WRAPPER-LIB)
-        is symbol('ft_glyph_bitmap')
+        is symbol('ft6_glyph_bitmap')
         returns Pointer[FT_Bitmap]
     {*}
     method bitmap { self!bitmap-pointer.deref }
@@ -242,7 +242,7 @@ class FT_OutlineGlyph is FT_Glyph is repr('CStruct') is export {
     HAS FT_Outline        $.outline;
     method !outline-pointer
         is native(FT-WRAPPER-LIB)
-        is symbol('ft_glyph_outline')
+        is symbol('ft6_glyph_outline')
         returns Pointer[FT_Outline]
     {*}
     method outline { self!outline-pointer.deref }
@@ -297,7 +297,7 @@ class FT_GlyphSlot is repr('CStruct') is export {
     ## Work-around for Rakudo RT #132222 - iffy HAS accessor
     method !metrics-pointer
         is native(FT-WRAPPER-LIB)
-        is symbol('ft_glyphslot_metrics')
+        is symbol('ft6_glyphslot_metrics')
         returns Pointer[FT_Glyph_Metrics]
     {*}
     method metrics { self!metrics-pointer.deref }

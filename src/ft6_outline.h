@@ -29,9 +29,9 @@ typedef struct {
 
 #define QEFFT2_NUM(num)  ((double) (num) / 64.0)
 
-DLLEXPORT FT_Error ft_outline_gather(ft_shape_t *data, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt);
+DLLEXPORT FT_Error ft6_outline_gather(ft_shape_t *data, FT_Outline *outline, int shift, FT_Pos delta, uint8_t conic_opt);
 
 DLLEXPORT void
-ft_outline_gather_done(ft_shape_t *shape);
+ft6_outline_gather_done(ft_shape_t *shape);
 
 #endif /* __FT_OUTLINE_H */

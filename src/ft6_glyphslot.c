@@ -3,10 +3,10 @@
 #include <stdint.h>
 #include <string.h>
 /* Get prototype. */
-#include "ft_glyphslot.h"
+#include "ft6_glyphslot.h"
 
 DLLEXPORT FT_Glyph_Metrics
-*ft_glyphslot_metrics(FT_GlyphSlot glyphslot) {
+*ft6_glyphslot_metrics(FT_GlyphSlot glyphslot) {
   return &(glyphslot->metrics);
 }
 

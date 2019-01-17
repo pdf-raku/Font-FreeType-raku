@@ -14,6 +14,6 @@
 #include FT_OUTLINE_H
 
 DLLEXPORT FT_Bitmap
-*ft_glyph_bitmap(FT_BitmapGlyph bm_glyph);
+*ft6_glyph_bitmap(FT_BitmapGlyph bm_glyph);
 
 #endif /* __FT_GLYPH_H */
