@@ -2,19 +2,19 @@ SRC=src
 
 all : lib doc
 
-lib : resources/libraries/%LIB_NAME%
+lib : resources/libraries/%LIB-NAME%
 
-resources/libraries/%LIB_NAME% : $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O%
-	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/libraries/%LIB_NAME% $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% `freetype-config --libs`
+resources/libraries/%LIB-NAME% : $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O%
+	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/libraries/%LIB-NAME% $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% %LIB-LDFLAGS%
 
 $(SRC)/ft6_outline%O% : $(SRC)/ft6_outline.c $(SRC)/ft6_outline.h
-	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_outline%O% $(SRC)/ft6_outline.c `freetype-config --cflags`
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_outline%O% $(SRC)/ft6_outline.c %LIB-CFLAGS%
 
 $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
-	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyph%O% $(SRC)/ft6_glyph.c `freetype-config --cflags`
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyph%O% $(SRC)/ft6_glyph.c %LIB-CFLAGS%
 
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
-	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c `freetype-config --cflags`
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS%
 
 # NB README.pm is built by mi6
 doc : lib/Font/FreeType/BitMap.md lib/Font/FreeType/CharMap.md lib/Font/FreeType/Face.md lib/Font/FreeType/Glyph.md lib/Font/FreeType/GlyphImage.md lib/Font/FreeType/Outline.md lib/Font/FreeType/NamedInfo.md lib/Font/FreeType/Native.md lib/Font/FreeType/Native/Types.md
@@ -50,7 +50,7 @@ test : all
 	@prove -e"perl6 -I ." -v t
 
 clean :
-	@rm -f $(SRC)/ft6_*.o resources/libraries/*%LIB_NAME%
+	@rm -f $(SRC)/ft6_*%O% resources/libraries/*%LIB-NAME%
 
 realclean : clean
 	@rm -f Makefile

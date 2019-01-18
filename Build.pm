@@ -11,7 +11,10 @@ class Build {
     #| without any prefixes or extensions.
     sub make(Str $folder, Str $destfolder, IO() :$libname!) {
         my %vars = LibraryMake::get-vars($destfolder);
-        %vars<LIB_NAME> = ~ $*VM.platform-library-name($libname);
+        %vars<LIB-NAME> = ~ $*VM.platform-library-name($libname);
+        %vars<LIB-LDFLAGS> = chomp qx<freetype-config --libs>;
+        %vars<LIB-CFLAGS> = chomp qx<freetype-config --cflags>;
+
         mkdir($destfolder);
         LibraryMake::process-makefile($folder, %vars);
         shell(%vars<MAKE>);
