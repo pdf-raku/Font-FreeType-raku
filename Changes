@@ -2,8 +2,8 @@
     - Fix premature destruction of Font-Library
       e.g. this is dangerous:
            my $vera = Font::FreeType.new.face('t/fonts/Vera.ttf');
-      The anonymous font library instance could get destroiyed
-      also destroying the struct still-live $vera face.
+      The anonymous font library instance could get destroyed also
+      destroying the underlying struct for the still-live $vera face.
 
       Added a $.ft-lib property to face that references
       to library class to avoid it's destruction.

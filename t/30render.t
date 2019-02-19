@@ -36,10 +36,16 @@ for @test {
     my $expected-pgm = $test-filename.IO.slurp(:bin);
     $vera.set-char-size(.<x_sz>, .<y_sz>, .<x_res>, .<y_res>);
     my $render-mode = .<aa> ?? FT_RENDER_MODE_NORMAL !! FT_RENDER_MODE_MONO;
-    for $vera.glyph-images(.<char>) {
-        is-deeply .face, $vera, 'glyph-image link to parent face';
-        my $bm = .bitmap: :$render-mode;
-        is-deeply $bm.face, $vera, 'bitmap link to parent face';
+    for $vera.glyph-images(.<char>) -> $gi {
+        my $bm = $gi.bitmap: :$render-mode;
+
+        if $*PERL.compiler.version < v2018.11 {
+            skip "tests unreliable on this Rakudo version", 2;
+        }
+        else {
+            is-deeply $gi.face, $vera, 'glyph-image link to parent face';
+            is-deeply $bm.face, $vera, 'bitmap link to parent face';
+        }
         ok $bm.pixels.defined, 'pixels';
         isa-ok $bm.left, Int, 'left';
         isa-ok $bm.top, Int, 'top';
