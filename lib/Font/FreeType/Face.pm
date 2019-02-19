@@ -12,6 +12,7 @@ class Font::FreeType::Face {
     use Font::FreeType::NamedInfo;
     use Font::FreeType::CharMap;
 
+    has $.ft-lib is required; #| keep a reference to library root object. Just to avoid destroying it
     has FT_Face $.struct handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
         height max-advance-width max-advance-height size>;
@@ -35,12 +36,12 @@ class Font::FreeType::Face {
         my $ptr = $!struct.available-sizes;
         (0 ..^ $n-sizes).map: {
             my FT_Bitmap_Size $struct = $ptr[$_];
-            Font::FreeType::BitMap::Size.new: :$struct;
+            Font::FreeType::BitMap::Size.new: :$struct, :face(self);
         }
     }
 
     method charmap {
-        Font::FreeType::CharMap.new: :struct($!struct.charmap);
+        Font::FreeType::CharMap.new: :face(self), :struct($!struct.charmap);
     }
 
     method charmaps {
@@ -48,7 +49,7 @@ class Font::FreeType::Face {
         my $ptr = $!struct.charmaps;
         (0 ..^ $n-sizes).map: {
             my FT_CharMap $struct = $ptr[$_];
-            Font::FreeType::CharMap.new: :$struct;
+            Font::FreeType::CharMap.new: :face(self), :$struct;
         }
     }
 

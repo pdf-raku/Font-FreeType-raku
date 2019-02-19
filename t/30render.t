@@ -13,7 +13,7 @@ my @test = (
     { char => '.', x_sz => 300, y_sz => 300, x_res => 72, y_res => 72, aa => 1 },
 );
 use Test;
-plan +@test * 4 + 3;
+plan +@test * 4 + 16;
 
 # Load the TTF file.
 # Hinting is turned off, because otherwise the compile-time option to turn
@@ -21,8 +21,11 @@ plan +@test * 4 + 3;
 # for some people.  This should make it always the same, unless the library
 # changes the rendering algorithm.
 my Font::FreeType $ft .= new;
-my $vera = Font::FreeType.new.face('t/fonts/Vera.ttf',
-                                   :load-flags(FT_LOAD_NO_HINTING));
+use Font::FreeType::Face;
+my Font::FreeType::Face $vera = $ft.face('t/fonts/Vera.ttf',
+                    :load-flags(FT_LOAD_NO_HINTING));
+
+is-deeply $vera.ft-lib, $ft, 'back-reference from font to library';
 
 for @test {
     my $test-basename = join('.',
@@ -34,7 +37,9 @@ for @test {
     $vera.set-char-size(.<x_sz>, .<y_sz>, .<x_res>, .<y_res>);
     my $render-mode = .<aa> ?? FT_RENDER_MODE_NORMAL !! FT_RENDER_MODE_MONO;
     for $vera.glyph-images(.<char>) {
+        is-deeply .face, $vera, 'glyph-image link to parent face';
         my $bm = .bitmap: :$render-mode;
+        is-deeply $bm.face, $vera, 'bitmap link to parent face';
         ok $bm.pixels.defined, 'pixels';
         isa-ok $bm.left, Int, 'left';
         isa-ok $bm.top, Int, 'top';

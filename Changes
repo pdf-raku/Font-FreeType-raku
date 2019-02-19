@@ -1,3 +1,18 @@
+0.1.4
+    - Fix premature destruction of Font-Library
+      e.g. this is dangerous:
+           my $vera = Font::FreeType.new.face('t/fonts/Vera.ttf');
+      The anonymous font library instance could get destroiyed
+      also destroying the struct still-live $vera face.
+
+      Added a $.ft-lib property to face that references
+      to library class to avoid it's destruction.
+
+      Also added $.face property to BitMap, CharMap,
+      Glyph and GlyphImage to indirectly keep the library
+      from being destroyed if any of these sub-objects
+      exist.
+      
 0.1.3
     - Renamed C wrapper functions and sources ft_* -> ft6_*.
 0.1.2

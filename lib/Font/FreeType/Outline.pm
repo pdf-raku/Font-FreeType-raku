@@ -1,9 +1,14 @@
 class Font::FreeType::Outline {
 
+    has $.face is required;
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
+
+    method !library(--> FT_Library:D) {
+        $!face.ft-lib.struct;
+    }
 
     enum FT_OUTLINE_OP «
         :FT_OUTLINE_OP_NONE
@@ -38,9 +43,8 @@ class Font::FreeType::Outline {
     }
 
     has FT_Outline $!struct handles <n-contours n-points points tags contours flags>;
-    has FT_Library $!library;
 
-    submethod TWEAK(:$!struct!, :$!library!) { }
+    submethod TWEAK(:$!struct!) { }
 
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
         my int32 $max-points = $!struct.n-points * 6;
@@ -99,14 +103,13 @@ class Font::FreeType::Outline {
     }
 
     method clone {
-        my $outline = $!struct.clone($!library);
-        self.new: :struct($outline), :$!library;
+        my $outline = $!struct.clone(self!library);
+        self.new: :struct($outline), :$!face;
     }
 
     method DESTROY {
-        ft-try({ $!library.FT_Outline_Done($!struct) });
+        ft-try({ self!library.FT_Outline_Done($!struct) });
         $!struct = Nil;
-        $!library = Nil;
     }
 }
 

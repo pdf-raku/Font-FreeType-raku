@@ -5,15 +5,19 @@ class Font::FreeType::BitMap {
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
 
+    has $.face;
     has FT_Bitmap $!struct handles <rows width pitch num-grays pixel-mode pallette>;
-    has FT_Library $!library;
     has Int $.left is required;
     has Int $.top is required;
     has FT_ULong     $.char-code is required;
 
-    submethod TWEAK(:$!struct!, :$!library!) {
+    submethod TWEAK(:$!struct!) {
         $!top *= 3
             if $!struct.pixel-mode == +FT_PIXEL_MODE_LCD_V;
+    }
+
+    method !library(--> FT_Library:D) {
+        $!face.ft-lib.struct;
     }
 
     constant Dpi = 72.0;
@@ -27,8 +31,8 @@ class Font::FreeType::BitMap {
 
     method convert(UInt :$alignment = 1) {
         my FT_Bitmap $target .= new;
-        ft-try({ $!library.FT_Bitmap_Convert($!struct, $target, $alignment); });
-        self.new: :$!library, :struct($target), :$!left, :$!top;
+        ft-try({ self!library.FT_Bitmap_Convert($!struct, $target, $alignment); });
+        self.new: :$!face, :struct($target), :$!left, :$!top;
     }
 
     method depth {
@@ -122,14 +126,13 @@ class Font::FreeType::BitMap {
 
     method clone {
         return self unless self.defined;
-        my $bitmap = $!struct.clone($!library);
-        self.new: :$!library, :struct($bitmap), :$!top, :$!left; 
+        my $bitmap = $!struct.clone(self!library);
+        self.new: :$!face, :struct($bitmap), :$!top, :$!left; 
     }
 
     method DESTROY {
-        ft-try({ $!library.FT_Bitmap_Done($!struct) });
+        ft-try({ self!library.FT_Bitmap_Done($!struct) });
         $!struct = Nil;
-        $!library = Nil;
     }
 
     class Size {

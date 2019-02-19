@@ -1,26 +1,26 @@
 use v6;
 
-class Font::FreeType:ver<0.1.3> {
+class Font::FreeType:ver<0.1.4> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
 
-    has FT_Library $!library;
+    has FT_Library $.struct;
     has Bool $!cleanup = False; # temporarily disabled
     our $lock = Lock.new;
 
     submethod BUILD {
         my $p = Pointer[FT_Library].new;
         ft-try({ FT_Init_FreeType( $p ); });
-        $!library = $p.deref;
+        $!struct = $p.deref;
     }
 
     submethod DESTROY {
         if $!cleanup {
             $lock.protect: {
-                with $!library {
+                with $!struct {
                     ft-try({ .FT_Done_FreeType });
                     $_ = Nil;
                 }
@@ -31,10 +31,10 @@ class Font::FreeType:ver<0.1.3> {
     multi method face(Str $file-path-name, Int :$index = 0, |c) {
         my $p = Pointer[FT_Face].new;
         $lock.protect: {
-            ft-try({ $!library.FT_New_Face($file-path-name, $index, $p); });
+            ft-try({ $!struct.FT_New_Face($file-path-name, $index, $p); });
         }
         my FT_Face $struct = $p.deref;
-        Font::FreeType::Face.new: :$struct, |c;
+        Font::FreeType::Face.new: :$struct, :ft-lib(self), |c;
     }
 
     multi method face(Blob $file-buf,
@@ -43,13 +43,13 @@ class Font::FreeType:ver<0.1.3> {
                       |c
         ) {
         my $p = Pointer[FT_Face].new;
-        ft-try({ $!library.FT_New_Memory_Face($file-buf, $size, $index, $p); });
+        ft-try({ $!struct.FT_New_Memory_Face($file-buf, $size, $index, $p); });
         my FT_Face $struct = $p.deref;
-        Font::FreeType::Face.new: :$struct, |c;
+        Font::FreeType::Face.new: :$struct, :ft-lib(self), |c;
     }
 
     method version returns Version {
-        $!library.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
+        $!struct.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
         Version.new: "{$major}.{$minor}.{$patch}";
     }
 }

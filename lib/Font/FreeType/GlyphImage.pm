@@ -8,10 +8,14 @@ class Font::FreeType::GlyphImage {
     use Font::FreeType::BitMap;
     use Font::FreeType::Outline;
 
+    has $.face is required; # parent font
     has FT_Glyph $.struct handles <top left>;
-    has FT_Library $!library;
     has FT_ULong  $.char-code;
     has FT_UInt   $.index;
+
+    method !library(--> FT_Library:D) {
+        $!face.ft-lib.struct;
+    }
 
     method format { FT_GLYPH_FORMAT($!struct.format) }
 
@@ -34,7 +38,6 @@ class Font::FreeType::GlyphImage {
             }
         }
 
-        $!library = $glyph.library;
         $!struct := $glyph-image;
     }
     method is-outline {
@@ -44,8 +47,8 @@ class Font::FreeType::GlyphImage {
         die "not an outline glyph"
             unless self.is-outline;
         my FT_Outline:D $outline = $!struct.outline;
-        my FT_Outline $struct = $outline.clone($!library);
-        Font::FreeType::Outline.new: :$!library, :$struct;
+        my FT_Outline $struct = $outline.clone(self!library);
+        Font::FreeType::Outline.new: :$struct, :$!face;
     }
     method bold(Int $strength) {
         if self.is-outline {
@@ -54,7 +57,7 @@ class Font::FreeType::GlyphImage {
         }
         elsif self.is-bitmap {
             my FT_Bitmap:D $bitmap = $!struct.bitmap;
-            ft-try({ $!library.FT_Bitmap_Embolden($bitmap, $strength, $strength); });
+            ft-try({ self!library.FT_Bitmap_Embolden($bitmap, $strength, $strength); });
         }
     }
 
@@ -78,9 +81,9 @@ class Font::FreeType::GlyphImage {
         self.to-bitmap(:$render-mode)
             unless self.is-bitmap;
         my FT_Bitmap:D $bitmap = $!struct.bitmap;
-        my FT_Bitmap $struct = $bitmap.clone($!library);
+        my FT_Bitmap $struct = $bitmap.clone(self!library);
         my $top = $.top;
-        Font::FreeType::BitMap.new: :$!library, :$struct, :$.left, :$top, :$!char-code;
+        Font::FreeType::BitMap.new: :$!face, :$struct, :$.left, :$top, :$!char-code;
     }
 
     method DESTROY {
