@@ -407,13 +407,13 @@ class FT_Face is export {
     #| Return the first character code in the current charmap of a given face, together with its corresponding glyph index.
     method FT_Get_First_Char(
         FT_UInt  $agindex is rw )
-    returns FT_UInt is native(FT-LIB) {*};
+    returns FT_ULong is native(FT-LIB) {*};
 
     #| Return the next character code in the current charmap of a given face following the value ‘char_code’, as well as the corresponding glyph index.
     method FT_Get_Next_Char(
-        FT_UInt  $char-code,
+        FT_ULong  $char-code,
         FT_UInt  $agindex is rw )
-    returns FT_UInt is native(FT-LIB) {*};
+    returns FT_ULong is native(FT-LIB) {*};
 
     #| Call FT_Request_Size to request the nominal size (in points).
     method FT_Set_Char_Size(

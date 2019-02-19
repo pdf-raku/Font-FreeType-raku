@@ -101,8 +101,8 @@ class Font::FreeType::Face {
     }
 
     method forall-chars(&code, Int :$flags = $!load-flags) {
-        my FT_UInt  $glyph-idx;
-        my $struct = $!struct.glyph;
+        my FT_UInt $glyph-idx;
+        my $struct := $!struct.glyph;
         my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
         $glyph.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
 

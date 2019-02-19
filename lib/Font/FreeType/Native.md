@@ -272,7 +272,7 @@ Load a glyph into the glyph slot of a face object, accessed by its character cod
 ```perl6
 method FT_Get_First_Char(
     uint32 $agindex is rw
-) returns uint32
+) returns NativeCall::Types::ulong
 ```
 
 Return the first character code in the current charmap of a given face, together with its corresponding glyph index.
@@ -281,9 +281,9 @@ Return the first character code in the current charmap of a given face, together
 
 ```perl6
 method FT_Get_Next_Char(
-    uint32 $char-code,
+    NativeCall::Types::ulong $char-code,
     uint32 $agindex is rw
-) returns uint32
+) returns NativeCall::Types::ulong
 ```
 
 Return the next character code in the current charmap of a given face following the value ‘char_code’, as well as the corresponding glyph index.
