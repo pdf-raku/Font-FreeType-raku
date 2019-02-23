@@ -4,9 +4,9 @@ plan 53;
 use Font::FreeType;
 use Font::FreeType::Native::Types;
 
-# Load the Vera Sans face.
 my Font::FreeType $ft .= new;
-# Load the Postcript file.
+my $ft-version = $ft.version;
+# Load the Postscript file.
 my $tnr = $ft.face: 't/fonts/TimesNewRomPS.pfb';
 ok $tnr.defined, 'FreeType.face returns an object';
 isa-ok $tnr, (require ::('Font::FreeType::Face')),
@@ -84,15 +84,15 @@ subtest "bounding box" => sub {
 # Test metrics on some particlar glyphs.
 my %glyph-metrics = (
     'A' => { name => 'A', advance => 1479,
-             LBearing => 20, RBearing => 50 },
+             LBearing => 20, RBearing => 20 },
     '_' => { name => 'underscore', advance => 1024,
-             LBearing => -17, RBearing => 4 },
+             LBearing => -17, RBearing => -17 },
     '`' => { name => 'grave', advance => 682,
-             LBearing => 116, RBearing => 245 },
+             LBearing => 118, RBearing => 235 },
     'g' => { name => 'g', advance => 1024,
-             LBearing => 56, RBearing => 56 },
+             LBearing => 57, RBearing => 36 },
     '|' => { name => 'bar', advance => 410,
-             LBearing => 160, RBearing => 169 },
+             LBearing => 163, RBearing => 164 },
 );
 
 # Set the size to match the em size, so that the values are in font units.
@@ -107,6 +107,10 @@ $tnr.for-glyphs: $chars, -> $glyph {
            "name of glyph '$char'";
         is $glyph.horizontal-advance, .<advance>,
            "advance width of glyph '$char'";
+
+        todo "FreeType2 v2.9.1+ needed for correct width and bearings", 3
+            unless $ft-version >= v2.9.1;
+
         is $glyph.left-bearing, .<LBearing>,
            "left bearing of glyph '$char'";
         is $glyph.right-bearing, .<RBearing>,

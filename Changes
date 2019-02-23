@@ -1,5 +1,7 @@
+0.1.6
+    Fix t/10metrics_postscript.t to pass on FreeType2 2.9.1+.
 0.1.5
-    Fix protypes for FT_Get_First_Char, FT_Get_Next_Char
+    Fix protoypes for FT_Get_First_Char, FT_Get_Next_Char
 0.1.4
     - Fix premature destruction of Font-Library
       e.g. this is dangerous:
