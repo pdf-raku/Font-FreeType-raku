@@ -461,7 +461,7 @@ class FT_Face is export {
 #|
 #| It also embeds a memory manager (see FT_Memory), as well as a scan-line converter object (see FT_Raster).
 #|
-#|In multi-threaded applications it is easiest to use one ‘FT_Library’ object per thread. In case this is too cumbersome, a single ‘FT_Library’ object across threads is possible also (since FreeType version 2.5.6), as long as a mutex lock is used around FT_New_Face and FT_Done_Face.
+#| In multi-threaded applications it is easiest to use one ‘FT_Library’ object per thread. In case this is too cumbersome, a single ‘FT_Library’ object across threads is possible also (since FreeType version 2.5.6), as long as a mutex lock is used around FT_New_Face and FT_Done_Face.
 class FT_Library is export {
 
     #| Call FT_Open_Face to open a font by its pathname.

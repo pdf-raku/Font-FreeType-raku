@@ -352,7 +352,7 @@ Discard a given face object, as well as all of its child slots and sizes.
 class Font::FreeType::Native::FT_Library
 ----------------------------------------
 
-A handle to a FreeType library instance. Each ‘library’ is completely independent from the others; it is the ‘root’ of a set of objects like fonts, faces, sizes, etc. It also embeds a memory manager (see FT_Memory), as well as a scan-line converter object (see FT_Raster).
+A handle to a FreeType library instance. Each ‘library’ is completely independent from the others; it is the ‘root’ of a set of objects like fonts, faces, sizes, etc. It also embeds a memory manager (see FT_Memory), as well as a scan-line converter object (see FT_Raster). In multi-threaded applications it is easiest to use one ‘FT_Library’ object per thread. In case this is too cumbersome, a single ‘FT_Library’ object across threads is possible also (since FreeType version 2.5.6), as long as a mutex lock is used around FT_New_Face and FT_Done_Face.
 
 ### method FT_New_Face
 

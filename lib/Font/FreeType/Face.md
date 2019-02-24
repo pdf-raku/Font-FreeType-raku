@@ -79,7 +79,15 @@ Returns an array of [glyphs-images](GlyphImage.md) for the Unicode string.
 
 Iterates through all the characters in the font, and calls _code-ref_ for each of them in turn. Glyphs which don't correspond to Unicode characters are ignored. There is currently no facility for iterating over all glyphs.
 
-Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph. For an example see the program _list-characters.pl_ provided in the distribution.
+Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph.
+
+For an example see the program _list-characters.pl_ provided in the distribution.
+
+### forall-glyphs(_code-ref_)
+
+Iterates through all the glyphs in the font, and calls _code-ref_ for each of them in turn.
+
+Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph. 
 
 ### for-glyphs(str, _code-ref_)
 

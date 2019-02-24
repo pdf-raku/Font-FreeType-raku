@@ -84,19 +84,19 @@ class Font::FreeType::Face {
     method is-bold { ?($!struct.style-flags +& FT_STYLE_FLAG_BOLD) }
     method is-italic { ?($!struct.style-flags +& FT_STYLE_FLAG_ITALIC) }
 
-    method !get-glyph-name(UInt $ord) {
+    method !get-glyph-name(UInt $glyph-index) {
         my buf8 $buf .= allocate(256);
-        my FT_UInt $index = $!struct.FT_Get_Char_Index( $ord );
-        ft-try({ $!struct.FT_Get_Glyph_Name($index, $buf, $buf.bytes); });
+        ft-try({ $!struct.FT_Get_Glyph_Name($glyph-index, $buf, $buf.bytes); });
         nativecast(Str, $buf);
     }
 
-    multi method glyph-name(Str $char) {
-        $.glyph-name($char.ord);
+    multi method glyph-name(Str:D $char) {
+        my FT_UInt $index = $!struct.FT_Get_Char_Index( $char.ord );
+        $.glyph-name($index);
     }
-    multi method glyph-name(Int $char-code) {
+    multi method glyph-name(Int $glyph-index) {
         self.has-glyph-names
-            ?? self!get-glyph-name($char-code)
+            ?? self!get-glyph-name($glyph-index)
             !! Mu;
     }
 
@@ -108,8 +108,40 @@ class Font::FreeType::Face {
 
         while $glyph-idx {
             $!struct.FT_Load_Glyph( $glyph-idx, $flags );
+            $glyph.glyph-index = $glyph-idx;
             &code($glyph);
             $glyph.char-code = $!struct.FT_Get_Next_Char( $glyph.char-code, $glyph-idx);
+        }
+    }
+
+    has array $!unicode-map;
+    method !unicode-map {
+        $!unicode-map //= do {
+            my uint16 @to-unicode[$.num-glyphs];
+            my FT_UInt  $glyph-idx;
+            my FT_ULong $char-code = $!struct.FT_Get_First_Char( $glyph-idx);
+            while $glyph-idx {
+                @to-unicode[ $glyph-idx ] = $char-code;
+                $char-code = $!struct.FT_Get_Next_Char( $char-code, $glyph-idx);
+            }
+            @to-unicode;
+        }
+    }
+
+    method forall-glyphs(&code, Int :$flags = $!load-flags) {
+        my FT_UInt $glyph-idx;
+        my FT_UInt $num-glyphs = $.num-glyphs;
+        my $struct := $!struct.glyph;
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
+        my $to-unicode := self!unicode-map;
+
+        loop ($glyph-idx = 0; $glyph-idx < $num-glyphs; $glyph-idx++) {
+            try {
+                my $stat = $!struct.FT_Load_Glyph( $glyph-idx, $flags );
+                $glyph.glyph-index = $glyph-idx;
+                $glyph.char-code = $to-unicode[$glyph-idx];
+                &code($glyph);
+            }
         }
     }
 
@@ -118,6 +150,7 @@ class Font::FreeType::Face {
         my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
         for $text.ords -> $char-code {
             ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
+            $glyph.glyph-index = 0;
             $glyph.char-code = $char-code;
             &code($glyph);
         }
@@ -264,8 +297,15 @@ for each of them in turn.  Glyphs which don't correspond to Unicode
 characters are ignored.  There is currently no facility for iterating
 over all glyphs.
 
-Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is
-passed for the current glyph. For an example see the program _list-characters.pl_ provided in the distribution.
+Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph.
+
+For an example see the program _list-characters.pl_ provided in the distribution.
+
+=head3 forall-glyphs(_code-ref_)
+
+Iterates through all the glyphs in the font, and calls _code-ref_ for each of them in turn.
+                                                 
+Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph. 
 
 =head3 for-glyphs(str, _code-ref_)
 

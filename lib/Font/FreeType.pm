@@ -1,6 +1,6 @@
 use v6;
 
-class Font::FreeType:ver<0.1.6> {
+class Font::FreeType:ver<0.1.7> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;

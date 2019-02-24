@@ -14,9 +14,12 @@ class Font::FreeType::Glyph is rw {
     has $.face is required; # parent object
     has FT_GlyphSlot $.struct is required handles <metrics>;
     has FT_ULong     $.char-code;
+    has FT_UInt      $.glyph-index;
 
-    method name { $!face.glyph-name: $!char-code }
-    method index { $!face.struct.FT_Get_Char_Index: $!char-code }
+    method name { $!face.glyph-name: $.index }
+    method index {
+        $!glyph-index ||= $!face.struct.FT_Get_Char_Index: $!char-code;
+    }
     method left-bearing { $.metrics.hori-bearing-x / Px; }
     method right-bearing {
         (.hori-advance - .hori-bearing-x - .width) / Px

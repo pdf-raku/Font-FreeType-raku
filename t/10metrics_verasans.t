@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 63 + 256 * 2;
+plan 63  +  256 * 2  +  268 * 3 + 1;
 use Font::FreeType;
 use Font::FreeType::Native::Types;
 
@@ -106,12 +106,12 @@ subtest "bounding box" => sub {
 # reported by this, and another 2 which have Unicode characters but no glyphs.
 # The expected Unicode codes and names of the glyphs are in a text file.
 # TODO - how can we iterate over the whole lot?
-my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
-my @glyph-list = $glyph-list-filename.IO.lines;
+my $character-list-filename = 't/fonts/vera_characters.txt';
+my @character-list = $character-list-filename.IO.lines;
 my $i = 0;
 $vera.forall-chars: -> $_ {
-    my $line = @glyph-list[$i++];
-    die "not enough characters in listing file '$glyph-list-filename'"
+    my $line = @character-list[$i++];
+    die "not enough characters in listing file '$character-list-filename'"
         unless defined $line;
     my ($unicode, $name) = split /\s+/, $line;
     $unicode = :16($unicode);
@@ -119,7 +119,7 @@ $vera.forall-chars: -> $_ {
        "glyph $unicode char code in foreach-char()";
     is .name, $name, "glyph $unicode name in foreach-char";
 };
-is $i, +@glyph-list, "we aren't missing any glyphs";
+is $i, +@character-list, "we aren't missing any glyphs";
 
 # Test metrics on some particlar glyphs.
 my %glyph-metrics = (
@@ -155,6 +155,22 @@ $vera.for-glyphs: $chars, -> $glyph {
            "width of glyph '$char'";
     }
 }
+
+my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
+my @glyph-list = $glyph-list-filename.IO.lines;
+my $i = 0;
+$vera.forall-glyphs: -> $_ {
+    my $line = @glyph-list[$i++];
+    die "not enough characters in listing file '$glyph-list-filename'"
+        unless defined $line;
+    my ($index, $unicode, $name) = split /\s+/, $line;
+    is .index, $index, "glyph $index index in forall-glyphs";
+    is .char-code, $unicode,
+       "glyph $unicode char code in foreach-char()";
+    is .name, $name, "glyph $index name in foreach-glyph";
+};
+is $i, +@glyph-list, "we aren't missing any glyphs";
+
 
 # Test kerning.
 my %kerning = (
