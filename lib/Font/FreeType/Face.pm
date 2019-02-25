@@ -100,14 +100,17 @@ class Font::FreeType::Face {
             !! Mu;
     }
 
-    method forall-chars(&code, Int :$flags = $!load-flags) {
+    method forall-chars(&code, Bool :$load = True, Int :$flags = $!load-flags) {
         my FT_UInt $glyph-idx;
         my $struct := $!struct.glyph;
         my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
         $glyph.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
 
         while $glyph-idx {
-            $!struct.FT_Load_Glyph( $glyph-idx, $flags );
+            $glyph.stat = $!struct.FT_Load_Glyph( $glyph-idx, $flags )
+                if $load;
+            warn "e:{$glyph.stat} idx:$glyph-idx chr:{$glyph.char-code.chr.perl}"
+                if $glyph.stat;
             $glyph.glyph-index = $glyph-idx;
             &code($glyph);
             $glyph.char-code = $!struct.FT_Get_Next_Char( $glyph.char-code, $glyph-idx);
@@ -136,12 +139,10 @@ class Font::FreeType::Face {
         my $to-unicode := self!unicode-map;
 
         loop ($glyph-idx = 0; $glyph-idx < $num-glyphs; $glyph-idx++) {
-            try {
-                my $stat = $!struct.FT_Load_Glyph( $glyph-idx, $flags );
-                $glyph.glyph-index = $glyph-idx;
-                $glyph.char-code = $to-unicode[$glyph-idx];
-                &code($glyph);
-            }
+            $glyph.stat = $!struct.FT_Load_Glyph( $glyph-idx, $flags );
+            $glyph.glyph-index = $glyph-idx;
+            $glyph.char-code = $to-unicode[$glyph-idx];
+            &code($glyph);
         }
     }
 
@@ -149,7 +150,7 @@ class Font::FreeType::Face {
         my $struct = $!struct.glyph;
         my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
         for $text.ords -> $char-code {
-            ft-try({ $!struct.FT_Load_Char( $char-code, $flags ); });
+            $glyph.stat = $!struct.FT_Load_Char( $char-code, $flags );
             $glyph.glyph-index = 0;
             $glyph.char-code = $char-code;
             &code($glyph);
@@ -293,11 +294,12 @@ Returns an array of [glyphs-images](GlyphImage.md) for the Unicode string.
 =head3 forall-chars(_code-ref_)
 
 Iterates through all the characters in the font, and calls _code-ref_
-for each of them in turn.  Glyphs which don't correspond to Unicode
-characters are ignored.  There is currently no facility for iterating
-over all glyphs.
+for each of them in turn.  Glyphs which don't correspond to Unicode characters are ignored.
 
 Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph.
+
+If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error`
+method will return an exception object.
 
 For an example see the program _list-characters.pl_ provided in the distribution.
 
@@ -307,9 +309,13 @@ Iterates through all the glyphs in the font, and calls _code-ref_ for each of th
                                                  
 Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph. 
 
+If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error`
+method will return an exception object.
+
 =head3 for-glyphs(str, _code-ref_)
 
-Execute a callback for each glyph in a string.
+Execute a callback for each glyph in a string, passing a [Font::FreeType::Glyph](Glyph.md) object
+on each invocation.
 
 =head3 has-glyph-names()
 

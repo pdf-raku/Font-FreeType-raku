@@ -1,7 +1,11 @@
 0.1.7
     - Added $face.forall-glyphs method. Ported from Perl 5
       version 0.0.7.
+    - Added Glyph 'stat' and 'error' methods. Leaving it to
+      the caller to detect and raise errors.
     - Fixed $glyph.name method on unmapped glyphs.
+    - Fixed on debian 9+ testing, which has withdrawn
+      the freetype-config executable (issue #3).
 0.1.6
     Fix t/10metrics_postscript.t to pass on FreeType2 2.9.1+.
 0.1.5

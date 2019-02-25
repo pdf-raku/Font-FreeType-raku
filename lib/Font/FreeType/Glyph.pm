@@ -15,7 +15,9 @@ class Font::FreeType::Glyph is rw {
     has FT_GlyphSlot $.struct is required handles <metrics>;
     has FT_ULong     $.char-code;
     has FT_UInt      $.glyph-index;
+    has FT_Error     $.stat;
 
+    method error  { Font::FreeType::Error.new: :error($!stat) }
     method name { $!face.glyph-name: $.index }
     method index {
         $!glyph-index ||= $!face.struct.FT_Get_Char_Index: $!char-code;

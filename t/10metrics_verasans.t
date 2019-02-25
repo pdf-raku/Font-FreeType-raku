@@ -105,7 +105,11 @@ subtest "bounding box" => sub {
 # don't have corresponding Unicode characters and for some reason aren't
 # reported by this, and another 2 which have Unicode characters but no glyphs.
 # The expected Unicode codes and names of the glyphs are in a text file.
-# TODO - how can we iterate over the whole lot?
+
+# Set the size to match the em size, so that the values are in font units.
+$vera.set-char-size(2048, 2048, 72, 72);
+
+
 my $character-list-filename = 't/fonts/vera_characters.txt';
 my @character-list = $character-list-filename.IO.lines;
 my $i = 0;
@@ -134,9 +138,6 @@ my %glyph-metrics = (
     '|' => { name => 'bar', advance => 690,
              LBearing => 260, RBearing => 260 },
 );
-
-# Set the size to match the em size, so that the values are in font units.
-$vera.set-char-size(2048, 2048, 72, 72);
 
 # 5*2 tests.
 my $chars = %glyph-metrics.keys.sort.join;

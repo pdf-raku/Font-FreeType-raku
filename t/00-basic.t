@@ -59,6 +59,8 @@ is $face.glyph-name('&'), 'ampersand', 'glyph name';
 $face.for-glyphs('A', {
     is .index, 36, '.index';
     is .char-code, 65, '.char-code';
+    is .stat, 0, '.stat';
+    is-deeply .error, Font::FreeType::Error.new(:error(0)), '.error';
 });
 
 lives-ok {$face.DESTROY}, 'face DESTROY';
