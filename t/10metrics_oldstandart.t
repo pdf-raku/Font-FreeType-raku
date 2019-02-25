@@ -47,8 +47,8 @@ my $underline-position = $font.underline-position;
 ok $underline-position <= -178 || $underline-position >= -198, 'underline position';
 is $font.underline-thickness, 40, 'underline thickness';
 my $ft-version = $ft.version;
-todo "FreeType2 v2.9.1+ needed for correct font sizes", 3
-                                                                    unless $ft-version >= v2.9.1;
+todo "FreeType2 v2.9.2+ needed for correct font sizes", 3
+                                                                    unless $ft-version >= v2.9.2;
 is $font.height, 1236, 'text height';
 is $font.ascender, 762, 'ascender';
 is $font.descender, -238, 'descender';

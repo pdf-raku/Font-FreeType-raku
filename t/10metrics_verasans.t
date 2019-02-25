@@ -158,7 +158,7 @@ $vera.for-glyphs: $chars, -> $glyph {
 
 my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;
-my $i = 0;
+$i = 0;
 $vera.forall-glyphs: -> $_ {
     my $line = @glyph-list[$i++];
     die "not enough characters in listing file '$glyph-list-filename'"
