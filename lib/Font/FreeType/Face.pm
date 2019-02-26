@@ -102,15 +102,12 @@ class Font::FreeType::Face {
 
     method forall-chars(&code, Bool :$load = True, Int :$flags = $!load-flags) {
         my FT_UInt $glyph-idx;
-        my $struct := $!struct.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :struct($!struct.glyph);
         $glyph.char-code = $!struct.FT_Get_First_Char( $glyph-idx);
 
         while $glyph-idx {
             $glyph.stat = $!struct.FT_Load_Glyph( $glyph-idx, $flags )
                 if $load;
-            warn "e:{$glyph.stat} idx:$glyph-idx chr:{$glyph.char-code.chr.perl}"
-                if $glyph.stat;
             $glyph.glyph-index = $glyph-idx;
             &code($glyph);
             $glyph.char-code = $!struct.FT_Get_Next_Char( $glyph.char-code, $glyph-idx);
@@ -134,8 +131,7 @@ class Font::FreeType::Face {
     method forall-glyphs(&code, Int :$flags = $!load-flags) {
         my FT_UInt $glyph-idx;
         my FT_UInt $num-glyphs = $.num-glyphs;
-        my $struct := $!struct.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :struct($!struct.glyph);
         my $to-unicode := self!unicode-map;
 
         loop ($glyph-idx = 0; $glyph-idx < $num-glyphs; $glyph-idx++) {
@@ -147,8 +143,7 @@ class Font::FreeType::Face {
     }
 
     method for-glyphs(Str $text, &code, Int :$flags = $!load-flags) {
-        my $struct = $!struct.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :face(self), :$struct;
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :struct($!struct.glyph);
         for $text.ords -> $char-code {
             $glyph.stat = $!struct.FT_Load_Char( $char-code, $flags );
             $glyph.glyph-index = 0;

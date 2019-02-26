@@ -116,6 +116,7 @@ class Font::FreeType::BitMap {
         @lines.join: "\n";
     }
 
+    # create pgm - Netpbm grayscale image format
     method pgm returns Buf {
         my $pixels = self.pixels;
         my UInt ($ht, $wd) = $pixels.shape.list;
