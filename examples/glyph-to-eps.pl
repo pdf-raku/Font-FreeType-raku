@@ -19,6 +19,7 @@ sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
         $outline.bold($_) with $bold;
         my ($xmin, $ymin, $xmax, $ymax) = $outline.Array;
 
+        # display as EPS (Encapsulated Postscript)
         print "%\%!PS-Adobe-3.0 EPSF-3.0\n",
         "%%Creator: $*PROGRAM-NAME\n",
         "%%BoundingBox: $xmin $ymin $xmax $ymax\n",
@@ -26,7 +27,9 @@ sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
         "%\%EndComments\n\n",
         "%\%Page: 1 1\n",
         "gsave newpath\n",
+
         $outline.postscript,
+
         "closepath fill grestore\n",
         "%\%EOF\n";
     }

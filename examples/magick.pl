@@ -1,4 +1,6 @@
 #!/usr/bin/perl -w
+use v5; # not converted to Perl 6 yet
+# wanted Image::Magick or equivalent
 use strict;
 
 # This program demonstrates using Font::FreeType with Image::Magick.

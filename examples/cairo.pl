@@ -2,14 +2,20 @@ use Cairo;
 use Font::FreeType;
 use Font::FreeType::Face;
 
+# use a FreeType font from Cairo
 given Cairo::Image.create(Cairo::FORMAT_ARGB32, 256, 256) {
     given Cairo::Context.new($_) {
 
         my Font::FreeType $freetype .= new;
+
+        # load a FreeType Face
         my Font::FreeType::Face $face = $freetype.face('t/fonts/DejaVuSans.ttf');
+        # construct a Cairo Font
         my Cairo::Font $font .= create(
             $face.struct, :free-type,
         );
+
+        # use it to display text
         .set_font_size(90.0);
         .set_font_face($font);
         .move_to(10.0, 135.0);

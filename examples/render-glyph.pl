@@ -1,6 +1,8 @@
 use v6;
 use Font::FreeType;
 
+# write or display a Glyph's bit-map as PGM (Netpbm grayscale image format)
+
 sub MAIN(Str $filename, Str $char is copy, Numeric $size? is copy, Str :$save-as) {
 
     my $dpi = 100;
