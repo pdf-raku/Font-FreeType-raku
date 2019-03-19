@@ -1,6 +1,6 @@
 use v6;
 
-class Font::FreeType:ver<0.1.7> {
+class Font::FreeType:ver<0.1.8> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;
@@ -8,7 +8,6 @@ class Font::FreeType:ver<0.1.7> {
     use Font::FreeType::Native::Types;
 
     has FT_Library $.struct;
-    has Bool $!cleanup = False; # temporarily disabled
     our $lock = Lock.new;
 
     submethod BUILD {
@@ -18,12 +17,9 @@ class Font::FreeType:ver<0.1.7> {
     }
 
     submethod DESTROY {
-        if $!cleanup {
-            $lock.protect: {
-                with $!struct {
-                    ft-try({ .FT_Done_FreeType });
-                    $_ = Nil;
-                }
+        $lock.protect: {
+            with $!struct {
+                ft-try({ .FT_Done_FreeType });
             }
         }
     }
