@@ -2,7 +2,8 @@ use NativeCall;
 use Font::FreeType::Native;
 
 class Font::FreeType::NamedInfo {
-    has FT_SfntName $.struct handles <platform-id encoding-id language-id name-id string-len>;
+    has FT_SfntName $!struct handles <platform-id encoding-id language-id name-id string-len>;
+    submethod TWEAK(FT_SfntName:D :$!struct!) { }
 
     method Str {
         my $len = $.string-len;

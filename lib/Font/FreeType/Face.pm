@@ -13,11 +13,13 @@ class Font::FreeType::Face {
     use Font::FreeType::CharMap;
 
     has $.ft-lib is required; # keep a reference to library root object. Just to avoid destroying it
-    has FT_Face $.struct handles <num-faces face-index face-flags style-flags
+    has FT_Face $!struct handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
         height max-advance-width max-advance-height size>;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
 
+    submethod TWEAK(FT_Face:D :$!struct!) { }
+    method unbox { $!struct }
     method units-per-EM { self.is-scalable ?? $!struct.units-per-EM !! Mu }
     method underline-position { self.is-scalable ?? $!struct.underline-position !! Mu }
     method underline-thickness { self.is-scalable ?? $!struct.underline-thickness !! Mu }
@@ -54,7 +56,8 @@ class Font::FreeType::Face {
     }
 
     my class Vector {
-        has FT_Vector $.struct;
+        has FT_Vector $!struct;
+        submethod TWEAK(FT_Vector:D :$!struct!) { }
         method x { $!struct.x / Px }
         method y { $!struct.y / Px }
     }
@@ -469,7 +472,7 @@ The outline's bounding box for this face.
 
     use Font::FreeType::Native;
     use Cairo;
-    my FT_Face $ft-face-struct = $face.struct;
+    my FT_Face $ft-face-struct = $face.unbox;
     $ft-face-struct.FT_Reference_Face;
     my Cairo::Font $font .= create(
          $ft-face-struct, :free-type,

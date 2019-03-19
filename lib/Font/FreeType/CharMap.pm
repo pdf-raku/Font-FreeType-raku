@@ -4,7 +4,8 @@ use Font::FreeType::Native::Types;
 
 class Font::FreeType::CharMap {
     has $.face;
-    has FT_CharMap $.struct handles <platform-id encoding-id>;
+    has FT_CharMap $!struct handles <platform-id encoding-id>;
+    submethod TWEAK(:$!struct!) { }
     method encoding { FT_ENCODING($!struct.encoding) }
 }
 

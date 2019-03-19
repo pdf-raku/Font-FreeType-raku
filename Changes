@@ -1,5 +1,6 @@
 0.1.8
-    - Re-enable final freeing of the Freetype library.
+    - Re-enable freeing of the Freetype library in DESTROY
+    - Deprecate $freetype/$face struct() method in favour of unbox()
 0.1.7
     - Added $face.forall-glyphs method. Ported from Perl 5
       version 0.0.7.

@@ -11,13 +11,13 @@ class Font::FreeType::BitMap {
     has Int $.top is required;
     has FT_ULong     $.char-code is required;
 
-    submethod TWEAK(:$!struct!) {
+    submethod TWEAK(FT_Bitmap:D :$!struct!) {
         $!top *= 3
             if $!struct.pixel-mode == +FT_PIXEL_MODE_LCD_V;
     }
 
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.struct;
+        $!face.ft-lib.unbox;
     }
 
     constant Dpi = 72.0;

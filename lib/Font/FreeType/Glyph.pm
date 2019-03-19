@@ -12,15 +12,15 @@ class Font::FreeType::Glyph is rw {
     constant Px = 64.0;
 
     has $.face is required; # parent object
-    has FT_GlyphSlot $.struct is required handles <metrics>;
+    has FT_GlyphSlot $!struct handles <metrics>;
     has FT_ULong     $.char-code;
     has FT_UInt      $.glyph-index;
     has FT_Error     $.stat;
-
+    submethod TWEAK(FT_GlyphSlot:D :$!struct!) { }
     method error  { Font::FreeType::Error.new: :error($!stat) }
     method name { $!face.glyph-name: $.index }
     method index {
-        $!glyph-index ||= $!face.struct.FT_Get_Char_Index: $!char-code;
+        $!glyph-index ||= $!face.unbox.FT_Get_Char_Index: $!char-code;
     }
     method left-bearing { $.metrics.hori-bearing-x / Px; }
     method right-bearing {
@@ -46,7 +46,7 @@ class Font::FreeType::Glyph is rw {
         my $top = $!struct.bitmap-top;
         my $left = $!struct.bitmap-left;
         my $index = $.index;
-        Font::FreeType::GlyphImage.new: :$!face, :glyph(self.struct), :$left, :$top, :$!char-code, :$index;
+        Font::FreeType::GlyphImage.new: :$!face, :glyph($!struct), :$left, :$top, :$!char-code, :$index;
     }
 
 }

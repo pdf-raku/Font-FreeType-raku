@@ -9,12 +9,12 @@ class Font::FreeType::GlyphImage {
     use Font::FreeType::Outline;
 
     has $.face is required; # parent font
-    has FT_Glyph $.struct handles <top left>;
+    has FT_Glyph $!struct handles <top left>;
     has FT_ULong  $.char-code;
     has FT_UInt   $.index;
 
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.struct;
+        $!face.ft-lib.unbox;
     }
 
     method format { FT_GLYPH_FORMAT($!struct.format) }

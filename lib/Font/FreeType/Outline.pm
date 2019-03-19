@@ -7,7 +7,7 @@ class Font::FreeType::Outline {
     use Font::FreeType::Native::Types;
 
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.struct;
+        $!face.ft-lib.unbox;
     }
 
     enum FT_OUTLINE_OP «

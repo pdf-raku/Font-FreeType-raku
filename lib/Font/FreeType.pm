@@ -7,7 +7,7 @@ class Font::FreeType:ver<0.1.8> {
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
 
-    has FT_Library $.struct;
+    has FT_Library $!struct;
     our $lock = Lock.new;
 
     submethod BUILD {
@@ -15,6 +15,8 @@ class Font::FreeType:ver<0.1.8> {
         ft-try({ FT_Init_FreeType( $p ); });
         $!struct = $p.deref;
     }
+    method struct is DEPRECATED("Please use the 'unbox' method") { $!struct }
+    method unbox { $!struct }
 
     submethod DESTROY {
         $lock.protect: {
