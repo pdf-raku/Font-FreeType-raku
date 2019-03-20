@@ -218,7 +218,7 @@ The outline's bounding box for this face.
 
     use Font::FreeType::Native;
     use Cairo;
-    my FT_Face $ft-face-struct = $face.struct;
+    my FT_Face $ft-face-struct = $face.unbox;
     $ft-face-struct.FT_Reference_Face;
     my Cairo::Font $font .= create(
          $ft-face-struct, :free-type,
