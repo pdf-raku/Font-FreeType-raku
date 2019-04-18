@@ -5,7 +5,7 @@
 /* Get prototype. */
 #include "ft6_outline.h"
 
-static int add_op(ft_shape_t *shape, FT_OUTLINE_OP op) {
+static void add_op(ft_shape_t *shape, FT_OUTLINE_OP op) {
   shape->ops[ shape->n_ops++ ] = (uint8_t) op;
 }
 

@@ -2,19 +2,23 @@ SRC=src
 
 all : lib doc
 
+# 'all', with compilation warnings and debug symbols enabled
+debug :
+	%MAKE% "CF=-Wall -g"  all
+
 lib : resources/libraries/%LIB-NAME%
 
 resources/libraries/%LIB-NAME% : $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O%
-	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/libraries/%LIB-NAME% $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% %LIB-LDFLAGS%
+	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/libraries/%LIB-NAME% $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% %LIB-LDFLAGS% $(CF)
 
 $(SRC)/ft6_outline%O% : $(SRC)/ft6_outline.c $(SRC)/ft6_outline.h
-	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_outline%O% $(SRC)/ft6_outline.c %LIB-CFLAGS%
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_outline%O% $(SRC)/ft6_outline.c %LIB-CFLAGS% $(CF)
 
 $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
-	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyph%O% $(SRC)/ft6_glyph.c %LIB-CFLAGS%
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyph%O% $(SRC)/ft6_glyph.c %LIB-CFLAGS% $(CF)
 
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
-	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS%
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS% $(CF)
 
 # NB README.pm is built by mi6
 doc : lib/Font/FreeType/BitMap.md lib/Font/FreeType/CharMap.md lib/Font/FreeType/Face.md lib/Font/FreeType/Glyph.md lib/Font/FreeType/GlyphImage.md lib/Font/FreeType/Outline.md lib/Font/FreeType/NamedInfo.md lib/Font/FreeType/Native.md lib/Font/FreeType/Native/Types.md
