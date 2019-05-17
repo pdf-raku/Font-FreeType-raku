@@ -2,15 +2,15 @@ use NativeCall;
 use Font::FreeType::Native;
 
 class Font::FreeType::NamedInfo {
-    has FT_SfntName $!struct handles <platform-id encoding-id language-id name-id string-len>;
-    submethod TWEAK(FT_SfntName:D :$!struct!) { }
+    has FT_SfntName $!native handles <platform-id encoding-id language-id name-id string-len>;
+    submethod TWEAK(FT_SfntName:D :$!native!) { }
 
     method Str {
         my $len = $.string-len;
         my buf8 $buf .= new;
         if $len {
             $buf[$len - 1] = 0;
-            Font::FreeType::Native::memcpy(nativecast(Pointer, $buf), $!struct.string, $len);
+            Font::FreeType::Native::memcpy(nativecast(Pointer, $buf), $!native.string, $len);
         }
         # todo various encoding schemes
         $buf.decode;

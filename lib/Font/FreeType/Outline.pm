@@ -7,7 +7,7 @@ class Font::FreeType::Outline {
     use Font::FreeType::Native::Types;
 
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.unbox;
+        $!face.ft-lib.native;
     }
 
     enum FT_OUTLINE_OP «
@@ -42,20 +42,20 @@ class Font::FreeType::Outline {
         }
     }
 
-    has FT_Outline $!struct handles <n-contours n-points points tags contours flags>;
+    has FT_Outline $!native handles <n-contours n-points points tags contours flags>;
 
-    submethod TWEAK(:$!struct!) { }
+    submethod TWEAK(:$!native!) { }
 
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
-        my int32 $max-points = $!struct.n-points * 6;
+        my int32 $max-points = $!native.n-points * 6;
         my ft_shape_t $shape .= new: :$max-points;
-        ft-try({ $shape.gather_outlines($!struct, $shift, $delta, $conic ?? 1 !! 0); });
+        ft-try({ $shape.gather_outlines($!native, $shift, $delta, $conic ?? 1 !! 0); });
         $shape;
     }
 
     method bbox {
         my FT_BBox $bbox .= new;
-        ft-try({ $!struct.FT_Outline_Get_BBox($bbox); });
+        ft-try({ $!native.FT_Outline_Get_BBox($bbox); });
         $bbox;
     }
 
@@ -99,17 +99,17 @@ class Font::FreeType::Outline {
     }
 
     method bold(Int $strength) {
-        $!struct.FT_Outline_Embolden($strength);
+        $!native.FT_Outline_Embolden($strength);
     }
 
     method clone {
-        my $outline = $!struct.clone(self!library);
-        self.new: :struct($outline), :$!face;
+        my $outline = $!native.clone(self!library);
+        self.new: :native($outline), :$!face;
     }
 
     method DESTROY {
-        ft-try({ self!library.FT_Outline_Done($!struct) });
-        $!struct = Nil;
+        ft-try({ self!library.FT_Outline_Done($!native) });
+        $!native = Nil;
     }
 }
 

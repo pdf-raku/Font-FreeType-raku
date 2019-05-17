@@ -4,9 +4,9 @@ use Font::FreeType::Native::Types;
 
 class Font::FreeType::CharMap {
     has $.face;
-    has FT_CharMap $!struct handles <platform-id encoding-id>;
-    submethod TWEAK(:$!struct!) { }
-    method encoding { FT_ENCODING($!struct.encoding) }
+    has FT_CharMap $!native handles <platform-id encoding-id>;
+    submethod TWEAK(:$!native!) { }
+    method encoding { FT_ENCODING($!native.encoding) }
 }
 
 =begin pod

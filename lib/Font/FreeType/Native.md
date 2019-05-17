@@ -13,7 +13,7 @@ SYNOPSIS
 
     sub face-unicode-map(Font::FreeType::Face $face) {
         my uint16 @to-unicode[$face.num-glyphs];
-        my FT_Face  $struct = $face.unbox;  # get the native face object
+        my FT_Face  $struct = $face.native;  # get the native face object
         my FT_UInt  $glyph-idx;
         my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
         while $glyph-idx {
@@ -27,11 +27,11 @@ DESCRIPTION
 
 This class contains the actual bindings to the FreeType library.
 
-Other high level classes, by convention, have a `struct()` accessor, which can be used, if needed, to gain access to native objects from this class:
+Other high level classes, by convention, have a `native()` accessor, which can be used, if needed, to gain access to native objects from this class:
 
 <table class="pod-table">
 <thead><tr>
-<th>Class</th> <th>struct() binding</th> <th>Description</th>
+<th>Class</th> <th>native() binding</th> <th>Description</th>
 </tr></thead>
 <tbody>
 <tr> <td>Font::FreeType</td> <td>L&lt;FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library&gt;</td> <td>A handle to a freetype library instance</td> </tr> <tr> <td>Font::FreeType::Face</td> <td>L&lt;FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face&gt;</td> <td>A Handle to a typographic face object</td> </tr> <tr> <td>Font::FreeType::Glyph</td> <td>L&lt;FT_GlyphSlot|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot&gt;</td> <td>A handle to a glyph container</td> </tr> <tr> <td>Font::FreeType::GlyphImage</td> <td>L&lt;FT_Glyph|https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html&gt;</td> <td>A specific glyph bitmap or outline object</td> </tr> <tr> <td>Font::FreeType::BitMap</td> <td>L&lt;FT_Bitmap|https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html&gt;</td> <td>A rendered bitmap for a glyph</td> </tr> <tr> <td>Font::FreeType::Outline</td> <td>L&lt;FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html&gt;</td> <td>A scalable glyph outline</td> </tr>

@@ -15,7 +15,7 @@ Font::FreeType::Native - bindings to the freetype library
 
     sub face-unicode-map(Font::FreeType::Face $face) {
         my uint16 @to-unicode[$face.num-glyphs];
-        my FT_Face  $struct = $face.unbox;  # get the native face object
+        my FT_Face  $struct = $face.native;  # get the native face object
         my FT_UInt  $glyph-idx;
         my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
         while $glyph-idx {
@@ -28,11 +28,11 @@ Font::FreeType::Native - bindings to the freetype library
 
 This class contains the actual bindings to the FreeType library.
 
-Other high level classes, by convention, have a `struct()` accessor, which can be
+Other high level classes, by convention, have a `native()` accessor, which can be
 used, if needed, to gain access to native objects from this class:
 
 =table
-  Class | struct() binding | Description
+  Class | native() binding | Description
   ------+------------------+------------
   Font::FreeType | L<FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library> | A handle to a freetype library instance
   Font::FreeType::Face | L<FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face> | A Handle to a typographic face object

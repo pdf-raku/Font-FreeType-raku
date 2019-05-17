@@ -1,26 +1,26 @@
 use v6;
 
-class Font::FreeType:ver<0.1.8> {
+class Font::FreeType:ver<0.1.9> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
 
-    has FT_Library $!struct;
+    has FT_Library $.native;
     our $lock = Lock.new;
 
     submethod BUILD {
         my $p = Pointer[FT_Library].new;
         ft-try({ FT_Init_FreeType( $p ); });
-        $!struct = $p.deref;
+        $!native = $p.deref;
     }
-    method struct is DEPRECATED("Please use the 'unbox' method") { $!struct }
-    method unbox { $!struct }
+    method struct is DEPRECATED("Please use the 'native' method") { $!native }
+    method unbox is DEPRECATED("Please use the 'native' method") { $!native }
 
     submethod DESTROY {
         $lock.protect: {
-            with $!struct {
+            with $!native {
                 ft-try({ .FT_Done_FreeType });
             }
         }
@@ -29,10 +29,10 @@ class Font::FreeType:ver<0.1.8> {
     multi method face(Str $file-path-name, Int :$index = 0, |c) {
         my $p = Pointer[FT_Face].new;
         $lock.protect: {
-            ft-try({ $!struct.FT_New_Face($file-path-name, $index, $p); });
+            ft-try({ $!native.FT_New_Face($file-path-name, $index, $p); });
         }
-        my FT_Face $struct = $p.deref;
-        Font::FreeType::Face.new: :$struct, :ft-lib(self), |c;
+        my FT_Face $native = $p.deref;
+        Font::FreeType::Face.new: :$native, :ft-lib(self), |c;
     }
 
     multi method face(Blob $file-buf,
@@ -41,13 +41,13 @@ class Font::FreeType:ver<0.1.8> {
                       |c
         ) {
         my $p = Pointer[FT_Face].new;
-        ft-try({ $!struct.FT_New_Memory_Face($file-buf, $size, $index, $p); });
-        my FT_Face $struct = $p.deref;
-        Font::FreeType::Face.new: :$struct, :ft-lib(self), |c;
+        ft-try({ $!native.FT_New_Memory_Face($file-buf, $size, $index, $p); });
+        my FT_Face $native = $p.deref;
+        Font::FreeType::Face.new: :$native, :ft-lib(self), |c;
     }
 
     method version returns Version {
-        $!struct.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
+        $!native.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
         Version.new: "{$major}.{$minor}.{$patch}";
     }
 }

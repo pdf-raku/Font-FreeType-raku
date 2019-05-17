@@ -9,15 +9,15 @@ class Font::FreeType::GlyphImage {
     use Font::FreeType::Outline;
 
     has $.face is required; # parent font
-    has FT_Glyph $!struct handles <top left>;
+    has FT_Glyph $!native handles <top left>;
     has FT_ULong  $.char-code;
     has FT_UInt   $.index;
 
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.unbox;
+        $!face.ft-lib.native;
     }
 
-    method format { FT_GLYPH_FORMAT($!struct.format) }
+    method format { FT_GLYPH_FORMAT($!native.format) }
 
     submethod TWEAK(FT_GlyphSlot :$glyph!, :$top, :$left,) {
         my $glyph-p = Pointer[FT_Glyph].new;
@@ -38,31 +38,31 @@ class Font::FreeType::GlyphImage {
             }
         }
 
-        $!struct := $glyph-image;
+        $!native := $glyph-image;
     }
     method is-outline {
-        .format == FT_GLYPH_FORMAT_OUTLINE with $!struct;
+        .format == FT_GLYPH_FORMAT_OUTLINE with $!native;
     }
     method outline {
         die "not an outline glyph"
             unless self.is-outline;
-        my FT_Outline:D $outline = $!struct.outline;
-        my FT_Outline $struct = $outline.clone(self!library);
-        Font::FreeType::Outline.new: :$struct, :$!face;
+        my FT_Outline:D $outline = $!native.outline;
+        my FT_Outline $native = $outline.clone(self!library);
+        Font::FreeType::Outline.new: :$native, :$!face;
     }
     method bold(Int $strength) {
         if self.is-outline {
-            my FT_Outline:D $outline = $!struct.outline;
+            my FT_Outline:D $outline = $!native.outline;
             ft-try({ $outline.FT_Outline_Embolden($strength); });
         }
         elsif self.is-bitmap {
-            my FT_Bitmap:D $bitmap = $!struct.bitmap;
+            my FT_Bitmap:D $bitmap = $!native.bitmap;
             ft-try({ self!library.FT_Bitmap_Embolden($bitmap, $strength, $strength); });
         }
     }
 
     method is-bitmap {
-        .format == FT_GLYPH_FORMAT_BITMAP with $!struct;
+        .format == FT_GLYPH_FORMAT_BITMAP with $!native;
     }
     method to-bitmap(
         :$render-mode = FT_RENDER_MODE_NORMAL,
@@ -70,24 +70,24 @@ class Font::FreeType::GlyphImage {
         Bool :$destroy = True,
         )  {
         my FT_BBox $bbox .= new;
-        $!struct.FT_Glyph_Get_CBox(FT_GLYPH_BBOX_PIXELS, $bbox);
-        my $struct-p = nativecast(Pointer[FT_Glyph], $!struct);
-        ft-try({ FT_Glyph_To_Bitmap($struct-p, +$render-mode, $origin, $destroy); });
-        $!struct = nativecast(FT_BitmapGlyph, $struct-p.deref);
+        $!native.FT_Glyph_Get_CBox(FT_GLYPH_BBOX_PIXELS, $bbox);
+        my $native-p = nativecast(Pointer[FT_Glyph], $!native);
+        ft-try({ FT_Glyph_To_Bitmap($native-p, +$render-mode, $origin, $destroy); });
+        $!native = nativecast(FT_BitmapGlyph, $native-p.deref);
         $.left = $bbox.x-min;
         $.top  = $bbox.y-max;
     }
     method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL) {
         self.to-bitmap(:$render-mode)
             unless self.is-bitmap;
-        my FT_Bitmap:D $bitmap = $!struct.bitmap;
-        my FT_Bitmap $struct = $bitmap.clone(self!library);
+        my FT_Bitmap:D $bitmap = $!native.bitmap;
+        my FT_Bitmap $native = $bitmap.clone(self!library);
         my $top = $.top;
-        Font::FreeType::BitMap.new: :$!face, :$struct, :$.left, :$top, :$!char-code;
+        Font::FreeType::BitMap.new: :$!face, :$native, :$.left, :$top, :$!char-code;
     }
 
     method DESTROY {
-        $!struct.FT_Done_Glyph;
+        $!native.FT_Done_Glyph;
     }
 }
 

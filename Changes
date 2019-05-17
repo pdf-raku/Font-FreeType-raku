@@ -1,3 +1,6 @@
+0.1.9
+    - Fix existing deprecations. Also depreciate newly introduced
+      unbox() accessor in favour of native().
 0.1.8
     - Re-enable freeing of the Freetype library in DESTROY
     - Deprecate $freetype/$face struct() method in favour of unbox()

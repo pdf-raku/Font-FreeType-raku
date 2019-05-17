@@ -214,20 +214,20 @@ An array of the [charmaps](CharMap.md) of the face.
 
 The outline's bounding box for this face.
 
-### struct
+### native
 
     use Font::FreeType::Native;
     use Cairo;
-    my FT_Face $ft-face-struct = $face.unbox;
-    $ft-face-struct.FT_Reference_Face;
+    my FT_Face $ft-face-native = $face.native;
+    $ft-face-native.FT_Reference_Face;
     my Cairo::Font $font .= create(
-         $ft-face-struct, :free-type,
+         $ft-face-native, :free-type,
     );
     # some time later...
     $ft-face.FT_Done_Face;
     $ft-face = Nil;
 
-This method provides access to the underlying native FT_Face struct; for example, for integration with the [Cairo](Cairo) graphics library.
+This method provides access to the underlying native FT_Face native struct; for example, for integration with the [Cairo](Cairo) graphics library.
 
 The `FT_Reference_Face` and `FT_Done_Face` methods will need to be called if the struct outlives the parent `$face` object.
 
