@@ -55,21 +55,21 @@ is $tnr.height, 1200, 'height';
 my @fixed-sizes = $tnr.fixed-sizes;
 is +@fixed-sizes, 0, 'Tnr has no fixed sizes';
 
-subtest {
+subtest "charmaps" => {
     plan 2;
-    subtest {
+    subtest "default-charmap" => {
         plan 4;
         my $default-cm = $tnr.charmap;
         ok $default-cm;
         is $default-cm.platform-id, 3;
         is $default-cm.encoding-id, 1;
         is $default-cm.encoding, FT_ENCODING_UNICODE;
-    }, "default charmap";
+    };
 
     my @charmaps = $tnr.charmaps;
     is +@charmaps, 2, "available charmaps"
 
-}, "charmaps";
+};
 
 subtest "bounding box" => sub {
     my $bb = $tnr.bounding-box;

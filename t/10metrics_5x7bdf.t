@@ -81,21 +81,21 @@ $bdf.forall-chars: -> $_ {
 
 is $i, +@glyph-list, "we aren't missing any glyphs";
 
-subtest {
+subtest "charmaps" => {
     plan 2;
-    subtest {
+    subtest "default charmap" => {
         plan 4;
         my $default-cm = $bdf.charmap;
         ok $default-cm;
         is $default-cm.platform-id, 3;
         is $default-cm.encoding-id, 1;
         is $default-cm.encoding, FT_ENCODING_UNICODE;
-    }, "default charmap";
+    };
 
     my @charmaps = $bdf.charmaps;
     is +@charmaps, 1, "available charmaps";
 
-}, "charmaps";
+};
 
 # Test metrics on some particlar glyphs.
 my %glyph-metrics = (

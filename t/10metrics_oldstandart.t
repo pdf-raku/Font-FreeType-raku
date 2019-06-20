@@ -53,23 +53,23 @@ is $font.height, 1236, 'text height';
 is $font.ascender, 762, 'ascender';
 is $font.descender, -238, 'descender';
 
-subtest {
+subtest "charmaps" => {
     plan 2;
-    subtest {
+    subtest "default charmap" => {
         plan 4;
         my $default-cm = $font.charmap;
         ok $default-cm;
         is $default-cm.platform-id, 3;
         is $default-cm.encoding-id, 10;
         is $default-cm.encoding, FT_ENCODING_UNICODE;
-    }, "default charmap";
+    };
 
     my @charmaps = $font.charmaps;
     is +@charmaps, 6, "available charmaps"
 
-}, "charmaps";
+};
 
-subtest {
+subtest "named-info" => {
     my $infos = $font.named-infos;
     ok $infos;
     ok +$infos, 64;
@@ -79,13 +79,13 @@ subtest {
     is $copy-info.platform-id, 1;
     is $copy-info.name-id, 0;
     is $copy-info.encoding-id, 0;
-}, "named-info";
+};
 
-subtest {
+subtest "bounding-box" => {
     my $bb = $font.bounding-box;
     ok $bb;
     is $bb.x-min, -868, "x-min is correct";
     is $bb.y-min, -294, "y-min is correct";
     is $bb.x-max, 1930, "x-max is correct";
     is $bb.y-max, 952,  "y-max is correct";
-}, "bounding-box";
+};

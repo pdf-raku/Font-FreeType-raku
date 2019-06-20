@@ -62,7 +62,7 @@ is $vera.height, 2384, 'height';
 my @fixed-sizes = $vera.fixed-sizes;
 is +@fixed-sizes, 0, 'Vera has no fixed sizes';
 
-subtest {
+subtest "charmaps" => {
     plan 2;
     subtest {
         plan 4;
@@ -76,9 +76,9 @@ subtest {
     my @charmaps = $vera.charmaps;
     is +@charmaps, 2, "available charmaps"
 
-}, "charmaps";
+};
 
-subtest {
+subtest "named-info" => {
     my $infos = $vera.named-infos;
     ok $infos;
     ok $infos.elems, 22;
@@ -88,7 +88,7 @@ subtest {
     is $copy-info.platform-id, 1;
     is $copy-info.name-id, 0;
     is $copy-info.encoding-id, 0;
-}, "named-info";
+};
 
 subtest "bounding box" => sub {
     my $bb = $vera.bounding-box;
