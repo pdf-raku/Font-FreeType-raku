@@ -1,6 +1,6 @@
 SRC=src
 
-all : lib doc
+all : lib
 
 # 'all', with compilation warnings and debug symbols enabled
 debug :
