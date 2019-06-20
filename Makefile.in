@@ -20,8 +20,14 @@ $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS% $(CF)
 
-# NB README.pm is built by mi6
-doc : lib/Font/FreeType/BitMap.md lib/Font/FreeType/CharMap.md lib/Font/FreeType/Face.md lib/Font/FreeType/Glyph.md lib/Font/FreeType/GlyphImage.md lib/Font/FreeType/Outline.md lib/Font/FreeType/NamedInfo.md lib/Font/FreeType/Native.md lib/Font/FreeType/Native/Types.md
+doc : README.md lib/Font/FreeType/BitMap.md lib/Font/FreeType/CharMap.md lib/Font/FreeType/Face.md lib/Font/FreeType/Glyph.md lib/Font/FreeType/GlyphImage.md lib/Font/FreeType/Outline.md lib/Font/FreeType/NamedInfo.md lib/Font/FreeType/Native.md lib/Font/FreeType/Native/Types.md
+
+README.md : lib/Font/FreeType.pm
+	(\
+	    echo '[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-p6.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-p6)'; \
+            echo '';\
+            perl6 -I . --doc=Markdown lib/Font/FreeType.pm\
+        ) > README.md
 
 lib/Font/FreeType/BitMap.md : lib/Font/FreeType/BitMap.pm
 	perl6 -I . --doc=Markdown lib/Font/FreeType/BitMap.pm > lib/Font/FreeType/BitMap.md
@@ -57,6 +63,6 @@ clean :
 	@rm -f $(SRC)/ft6_*%O% resources/libraries/*%LIB-NAME%
 
 realclean : clean
-	@rm -f Makefile
+	@rm -f Makefile README.md lib/Font/FreeType/*.md
 
 
