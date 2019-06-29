@@ -1,6 +1,6 @@
 use v6;
 
-class Font::FreeType:ver<0.1.9> {
+class Font::FreeType:ver<0.2.0> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;
@@ -270,14 +270,14 @@ Font::FreeType depends on the [freetype](https://www.freetype.org/download.html)
 
 =head1 SEE ALSO
 
-=item [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Face.md) - Font Properties
-=item  [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Glyph.md) - Glyph properties
-=item2    [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
-=item2    [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Outline.md) - Scalable glyph images
-=item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
-=item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/CharMap.md) - Font Encodings
-=item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Native.md) - Bindings to the FreeType library
-=item2   [Font::FreeType::Native::Types](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Native/Types.md) - Data types and enumerations
+=item [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Face.md) - Font Properties
+=item  [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Glyph.md) - Glyph properties
+=item2    [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/GlyphImage.md) - Glyph outlines and bitmaps
+=item2    [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Outline.md) - Scalable glyph images
+=item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
+=item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/CharMap.md) - Font Encodings
+=item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native.md) - Bindings to the FreeType library
+=item2   [Font::FreeType::Native::Types](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native/Types.md) - Data types and enumerations
 
 =head1 AUTHORS
 

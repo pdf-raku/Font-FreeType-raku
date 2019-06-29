@@ -20,7 +20,7 @@ $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS% $(CF)
 
-doc : README.md lib/Font/FreeType/BitMap.md lib/Font/FreeType/CharMap.md lib/Font/FreeType/Face.md lib/Font/FreeType/Glyph.md lib/Font/FreeType/GlyphImage.md lib/Font/FreeType/Outline.md lib/Font/FreeType/NamedInfo.md lib/Font/FreeType/Native.md lib/Font/FreeType/Native/Types.md
+doc : README.md doc/BitMap.md doc/CharMap.md doc/Face.md doc/Glyph.md doc/GlyphImage.md doc/Outline.md doc/NamedInfo.md doc/Native.md doc/Native/Types.md
 
 README.md : lib/Font/FreeType.pm
 	(\
@@ -29,32 +29,32 @@ README.md : lib/Font/FreeType.pm
             perl6 -I . --doc=Markdown lib/Font/FreeType.pm\
         ) > README.md
 
-lib/Font/FreeType/BitMap.md : lib/Font/FreeType/BitMap.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/BitMap.pm > lib/Font/FreeType/BitMap.md
+doc/BitMap.md : lib/Font/FreeType/BitMap.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/BitMap.pm > doc/BitMap.md
 
-lib/Font/FreeType/CharMap.md : lib/Font/FreeType/CharMap.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/CharMap.pm > lib/Font/FreeType/CharMap.md
+doc/CharMap.md : lib/Font/FreeType/CharMap.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/CharMap.pm > doc/CharMap.md
 
-lib/Font/FreeType/Face.md : lib/Font/FreeType/Face.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Face.pm > lib/Font/FreeType/Face.md
+doc/Face.md : lib/Font/FreeType/Face.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/Face.pm > doc/Face.md
 
-lib/Font/FreeType/Glyph.md : lib/Font/FreeType/Glyph.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Glyph.pm > lib/Font/FreeType/Glyph.md
+doc/Glyph.md : lib/Font/FreeType/Glyph.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/Glyph.pm > doc/Glyph.md
 
-lib/Font/FreeType/GlyphImage.md : lib/Font/FreeType/GlyphImage.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/GlyphImage.pm > lib/Font/FreeType/GlyphImage.md
+doc/GlyphImage.md : lib/Font/FreeType/GlyphImage.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/GlyphImage.pm > doc/GlyphImage.md
 
-lib/Font/FreeType/NamedInfo.md : lib/Font/FreeType/NamedInfo.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/NamedInfo.pm > lib/Font/FreeType/NamedInfo.md
+doc/NamedInfo.md : lib/Font/FreeType/NamedInfo.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/NamedInfo.pm > doc/NamedInfo.md
 
-lib/Font/FreeType/Outline.md : lib/Font/FreeType/Outline.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Outline.pm > lib/Font/FreeType/Outline.md
+doc/Outline.md : lib/Font/FreeType/Outline.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/Outline.pm > doc/Outline.md
 
-lib/Font/FreeType/Native.md : lib/Font/FreeType/Native.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Native.pm > lib/Font/FreeType/Native.md
+doc/Native.md : lib/Font/FreeType/Native.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/Native.pm > doc/Native.md
 
-lib/Font/FreeType/Native/Types.md : lib/Font/FreeType/Native/Types.pm
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Native/Types.pm > lib/Font/FreeType/Native/Types.md
+doc/Native/Types.md : lib/Font/FreeType/Native/Types.pm
+	perl6 -I . --doc=Markdown lib/Font/FreeType/Native/Types.pm > doc/Native/Types.md
 
 test : all
 	@prove -e"perl6 -I ." -v t
@@ -63,6 +63,6 @@ clean :
 	@rm -f $(SRC)/ft6_*%O% resources/libraries/*%LIB-NAME%
 
 realclean : clean
-	@rm -f Makefile README.md lib/Font/FreeType/*.md
+	@rm -f Makefile README.md doc/*.md doc/*/*.md
 
 
