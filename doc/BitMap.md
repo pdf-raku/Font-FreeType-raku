@@ -35,7 +35,7 @@ METHODS
 
 ### pixel-mode()
 
-The rendering mode. One of:
+The rendering pixel mode. One of:
 
   * *FT_PIXEL_MODE_NONE*
 

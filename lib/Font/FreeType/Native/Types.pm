@@ -4,14 +4,16 @@ unit module Font::FreeType::Native::Types;
 
 =head1 NAME
 
-Font::FreeType::Native - type and enumeration declarations
+Font::FreeType::Native:Types - type and enumeration declarations
 
 =head1 SYNOPSIS
 
-    # E.g. build a map of glyphs number to unicode
     use Font::FreeType::Native::Types;
+    # Examples
+    # 1. Declare a native variable of type FT_Ulong
     my FT_ULong $char-code;
-    my FT_UInt $render-mode = FT_RENDER_MODE_LCD;
+    # 2. Compare against an enumeration
+    if $bitmap.pixel-mode == FT_PIXEL_MODE_LCD { ... }
 
 =head1 DESCRIPTION
 

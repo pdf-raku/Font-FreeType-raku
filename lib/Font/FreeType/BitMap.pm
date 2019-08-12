@@ -182,7 +182,7 @@ This class represents the bitmap image of a rendered glyph.
 
 =head3 pixel-mode()
 
-The rendering mode. One of:
+The rendering pixel mode. One of:
 
     =begin item
     I<FT_PIXEL_MODE_NONE>
