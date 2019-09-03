@@ -26,7 +26,7 @@ Font::FreeType::Native - bindings to the freetype library
 
 =head1 DESCRIPTION
 
-This class contains the actual bindings to the FreeType library.
+This class contains structure definitions and bindings for the FreeType library.
 
 Other high level classes, by convention, have a `native()` accessor, which can be
 used, if needed, to gain access to native objects from this class:
