@@ -13,7 +13,7 @@ install:
 addons:
   apt:
     packages:
-      - freetype
+      - freetype2
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
