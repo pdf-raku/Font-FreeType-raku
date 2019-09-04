@@ -1,8 +1,5 @@
 language: perl6
 sudo: false
-os:
-  - linux
-  - osx
 perl6:
   - latest
   - '2018.08'
@@ -10,10 +7,14 @@ install:
   - rakudobrew build zef
   - zef --depsonly install .
   - zef build .
-addons:
-  apt:
-    packages:
-      - freetype2
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install freetype; fi
+matrix:
+    include:
+    - os: linux
+    - os: osx
+      addons:
+        apt:
+          packages:
+            - freetype
+      before_install:
+        - brew update
+        - brew install freetype
