@@ -17,3 +17,4 @@ DESCRIPTION
 ===========
 
 This class contains datatype and enumerations for the FreeType library.
+

@@ -28,7 +28,7 @@ Font::FreeType::Native - bindings to the freetype library
 
 This class contains structure definitions and bindings for the FreeType library.
 
-Other high level classes, by convention, have a `native()` accessor, which can be
+Containing classes, by convention, have a `native()` accessor, which can be
 used, if needed, to gain access to native objects from this class:
 
 =table
@@ -50,17 +50,15 @@ used, if needed, to gain access to native objects from this class:
 
 use NativeCall;
 use NativeCall::Types;
-use LibraryMake;
 use Font::FreeType::Error;
 use Font::FreeType::Native::Types;
 
-constant $SO = get-vars('')<SO>;
-
 # library bindings
-constant FT-LIB = $SO ~~ /dll/ ?? 'libfreetype' !! ('freetype', v6);
+constant FT-LIB = Rakudo::Internals.IS-WIN ?? 'libfreetype' !! ('freetype', v6);
 
 # additional C bindings
 constant FT-WRAPPER-LIB = ~ %?RESOURCES<libraries/ft6>;
+constant CLIB = Rakudo::Internals.IS-WIN ?? 'msvcrt' !! Str;
 
 constant FT_Byte   = uint8;
 constant FT_Encoding = uint32;
@@ -555,5 +553,5 @@ sub FT_Init_FreeType(Pointer[FT_Library] $library is rw)
         is export
         is native(FT-LIB) {*};
 
-our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native {*};
+our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native(CLIB) {*};
 

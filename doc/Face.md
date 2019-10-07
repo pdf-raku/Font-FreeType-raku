@@ -7,9 +7,10 @@ SYNOPSIS
 ========
 
     use Font::FreeType;
+    use Font::FreeType::Face;
 
     my Font::FreeType $freetype .= new;
-    my $face = $freetype.face('Vera.ttf');
+    my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
 
 DESCRIPTION
 ===========
