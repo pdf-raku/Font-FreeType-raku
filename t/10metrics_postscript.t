@@ -43,7 +43,7 @@ for %expected-flags.pairs.sort {
 is $tnr.num-glyphs, 229, '$face.number-of-glyphs';
 is $tnr.units-per-EM, 1000, '$face.units-per-em';
 my $underline-position = $tnr.underline-position;
-ok $underline-position <= -213 || $underline-position >= -284, 'underline position';
+ok -110 <= $underline-position <= -90, 'underline position';
 
 is $tnr.underline-thickness, 50, 'underline thickness';
 # italic angle 0

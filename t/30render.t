@@ -5,12 +5,12 @@ use Font::FreeType::Native::Types;
 use Font::FreeType::Outline;
 
 my @test = (
-    { char => 'A', x_sz => 72, y_sz => 72, x_res => 72, y_res => 72, aa => 0 },
-    { char => 'A', x_sz => 72, y_sz => 72, x_res => 72, y_res => 72, aa => 1 },
-    { char => 'A', x_sz => 8, y_sz => 8, x_res => 100, y_res => 100, aa => 1 },
-    { char => 'A', x_sz => 8, y_sz => 8, x_res => 100, y_res => 100, aa => 0 },
-    { char => 'A', x_sz => 8, y_sz => 8, x_res => 600, y_res => 600, aa => 0 },
-    { char => '.', x_sz => 300, y_sz => 300, x_res => 72, y_res => 72, aa => 1 },
+    { :char<A>, :x_sz(72),  :y_sz(72),  :x_res(72),  :y_res(72),  :aa(0) },
+    { :char<A>, :x_sz(72),  :y_sz(72),  :x_res(72),  :y_res(72),  :aa(1) },
+    { :char<A>, :x_sz(8),   :y_sz(8),   :x_res(100), :y_res(100), :aa(1) },
+    { :char<A>, :x_sz(8),   :y_sz(8),   :x_res(100), :y_res(100), :aa(0) },
+    { :char<A>, :x_sz(8),   :y_sz(8),   :x_res(600), :y_res(600), :aa(0) },
+    { :char<.>, :x_sz(300), :y_sz(300), :x_res(72),  :y_res(72),  :aa(1) },
 );
 use Test;
 plan +@test * 4 + 16;

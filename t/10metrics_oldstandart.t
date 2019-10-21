@@ -11,7 +11,7 @@ my Font::FreeType $ft .= new;
 # Load the BDF file.
 my $font = $ft.face: 't/fonts/OldStandard-Bold.otf';
 ok $font.defined, 'FreeType.face returns an object';
-isa-ok $font, (require ::('Font::FreeType::Face')),
+isa-ok $font, 'Font::FreeType::Face',
     'FreeType.face returns face object';
 
 # Test general properties of the face.
@@ -44,11 +44,11 @@ for %expected-flags.pairs.sort {
 is($font.num-glyphs, 1658, '$face.number-of-glyphs() is right');
 is($font.units-per-EM, 1000, '$face.units-per-em() is right');
 my $underline-position = $font.underline-position;
-ok $underline-position <= -178 || $underline-position >= -198, 'underline position';
+ok -198 <= $underline-position <= -178, 'underline position';
 is $font.underline-thickness, 40, 'underline thickness';
 my $ft-version = $ft.version;
 todo "FreeType2 v2.9.2+ needed for correct font sizes", 3
-                                                                    unless $ft-version >= v2.9.2;
+    unless $ft-version >= v2.9.2;
 is $font.height, 1236, 'text height';
 is $font.ascender, 762, 'ascender';
 is $font.descender, -238, 'descender';
@@ -74,7 +74,7 @@ subtest "named-info" => {
     ok $infos;
     ok +$infos, 64;
     my $copy-info = $infos[0];
-    like $copy-info.Str, rx/'Copyright'.*'Alexey Kryukov'/;
+    like $copy-info.Str, /'Copyright'.*'Alexey Kryukov'/;
     is $copy-info.language-id, 0;
     is $copy-info.platform-id, 1;
     is $copy-info.name-id, 0;
