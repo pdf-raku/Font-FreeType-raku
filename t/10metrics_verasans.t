@@ -16,7 +16,7 @@ my Font::FreeType $ft .= new;
 # Load the BDF file.
 my $vera = $ft.face: 't/fonts/Vera.ttf';
 ok $vera.defined, 'FreeType.face returns an object';
-isa-ok $vera, (require ::('Font::FreeType::Face')),
+isa-ok $vera, 'Font::FreeType::Face',
     'FreeType.face returns face object';
 
 # Test general properties of the face.

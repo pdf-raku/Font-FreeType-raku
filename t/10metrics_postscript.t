@@ -9,7 +9,7 @@ my $ft-version = $ft.version;
 # Load the Postscript file.
 my $tnr = $ft.face: 't/fonts/TimesNewRomPS.pfb';
 ok $tnr.defined, 'FreeType.face returns an object';
-isa-ok $tnr, (require ::('Font::FreeType::Face')),
+isa-ok $tnr, 'Font::FreeType::Face',
     'FreeType.face returns face object';
 
 # Test general properties of the face.

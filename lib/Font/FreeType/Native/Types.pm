@@ -4,7 +4,7 @@ unit module Font::FreeType::Native::Types;
 
 =head1 NAME
 
-Font::FreeType::Native:Types - type and enumeration declarations
+Font::FreeType::Native::Types - type and enumeration declarations
 
 =head1 SYNOPSIS
 

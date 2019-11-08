@@ -9,7 +9,7 @@ my Font::FreeType $ft .= new;
 # Load the BDF file.
 my $bdf = $ft.face: 't/fonts/5x7.bdf';
 ok $bdf.defined, 'FreeType.face returns an object';
-isa-ok $bdf, (require ::('Font::FreeType::Face')),
+isa-ok $bdf, 'Font::FreeType::Face',
     'FreeType.face returns face object';
 
 # Test general properties of the face.

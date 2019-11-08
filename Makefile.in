@@ -57,6 +57,9 @@ doc/Native/Types.md : lib/Font/FreeType/Native/Types.pm
 	perl6 -I . --doc=Markdown lib/Font/FreeType/Native/Types.pm > doc/Native/Types.md
 
 test : all
+	@prove -e"perl6 -I ." t
+
+loudtest : all
 	@prove -e"perl6 -I ." -v t
 
 clean :
