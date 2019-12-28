@@ -44,7 +44,9 @@ class Font::FreeType::Face {
     }
 
     method charmap {
-        Font::FreeType::CharMap.new: :face(self), :native($!native.charmap);
+        my Font::FreeType::CharMap $charmap .= new: :face(self), :native($_)
+            with $!native.charmap;
+        $charmap;
     }
 
     method charmaps {
