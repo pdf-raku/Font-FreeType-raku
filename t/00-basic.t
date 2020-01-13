@@ -4,7 +4,7 @@ use Font::FreeType;
 use Font::FreeType::Face;
 use Font::FreeType::Error;
 use Font::FreeType::Native;
-use Font::FreeType::Native::Types;
+use Font::FreeType::Native::Defs;
 
 my Font::FreeType $freetype;
 lives-ok { $freetype .= new }, 'font freetype creation';

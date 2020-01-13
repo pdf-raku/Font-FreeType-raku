@@ -11,7 +11,7 @@ Font::FreeType::Native - bindings to the freetype library
     # E.g. build a map of glyphs number to Unicode
     use Font::FreeType::Face;
     use Font::FreeType::Native;
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
 
     sub face-unicode-map(Font::FreeType::Face $face) {
         my uint16 @to-unicode[$face.num-glyphs];
@@ -51,14 +51,7 @@ used, if needed, to gain access to native objects from this class:
 use NativeCall;
 use NativeCall::Types;
 use Font::FreeType::Error;
-use Font::FreeType::Native::Types;
-
-# library bindings
-constant FT-LIB = Rakudo::Internals.IS-WIN ?? 'libfreetype' !! ('freetype', v6);
-
-# additional C bindings
-constant FT-WRAPPER-LIB = ~ %?RESOURCES<libraries/ft6>;
-constant CLIB = Rakudo::Internals.IS-WIN ?? 'msvcrt' !! Str;
+use Font::FreeType::Native::Defs;
 
 constant FT_Byte   = uint8;
 constant FT_Encoding = uint32;
@@ -86,7 +79,7 @@ class FT_Bitmap is repr('CStruct') is export {
 
     #| initialize a bitmap structure.
     method FT_Bitmap_Init
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 
     #| make a copy of the bitmap
     method clone(FT_Library $library) {
@@ -159,13 +152,13 @@ class FT_Outline is repr('CStruct') is export {
     has int32               $.flags;     # outline masks
 
     method FT_Outline_Copy(FT_Outline $target)
-        returns FT_Error is native(FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 
     method FT_Outline_Get_BBox(FT_BBox $bbox)
-        returns FT_Error is native(FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 
     method FT_Outline_Embolden(FT_Pos $strength)
-        returns FT_Error is native(FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 
     method clone(FT_Library $library) {
         my FT_Outline $outline .= new;
@@ -215,11 +208,11 @@ class FT_Glyph is repr('CStruct') is export {
         FT_UInt $bbox-mode,
         FT_BBox $bbox
         )
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 
     #| Destroy a given glyph.
     method FT_Done_Glyph
-        returns FT_Error is native(FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 }
 
 #| A handle to an object used to model a bitmap glyph image. This is a sub-class of FT_Glyph
@@ -228,7 +221,7 @@ class FT_BitmapGlyph is repr('CStruct') is FT_Glyph is export is rw {
     has FT_Int            $.top;
     HAS FT_Bitmap         $.bitmap;
     method !bitmap-pointer
-        is native(FT-WRAPPER-LIB)
+        is native($FT-WRAPPER-LIB)
         is symbol('ft6_glyph_bitmap')
         returns Pointer[FT_Bitmap]
     {*}
@@ -239,7 +232,7 @@ class FT_BitmapGlyph is repr('CStruct') is FT_Glyph is export is rw {
 class FT_OutlineGlyph is FT_Glyph is repr('CStruct') is export {
     HAS FT_Outline        $.outline;
     method !outline-pointer
-        is native(FT-WRAPPER-LIB)
+        is native($FT-WRAPPER-LIB)
         is symbol('ft6_glyph_outline')
         returns Pointer[FT_Outline]
     {*}
@@ -285,16 +278,16 @@ class FT_GlyphSlot is repr('CStruct') is export {
     #| Convert a given glyph image to a bitmap. It does so by inspecting the glyph image format, finding the relevant renderer, and invoking it.
     method FT_Render_Glyph(
         FT_Render_Mode $render-mode )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| A function used to extract a glyph image from a slot. Note that the created FT_Glyph object must be released with FT_Done_Glyph.
     method FT_Get_Glyph(
         Pointer[FT_Glyph] $glyph-p is rw )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     ## Work-around for Rakudo RT #132222 - iffy HAS accessor
     method !metrics-pointer
-        is native(FT-WRAPPER-LIB)
+        is native($FT-WRAPPER-LIB)
         is symbol('ft6_glyphslot_metrics')
         returns Pointer[FT_Glyph_Metrics]
     {*}
@@ -357,61 +350,61 @@ class FT_Face is export {
 
     #| Return true if a given face provides reliable PostScript glyph names. 
     method FT_Has_PS_Glyph_Names(  )
-        returns FT_Int is native(FT-LIB) {*};
+        returns FT_Int is native($FT-LIB) {*};
 
     #| Retrieve the ASCII PostScript name of a given face, if available. This only works with PostScript, TrueType, and OpenType fonts.
     method FT_Get_Postscript_Name(  )
-        returns Str is native(FT-LIB) {*};
+        returns Str is native($FT-LIB) {*};
 
     #| Retrieve the number of name strings in the SFNT ‘name’ table.
     method FT_Get_Sfnt_Name_Count(  )
-        returns FT_UInt is native(FT-LIB) {*};
+        returns FT_UInt is native($FT-LIB) {*};
 
     #| Retrieve a string of the SFNT ‘name’ table for a given index.
     method FT_Get_Sfnt_Name(
         FT_UInt $index,
         FT_SfntName $sfnt)
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Retrieve the ASCII name of a given glyph in a face.
     method FT_Get_Glyph_Name(
         FT_UInt $glyph-index,
         buf8    $buffer,
         FT_UInt $buffer-max )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Return the glyph index of a given character code. This function uses the currently selected charmap to do the mapping.
     method FT_Get_Char_Index(
         FT_ULong  $charcode )
-    returns FT_UInt is native(FT-LIB) {*};
+    returns FT_UInt is native($FT-LIB) {*};
 
     #| Return the glyph index of a given glyph name.
     method FT_Get_Name_Index(
         FT_String  $glyph-name )
-    returns FT_UInt is native(FT-LIB) {*};
+    returns FT_UInt is native($FT-LIB) {*};
 
     #| Load a glyph into the glyph slot of a face object.
     method FT_Load_Glyph(
         FT_UInt   $glyph-index,
         FT_Int32  $load-flags )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Load a glyph into the glyph slot of a face object, accessed by its character code.
     method FT_Load_Char(
         FT_ULong  $char-code,
         FT_Int32  $load-flags )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Return the first character code in the current charmap of a given face, together with its corresponding glyph index.
     method FT_Get_First_Char(
         FT_UInt  $agindex is rw )
-    returns FT_ULong is native(FT-LIB) {*};
+    returns FT_ULong is native($FT-LIB) {*};
 
     #| Return the next character code in the current charmap of a given face following the value ‘char_code’, as well as the corresponding glyph index.
     method FT_Get_Next_Char(
         FT_ULong  $char-code,
         FT_UInt  $agindex is rw )
-    returns FT_ULong is native(FT-LIB) {*};
+    returns FT_ULong is native($FT-LIB) {*};
 
     #| Call FT_Request_Size to request the nominal size (in points).
     method FT_Set_Char_Size(
@@ -419,13 +412,13 @@ class FT_Face is export {
         FT_F26Dot6  $char-height,
         FT_UInt     $horz-resolution,
         FT_UInt     $vert-resolution )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Call FT_Request_Size to request the nominal size (in pixels).
     method FT_Set_Pixel_Sizes(
         FT_UInt  $char-width,
         FT_UInt  $char-height )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Return the kerning vector between two glyphs of the same face.
     method FT_Get_Kerning(
@@ -433,26 +426,26 @@ class FT_Face is export {
         FT_UInt     $right-glyph,
         FT_UInt     $kern-mode,
         FT_Vector   $kerning)
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Return a string describing the format of a given face. Possible values are ‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’, and ‘Windows FNT’.
     method FT_Get_Font_Format
         returns Str
         is export
         is symbol('FT_Get_X11_Font_Format') # for FreeType < v2.0.0 compat
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 
     #| A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
     method FT_Reference_Face
         returns FT_Error
         is export
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 
     #| Discard a given face object, as well as all of its child slots and sizes.
     method FT_Done_Face
         returns FT_Error
         is export
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 }
 
 #| A handle to a FreeType library instance. Each ‘library’ is completely independent from the others; it is the ‘root’ of a set of objects like fonts, faces, sizes, etc.
@@ -468,7 +461,7 @@ class FT_Library is export {
         FT_Long $face-index,
         Pointer[FT_Face] $aface is rw
         )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Call FT_Open_Face to open a font that has been loaded into memory.
     method FT_New_Memory_Face(
@@ -477,7 +470,7 @@ class FT_Library is export {
         FT_Long $face-index,
         Pointer[FT_Face] $aface is rw
         )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Convert a bitmap object with depth 1bpp, 2bpp, 4bpp, 8bpp or 32bpp to a bitmap object with depth 8bpp, making the number of used bytes line (a.k.a. the ‘pitch’) a multiple of ‘alignment’.
     method FT_Bitmap_Convert(
@@ -485,14 +478,14 @@ class FT_Library is export {
         FT_Bitmap  $target,
         FT_Int     $alignment
         )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Copy a bitmap into another one.
     method FT_Bitmap_Copy(
         FT_Bitmap $source,
         FT_Bitmap $target,
         )
-        returns FT_Error is native(FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 
     #| Embolden a bitmap. The new bitmap will be about ‘x-strength’ pixels wider and ‘y-strength’ pixels higher. The left and bottom borders are kept unchanged.
     method FT_Bitmap_Embolden(
@@ -500,13 +493,13 @@ class FT_Library is export {
         FT_Pos $x-strength,
         FT_Pos $y-strength,
         )
-        returns FT_Error is native(FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 
     #| Destroy a bitmap object initialized with FT_Bitmap_Init.
     method FT_Bitmap_Done(
         FT_Bitmap  $bitmap
         )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Create a new outline of a given size.
     method FT_Outline_New(
@@ -514,13 +507,13 @@ class FT_Library is export {
         FT_Int     $num-contours,
         FT_Outline $aoutline,
         )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Destroy an outline created with FT_Outline_New.
     method FT_Outline_Done(
         FT_Outline  $outline
         )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Return the version of the FreeType library being used.
     method FT_Library_Version(
@@ -528,13 +521,13 @@ class FT_Library is export {
         FT_Int $minor is rw,
         FT_Int $patch is rw,
         )
-    returns FT_Error is native(FT-LIB) {*};
+    returns FT_Error is native($FT-LIB) {*};
 
     #| Destroy a given FreeType library object and all of its children, including resources, drivers, faces, sizes, etc.
     method FT_Done_FreeType
         returns FT_Error
         is export
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 }
 
 #| Convert a given glyph object to a bitmap glyph object.
@@ -545,13 +538,13 @@ sub FT_Glyph_To_Bitmap(
     FT_Bool $destroy,
     ) returns FT_Error
         is export
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 
 #| Initialize a new FreeType library object.
 sub FT_Init_FreeType(Pointer[FT_Library] $library is rw)
     returns FT_Error
         is export
-        is native(FT-LIB) {*};
+        is native($FT-LIB) {*};
 
-our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native(CLIB) {*};
+our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native($CLIB) {*};
 

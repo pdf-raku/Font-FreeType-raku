@@ -23,7 +23,7 @@
     "Font::FreeType::GlyphImage" : "lib/Font/FreeType/GlyphImage.pm",
     "Font::FreeType::NamedInfo" : "lib/Font/FreeType/NamedInfo.pm",
     "Font::FreeType::Native" : "lib/Font/FreeType/Native.pm",
-    "Font::FreeType::Native::Types" : "lib/Font/FreeType/Native/Types.pm",
+    "Font::FreeType::Native::Defs" : "lib/Font/FreeType/Native/Defs.pm",
     "Font::FreeType::Outline" : "lib/Font/FreeType/Outline.pm"
   },
   "resources" : [
@@ -35,5 +35,5 @@
     "freetype"
   ],
   "test-depends" : [ ],
-  "version" : "0.2.0"
+  "version" : "0.2.1"
 }

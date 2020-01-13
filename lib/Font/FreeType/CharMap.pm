@@ -1,6 +1,6 @@
 use NativeCall;
 use Font::FreeType::Native;
-use Font::FreeType::Native::Types;
+use Font::FreeType::Native::Defs;
 
 class Font::FreeType::CharMap {
     has $.face;

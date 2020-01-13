@@ -1,11 +1,11 @@
 use v6;
 
-class Font::FreeType:ver<0.2.0> {
+class Font::FreeType:ver<0.2.1> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
 
     has FT_Library $.native;
     our $lock = Lock.new;
@@ -277,7 +277,7 @@ Font::FreeType depends on the [freetype](https://www.freetype.org/download.html)
 =item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
 =item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/CharMap.md) - Font Encodings
 =item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native.md) - Bindings to the FreeType library
-=item2   [Font::FreeType::Native::Types](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native/Types.md) - Data types and enumerations
+=item2   [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native/Types.md) - Data types and enumerations
 
 =head1 AUTHORS
 

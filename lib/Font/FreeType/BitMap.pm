@@ -3,7 +3,7 @@ class Font::FreeType::BitMap {
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
 
     has $.face;
     has FT_Bitmap $!native handles <rows width pitch num-grays pixel-mode pallette>;

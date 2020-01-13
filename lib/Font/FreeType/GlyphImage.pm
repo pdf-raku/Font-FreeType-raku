@@ -3,7 +3,7 @@ class Font::FreeType::GlyphImage {
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
 
     use Font::FreeType::BitMap;
     use Font::FreeType::Outline;

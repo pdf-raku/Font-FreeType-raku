@@ -1,3 +1,6 @@
+0.2.1
+    - Rename Font::FreeType::Types to Font::FreeType::Defs and
+      add exports $FT-LIB, $FT-WRAPPER-LIB and $CLIB
 0.2.0
     - Generate documentation (markdown) to docs/ directory
 0.1.9

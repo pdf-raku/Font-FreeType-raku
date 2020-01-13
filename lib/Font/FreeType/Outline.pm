@@ -4,7 +4,7 @@ class Font::FreeType::Outline {
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Native;
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
 
     method !library(--> FT_Library:D) {
         $!face.ft-lib.native;
@@ -32,10 +32,10 @@ class Font::FreeType::Outline {
         method points { nativecast(CArray[num64], $!points) }
 
         method gather_outlines(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
-            returns FT_Error is native(Font::FreeType::Native::FT-WRAPPER-LIB) is symbol('ft6_outline_gather') {*}
+            returns FT_Error is native($FT-WRAPPER-LIB) is symbol('ft6_outline_gather') {*}
 
         method ft6_outline_gather_done
-            is native(Font::FreeType::Native::FT-WRAPPER-LIB) {*}
+            is native($FT-WRAPPER-LIB) {*}
 
         submethod DESTROY {
             self.ft6_outline_gather_done;

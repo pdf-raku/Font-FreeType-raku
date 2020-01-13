@@ -3,7 +3,7 @@ use v6;
 use Test;
 plan 59 + 4 * 1 + 1836 * 1;
 use Font::FreeType;
-use Font::FreeType::Native::Types;
+use Font::FreeType::Native::Defs;
 
 my Font::FreeType $ft .= new;
 # Load the BDF file.

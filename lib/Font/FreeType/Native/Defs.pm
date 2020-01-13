@@ -1,14 +1,14 @@
-unit module Font::FreeType::Native::Types;
+unit module Font::FreeType::Native::Defs;
 
 =begin pod
 
 =head1 NAME
 
-Font::FreeType::Native::Types - type and enumeration declarations
+Font::FreeType::Native::Defs - type and enumeration declarations
 
 =head1 SYNOPSIS
 
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
     # Examples
     # 1. Declare a native variable of type FT_Ulong
     my FT_ULong $char-code;
@@ -29,6 +29,13 @@ This class contains datatype and enumerations for the FreeType library.
 
 use NativeCall;
 use NativeCall::Types;
+
+our $FT-LIB is export = Rakudo::Internals.IS-WIN ?? 'libfreetype' !! ('freetype', v6);
+# library bindings
+
+# additional C bindings
+our $FT-WRAPPER-LIB is export = %?RESOURCES<libraries/ft6>;
+our $CLIB is export = Rakudo::Internals.IS-WIN ?? 'msvcrt' !! Str;
 
 constant FT_Bool   is export = uint8;
 constant FT_Error  is export = uint32;

@@ -3,7 +3,7 @@ class Font::FreeType::Glyph is rw {
     use NativeCall;
     use Font::FreeType::GlyphImage;
     use Font::FreeType::Native;
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
     use Font::FreeType::Error;
 
     use Font::FreeType::BitMap;

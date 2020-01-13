@@ -1,7 +1,7 @@
 # Render bitmaps from an outline font.
 use v6;
 use Font::FreeType;
-use Font::FreeType::Native::Types;
+use Font::FreeType::Native::Defs;
 use Font::FreeType::Outline;
 
 my @test = (
