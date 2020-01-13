@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-p6.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-p6)
+[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)
 
 NAME
 ====
@@ -163,21 +163,21 @@ To checkout and test this module from the Git repository:
 SEE ALSO
 ========
 
-  * [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Face.md) - Font Properties
+  * [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Face.md) - Font Properties
 
-  * [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Glyph.md) - Glyph properties
+  * [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Glyph.md) - Glyph properties
 
-    * [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/GlyphImage.md) - Glyph outlines and bitmaps
+    * [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/GlyphImage.md) - Glyph outlines and bitmaps
 
-    * [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Outline.md) - Scalable glyph images
+    * [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Outline.md) - Scalable glyph images
 
-    * [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
+    * [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
 
-  * [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/CharMap.md) - Font Encodings
+  * [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/CharMap.md) - Font Encodings
 
-  * [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native.md) - Bindings to the FreeType library
+  * [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native.md) - Bindings to the FreeType library
 
-    * [Font::FreeType::Native::Types](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native/Types.md) - Data types and enumerations
+    * [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native/Types.md) - Data types and enumerations
 
 AUTHORS
 =======

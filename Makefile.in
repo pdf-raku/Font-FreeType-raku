@@ -24,7 +24,7 @@ doc : README.md doc/BitMap.md doc/CharMap.md doc/Face.md doc/Glyph.md doc/GlyphI
 
 README.md : lib/Font/FreeType.pm
 	(\
-	    echo '[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-p6.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-p6)'; \
+	    echo '[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)'; \
             echo '';\
             perl6 -I . --doc=Markdown lib/Font/FreeType.pm\
         ) > README.md

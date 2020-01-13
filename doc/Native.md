@@ -9,7 +9,7 @@ SYNOPSIS
     # E.g. build a map of glyphs number to Unicode
     use Font::FreeType::Face;
     use Font::FreeType::Native;
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
 
     sub face-unicode-map(Font::FreeType::Face $face) {
         my uint16 @to-unicode[$face.num-glyphs];

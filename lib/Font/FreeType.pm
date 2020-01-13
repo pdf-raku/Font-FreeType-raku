@@ -268,16 +268,23 @@ This script displays text as bitmapped characters, using a given font. For examp
 
 Font::FreeType depends on the [freetype](https://www.freetype.org/download.html) native library, so you must install that prior to using this module.
 
+To checkout and test this module from the Git repository:
+
+    $ git checkout https://github.com/p6-pdf/Font-FreeType-raku.git
+    $ zef build .  # -OR- rakudo Build.pm
+    $ prove -e'rakudo -I .' -v t
+
+
 =head1 SEE ALSO
 
-=item [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Face.md) - Font Properties
-=item  [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Glyph.md) - Glyph properties
-=item2    [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/GlyphImage.md) - Glyph outlines and bitmaps
-=item2    [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Outline.md) - Scalable glyph images
-=item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
-=item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/CharMap.md) - Font Encodings
-=item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native.md) - Bindings to the FreeType library
-=item2   [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/doc/Native/Types.md) - Data types and enumerations
+=item [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Face.md) - Font Properties
+=item  [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Glyph.md) - Glyph properties
+=item2    [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/GlyphImage.md) - Glyph outlines and bitmaps
+=item2    [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Outline.md) - Scalable glyph images
+=item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
+=item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/CharMap.md) - Font Encodings
+=item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native.md) - Bindings to the FreeType library
+=item2   [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native/Types.md) - Data types and enumerations
 
 =head1 AUTHORS
 
