@@ -546,5 +546,5 @@ sub FT_Init_FreeType(Pointer[FT_Library] $library is rw)
         is export
         is native($FT-LIB) {*};
 
-our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native($CLIB) {*};
+our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native($Font::FreeType::Native::Defs::CLIB) {*};
 
