@@ -29,7 +29,7 @@
   "resources" : [
     "libraries/ft6"
   ],
-  "source-url" : "git://github.com/p6-pdf/Font-FreeType-p6.git",
+  "source-url" : "git://github.com/p6-pdf/Font-FreeType-raku.git",
   "tags" : [
     "font",
     "freetype"

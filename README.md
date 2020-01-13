@@ -154,6 +154,12 @@ INSTALL
 
 Font::FreeType depends on the [freetype](https://www.freetype.org/download.html) native library, so you must install that prior to using this module.
 
+To checkout and test this module from the Git repository:
+
+    $ git checkout https://github.com/p6-pdf/Font-FreeType-raku.git
+    $ zef build .  # -OR- rakudo Build.pm
+    $ prove -e'rakudo -I .' -v t
+
 SEE ALSO
 ========
 

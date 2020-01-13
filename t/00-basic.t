@@ -5,6 +5,14 @@ use Font::FreeType::Face;
 use Font::FreeType::Error;
 use Font::FreeType::Native;
 use Font::FreeType::Native::Defs;
+use NativeCall;
+
+# sanity check our libraries
+lives-ok({ cglobal($FT-LIB, "FT_Library_Version", Pointer) }, 'FreeType lib access')
+    or die "unable to access FreeType library; is the FreeType library installed?";
+
+lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper lib access')
+    or die "unable to access FreeType wrapper library; has it been built? (e.g. 'zef build .)";
 
 my Font::FreeType $freetype;
 lives-ok { $freetype .= new }, 'font freetype creation';
