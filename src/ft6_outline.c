@@ -76,7 +76,7 @@ ft6_outline_gather(ft_shape_t *shape, FT_Outline *outline, int shift, FT_Pos del
    shape->ops = malloc(shape->max_points * sizeof( *(shape->ops) ));
    shape->points = malloc(shape->max_points * sizeof( *(shape->points) ));
 
-   FT_Outline_Decompose(outline, &funcs, shape);
+   return FT_Outline_Decompose(outline, &funcs, shape);
 }
 
 DLLEXPORT void
