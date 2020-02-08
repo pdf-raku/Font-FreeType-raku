@@ -284,7 +284,7 @@ To checkout and test this module from the Git repository:
 =item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
 =item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/CharMap.md) - Font Encodings
 =item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native.md) - Bindings to the FreeType library
-=item2   [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native/Types.md) - Data types and enumerations
+=item2   [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native/Defs.md) - Data types and enumerations
 
 =head1 AUTHORS
 

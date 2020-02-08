@@ -177,7 +177,7 @@ SEE ALSO
 
   * [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native.md) - Bindings to the FreeType library
 
-    * [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native/Types.md) - Data types and enumerations
+    * [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native/Defs.md) - Data types and enumerations
 
 AUTHORS
 =======

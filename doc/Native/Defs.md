@@ -1,12 +1,12 @@
 NAME
 ====
 
-Font::FreeType::Native::Types - type and enumeration declarations
+Font::FreeType::Native::Defs - type and enumeration declarations
 
 SYNOPSIS
 ========
 
-    use Font::FreeType::Native::Types;
+    use Font::FreeType::Native::Defs;
     # Examples
     # 1. Declare a native variable of type FT_Ulong
     my FT_ULong $char-code;
