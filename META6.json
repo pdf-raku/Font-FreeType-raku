@@ -1,5 +1,5 @@
 {
-  "auth": "github:p6-pdf",
+  "auth": "github:pdf-raku",
   "authors": [
     "David Warring"
   ],
@@ -9,7 +9,7 @@
   ],
   "depends": [
   ],
-  "description": "read font files and render glyphs from Perl using FreeType2",
+  "description": "read font files and render glyphs from Raku using FreeType2",
   "license": "Artistic-2.0",
   "name": "Font::FreeType",
   "perl": "6",
@@ -30,12 +30,12 @@
   "resources": [
     "libraries/ft6"
   ],
-  "source-url": "git://github.com/p6-pdf/Font-FreeType-raku.git",
+  "source-url": "git://github.com/pdf-raku/Font-FreeType-raku.git",
   "tags": [
     "font",
     "freetype"
   ],
   "test-depends": [
   ],
-  "version": "0.2.1"
+  "version": "0.2.2"
 }
