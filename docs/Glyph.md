@@ -1,10 +1,10 @@
-NAME
-====
+class Font::FreeType::Glyph
+---------------------------
 
-Font::FreeType::Glyph - iterator for font typeface glyphs
+iterator for font typeface glyphs
 
-SYNOPSIS
-========
+Synopsis
+--------
 
     use Font::FreeType;
     use Font::FreeType::Glyph;
@@ -21,17 +21,17 @@ SYNOPSIS
         ($g.name() ~ '.pgm').IO.open(:w, :bin).write: $g-image.bitmap.pgm;
     }
 
-DESCRIPTION
-===========
+Description
+-----------
 
 This is an iterator class that represents individual glyphs loaded from a font.
 
-See [Font::FreeType::Face](Face.md) for how to obtain glyph objects, in particular the `for-glyph-slots` method.
+See [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face) for how to obtain glyph objects, in particular the `for-glyph-slots` method.
 
 For a detailed description of the meaning of glyph metrics, and the structure of vectorial outlines, see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sourceforge.net/freetype2/docs/glyphs/)
 
-METHODS
-=======
+Methods
+-------
 
 Unless otherwise stated, all methods will die if there is an error, and the metrics are scaled to the size of the font face.
 
@@ -83,17 +83,21 @@ The width of the glyph. This is the distance from the left side to the right sid
 
 The Unicode character represented by the glyph.
 
-SEE ALSO
-========
+See Also
+--------
 
-[Font::FreeType](../../../README.md), [Font::FreeType::Face](Face.md) [Font::FreeType::GlyphImage](GlyphImage.md)
+  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
 
-COPYRIGHT
-=========
+  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face)
+
+  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage)
+
+Copyright
+---------
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 2017.
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

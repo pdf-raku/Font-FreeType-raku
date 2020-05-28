@@ -1,8 +1,8 @@
-use NativeCall;
-use Font::FreeType::Native;
-use Font::FreeType::Native::Defs;
-
+#| Character map from font typefaces
 class Font::FreeType::CharMap {
+    use Font::FreeType::Native;
+    use Font::FreeType::Native::Defs;
+
     has $.face;
     has FT_CharMap $!native handles <platform-id encoding-id>;
     submethod TWEAK(:$!native!) { }
@@ -10,11 +10,8 @@ class Font::FreeType::CharMap {
 }
 
 =begin pod
-=head1 NAME
 
-Font::FreeType::CharMap - character map from font typefaces loaded from Font::FreeType
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
     use Font::FreeType;
 
@@ -25,15 +22,15 @@ Font::FreeType::CharMap - character map from font typefaces loaded from Font::Fr
     say $charmap.encoding-id;
     say $charmap.encoding;
 
-=head1 DESCRIPTION
+=head2 Description
 
 A charmap is used to translate character codes in a given encoding into glyph
 indexes for its parent's face. Some font formats may provide several charmaps
 per font.
 
-=head1 CONSTANTS
+=head2 Constants
 
-The following encoding constants are exported by default by [Font::FreeType](FreeType.md).
+The following encoding constants are exported by default by L<Font::FreeType>.
 See [freetype documentation](http://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Encoding)
 
 - FT_ENCODING_NONE
@@ -84,7 +81,7 @@ See [freetype documentation](http://www.freetype.org/freetype2/docs/reference/ft
 
   Same as FT_ENCODING_JOHAB. Deprecated.
 
-=head1 METHODS
+=head2 Methods
 
 =head3 platform-id
 
@@ -102,13 +99,14 @@ For details please refer to the TrueType or OpenType specification.
 
 A FreeType Encoding tag (constant) identifying the charmap.
 
-=head1 COPYRIGHT
+=head2 Copyright
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Ported from Perl to Raku by David Warring <david.warring@gmail.com>
 Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
 =end pod

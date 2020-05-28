@@ -1,3 +1,4 @@
+#| Bitmaps from rendered glyphs
 class Font::FreeType::BitMap {
 
     use NativeCall;
@@ -149,11 +150,8 @@ class Font::FreeType::BitMap {
 }
 
 =begin pod
-=head1 NAME
 
-Font::FreeType::BitMap - bitmaps from rendered glyphs
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
     use Font::FreeType;
 
@@ -174,11 +172,11 @@ Font::FreeType::BitMap - bitmaps from rendered glyphs
         print $bitmap.Str;
     }
 
-=head1 DESCRIPTION
+=head2 Description
 
 This class represents the bitmap image of a rendered glyph.
 
-=head1 METHODS
+=head2 Methods
 
 =head3 pixel-mode()
 
@@ -279,17 +277,17 @@ Returns an ASCII display representation of the rendered glyph.
 
 produces a new bitmap, re-rendered as eight bit FT_PIXEL_MODE_GRAY.
 
-=head1 AUTHORS
+=head2 Authors
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
-=head1 COPYRIGHT
+=head2 Copyright
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Ported from Perl to Raku by David Warring <david.warring@gmail.com>
 Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify

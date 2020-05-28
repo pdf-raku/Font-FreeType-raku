@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/pdf-raku/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/pdf-raku/Font-FreeType-raku)
+[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)
 
 NAME
 ====
 
-Font::FreeType - read font files and render glyphs from Perl using FreeType2
+Font::FreeType - read font files and render glyphs from Raku using FreeType2
 
 SYNOPSIS
 ========
@@ -23,7 +23,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This module allows Perl programs to conveniently read information from font files. All the font access is done through the FreeType2 library, which supports many formats. It can render images of characters with high-quality hinting and anti-aliasing, extract metrics information, and extract the outlines of characters in scalable formats like TrueType.
+This module allows Raku programs to conveniently read information from font files. All the font access is done through the FreeType2 library, which supports many formats. It can render images of characters with high-quality hinting and anti-aliasing, extract metrics information, and extract the outlines of characters in scalable formats like TrueType.
 
 The quickest way to get started with this library is to look at the examples in the _examples_ directory of the distribution. Full details of the API are contained in this documentation, and (more importantly) the documentation for the Font::FreeType::Face class.
 
@@ -156,28 +156,28 @@ Font::FreeType depends on the [freetype](https://www.freetype.org/download.html)
 
 To checkout and test this module from the Git repository:
 
-    $ git checkout https://github.com/pdf-raku/Font-FreeType-raku.git
+    $ git checkout https://github.com/p6-pdf/Font-FreeType-raku.git
     $ zef build .  # -OR- rakudo Build.pm
     $ prove -e'rakudo -I .' -v t
 
 SEE ALSO
 ========
 
-  * [Font::FreeType::Face](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/Face.md) - Font Properties
+  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face) - Font Properties
 
-  * [Font::FreeType::Glyph](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/Glyph.md) - Glyph properties
+  * [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) - Glyph properties
 
-    * [Font::FreeType::GlyphImage](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/GlyphImage.md) - Glyph outlines and bitmaps
+  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage) - Glyph outlines and bitmaps
 
-    * [Font::FreeType::Outline](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/Outline.md) - Scalable glyph images
+  * [Font::FreeType::Outline](https://pdf-raku.github.io/Font-FreeType-raku/Outline) - Scalable glyph images
 
-    * [Font::FreeType::BitMap](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
+  * [Font::FreeType::BitMap](https://pdf-raku.github.io/Font-FreeType-raku/BitMap) - Rendered glyph bitmaps
 
-  * [Font::FreeType::CharMap](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/CharMap.md) - Font Encodings
+  * [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) - Font Encodings
 
-  * [Font::FreeType::Native](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/Native.md) - Bindings to the FreeType library
+  * [Font::FreeType::Native](https://pdf-raku.github.io/Font-FreeType-raku/Native) - Bindings to the FreeType library
 
-  * [Font::FreeType::Native::Defs](https://github.com/pdf-raku/Font-FreeType-raku/blob/master/doc/Native/Defs.md) - Data types and enumerations
+  * [Font::FreeType::Native::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Native/Defs) - Data types and enumerations
 
 AUTHORS
 =======
@@ -186,14 +186,14 @@ Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
 COPYRIGHT
 =========
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 2017.
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

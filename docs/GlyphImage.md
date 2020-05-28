@@ -1,10 +1,10 @@
-NAME
-====
+class Font::FreeType::GlyphImage
+--------------------------------
 
-Font::FreeType::GlyphImage - glyph images from font typefaces
+Glyph images from font typefaces
 
-SYNOPSIS
-========
+Synopsis
+--------
 
     use Font::FreeType;
 
@@ -18,8 +18,8 @@ SYNOPSIS
         my $bitmap = .bitmap;
     }
 
-DESCRIPTION
-===========
+Description
+-----------
 
 This class represents individual glyph images (character image) loaded from a font.
 
@@ -83,26 +83,28 @@ True if the glyph has a vector outline, in which case it is safe to call `outlin
 
 ### outline()
 
-Returns an object of type [Font::FreeType::Outline](Outline.md)
+Returns an object of type [Font::FreeType::Outline](https://pdf-raku.github.io/Font-FreeType-raku/Outline)
 
-SEE ALSO
-========
+See Also
+--------
 
-[Font::FreeType](../../../README.md), [Font::FreeType::Face](Face.md)
+  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
 
-AUTHORS
-=======
+  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face)
+
+Authors
+-------
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
-COPYRIGHT
-=========
+Copyright
+---------
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 2017.
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

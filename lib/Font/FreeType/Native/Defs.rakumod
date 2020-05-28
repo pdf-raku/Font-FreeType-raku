@@ -1,12 +1,8 @@
+#| Type and Enumeration declarations
 unit module Font::FreeType::Native::Defs;
 
 =begin pod
-
-=head1 NAME
-
-Font::FreeType::Native::Defs - type and enumeration declarations
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
     use Font::FreeType::Native::Defs;
     # Examples
@@ -15,9 +11,9 @@ Font::FreeType::Native::Defs - type and enumeration declarations
     # 2. Compare against an enumeration
     if $bitmap.pixel-mode == FT_PIXEL_MODE_LCD { ... }
 
-=head1 DESCRIPTION
+=head2 Description
 
-This class contains datatype and enumerations for the FreeType library.
+This module contains datatype and enumerations for the FreeType library.
 
 =end pod
 
@@ -25,7 +21,6 @@ This class contains datatype and enumerations for the FreeType library.
 
 =cut
 }}
-
 
 use NativeCall;
 use NativeCall::Types;

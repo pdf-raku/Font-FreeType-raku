@@ -1,3 +1,4 @@
+#| Font typefaces loaded from Font::FreeType
 class Font::FreeType::Face {
 
     constant Px = 64.0;
@@ -194,11 +195,7 @@ class Font::FreeType::Face {
 
 =begin pod
 
-=head1 NAME
-
-Font::FreeType::Face - font typefaces loaded from Font::FreeType
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
     use Font::FreeType;
     use Font::FreeType::Face;
@@ -206,7 +203,7 @@ Font::FreeType::Face - font typefaces loaded from Font::FreeType
     my Font::FreeType $freetype .= new;
     my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
 
-=head1 DESCRIPTION
+=head2 Description
 
 This class represents a font face (or typeface) loaded from a font file.
 Usually a face represents all the information in the font file (such as
@@ -216,7 +213,7 @@ file.
 Never 'use' this module directly; the class is loaded automatically from Font::FreeType.  Use the `Font::FreeType.face()`
 method to create a new Font::FreeType::Face object from a filename and then use the `forall-chars()` or `for-glyphs()` methods to iterate through the glyphs.
 
-=head1 METHODS
+=head2 Methods
 
 Unless otherwise stated, all methods will die if there is an error.
 
@@ -291,14 +288,14 @@ detail sizes.  Each object has the following available methods:
 
 =head3 glyph-images(str)
 
-Returns an array of [glyphs-images](GlyphImage.md) for the Unicode string.
+Returns an array of L<Font::FreeType::GlyphImage> objects for the Unicode string.
 
 =head3 forall-chars(_code-ref_)
 
 Iterates through all the characters in the font, and calls _code-ref_
 for each of them in turn.  Glyphs which don't correspond to Unicode characters are ignored.
 
-Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph.
+Each time your callback code is called, a L<Font::FreeType::Glyph> object is passed for the current glyph.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error`
 method will return an exception object.
@@ -309,21 +306,20 @@ For an example see the program _list-characters.pl_ provided in the distribution
 
 Iterates through all the glyphs in the font, and calls _code-ref_ for each of them in turn.
                                                  
-Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph. 
+Each time your callback code is called, a L<Font::FreeType::Glyph> object is passed for the current glyph. 
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error`
 method will return an exception object.
 
 =head3 for-glyphs(str, _code-ref_)
 
-Execute a callback for each glyph in a string, passing a [Font::FreeType::Glyph](Glyph.md) object
+Execute a callback for each glyph in a string, passing a L<Font::FreeType::Glyph> object
 on each invocation.
 
 =head3 has-glyph-names()
 
 True if individual glyphs have names.  If so, the names can be
-retrieved with the `name()` method on
-[Font::FreeType::Glyph](Glyph.md) objects.
+retrieved with the `name()` method on L<Font::FreeType::Glyph> objects.
 
 See also `has-reliable-glyph-names()` below.
 
@@ -462,11 +458,11 @@ TrueType fonts.
 
 =head3 charmap()
 
-The current active [charmap](CharMap.md) for this face.
+The current active L<Font::FreeType::CharMap> object for this face.
 
 =head3 charmaps()
 
-An array of the [charmaps](CharMap.md) of the face.
+An array of the available L<Font::FreeType::CharMap> objects for the face.
 
 =head3 bounding-box()
 
@@ -491,25 +487,25 @@ for example, for integration with the L<Cairo> graphics library.
 The C<FT_Reference_Face> and C<FT_Done_Face> methods will need to be called
 if the struct outlives the parent C<$face> object.
 
-=head1 SEE ALSO
+=head2 See Also
 
-[Font::FreeType](../../../README.md),
-[Font::FreeType::Glyph](Glyph.md)
-[Font::FreeType::GlyphImage](GlyphImage.md)
+=item L<Font::FreeType>
+=item L<Font::FreeType::Glyph>
+=item L<Font::FreeType::GlyphImage>
 
-=head1 AUTHOR
+=head2 Author
 
 Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
 =head1 COPYRIGHT
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring Copyright 2017.
+Ported from Perl to Raku by David Warring Copyright 2017.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

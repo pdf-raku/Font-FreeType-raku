@@ -1,10 +1,10 @@
-NAME
-====
+class Font::FreeType::CharMap
+-----------------------------
 
-Font::FreeType::CharMap - character map from font typefaces loaded from Font::FreeType
+Character map from font typefaces
 
-SYNOPSIS
-========
+Synopsis
+--------
 
     use Font::FreeType;
 
@@ -15,15 +15,15 @@ SYNOPSIS
     say $charmap.encoding-id;
     say $charmap.encoding;
 
-DESCRIPTION
-===========
+Description
+-----------
 
 A charmap is used to translate character codes in a given encoding into glyph indexes for its parent's face. Some font formats may provide several charmaps per font.
 
-CONSTANTS
-=========
+Constants
+---------
 
-The following encoding constants are exported by default by [Font::FreeType](FreeType.md). See [freetype documentation](http://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Encoding)
+The following encoding constants are exported by default by [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku). See [freetype documentation](http://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Encoding)
 
 - FT_ENCODING_NONE
 
@@ -73,8 +73,8 @@ The following encoding constants are exported by default by [Font::FreeType](Fre
 
     Same as FT_ENCODING_JOHAB. Deprecated.
 
-METHODS
-=======
+Methods
+-------
 
 ### platform-id
 
@@ -92,12 +92,12 @@ For details please refer to the TrueType or OpenType specification.
 
 A FreeType Encoding tag (constant) identifying the charmap.
 
-COPYRIGHT
-=========
+Copyright
+---------
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 2017.
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

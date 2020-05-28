@@ -1,3 +1,4 @@
+#| Glyph images from font typefaces
 class Font::FreeType::GlyphImage {
 
     use NativeCall;
@@ -93,11 +94,7 @@ class Font::FreeType::GlyphImage {
 
 =begin pod
 
-=head1 NAME
-
-Font::FreeType::GlyphImage - glyph images from font typefaces
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
     use Font::FreeType;
 
@@ -111,7 +108,7 @@ Font::FreeType::GlyphImage - glyph images from font typefaces
         my $bitmap = .bitmap;
     }
 
-=head1 DESCRIPTION
+=head2 Description
 
 This class represents individual glyph images (character image) loaded from
 a font.
@@ -201,24 +198,24 @@ call `outline`. Otherwise, the glyph only has a bitmap image.
 
 =head3 outline()
 
-Returns an object of type [Font::FreeType::Outline](Outline.md)
+Returns an object of type L<Font::FreeType::Outline>
 
-=head1 SEE ALSO
+=head2 See Also
 
-[Font::FreeType](../../../README.md),
-[Font::FreeType::Face](Face.md)
+=item L<Font::FreeType>
+=item L<Font::FreeType::Face>
 
-=head1 AUTHORS
+=head2 Authors
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
-=head1 COPYRIGHT
+=head2 Copyright
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 2017.
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

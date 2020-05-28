@@ -4,7 +4,7 @@ unit module Font::FreeType::Native;
 
 =head1 NAME
 
-Font::FreeType::Native - bindings to the freetype library
+module Font::FreeType::Native - bindings to the freetype library
 
 =head1 SYNOPSIS
 
@@ -34,12 +34,12 @@ used, if needed, to gain access to native objects from this class:
 =table
   Class | native() binding | Description
   ------+------------------+------------
-  Font::FreeType | L<FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library> | A handle to a freetype library instance
-  Font::FreeType::Face | L<FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face> | A Handle to a typographic face object
-  Font::FreeType::Glyph | L<FT_GlyphSlot|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot> | A handle to a glyph container
-  Font::FreeType::GlyphImage | L<FT_Glyph|https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html> | A specific glyph bitmap or outline object
-  Font::FreeType::BitMap | L<FT_Bitmap|https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html> | A rendered bitmap for a glyph
-  Font::FreeType::Outline | L<FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html> | A scalable glyph outline
+  L<Font::FreeType> | L<FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library> | A handle to a freetype library instance
+  L<Font::FreeType::Face> | L<FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face> | A Handle to a typographic face object
+  L<Font::FreeType::Glyph> | L<FT_GlyphSlot|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot> | A handle to a glyph container
+  L<Font::FreeType::GlyphImage> | L<FT_Glyph|https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html> | A specific glyph bitmap or outline object
+  L<Font::FreeType::BitMap> | L<FT_Bitmap|https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html> | A rendered bitmap for a glyph
+  L<Font::FreeType::Outline> | L<FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html> | A scalable glyph outline
 
 =end pod
 
@@ -122,7 +122,7 @@ class FT_BBox is repr('CStruct') is export {
  }
 
 #| A structure to model the metrics of a single glyph. The values are expressed in 26.6 fractional pixel format; if the flag FT_LOAD_NO_SCALE has been used while loading the glyph, values are expressed in font units instead.
-class FT_Glyph_Metrics is repr('CStruct') {
+class FT_Glyph_Metrics is repr('CStruct') is export {
     has FT_Pos  $.width;
     has FT_Pos  $.height;
 

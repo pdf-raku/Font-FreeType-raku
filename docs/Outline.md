@@ -1,10 +1,10 @@
-NAME
-====
+class Font::FreeType::Outline
+-----------------------------
 
-Font::FreeType::Outline - glyph outlines from font typefaces loaded from Font::FreeType
+Glyph outlines from font typefaces
 
-SYNOPSIS
-========
+Synopsis
+--------
 
     use Font::FreeType;
 
@@ -17,13 +17,13 @@ SYNOPSIS
         say $outline.svg;
     }
 
-DESCRIPTION
-===========
+Description
+-----------
 
 This class represents scalable glyph images; known as outlines.
 
-METHODS
-=======
+Methods
+-------
 
 ### bbox()
 
@@ -64,19 +64,19 @@ It returns a struct of type Font::FreeType::Outline::ft\_shape\_t that describes
 
 Note: when you intend to extract the outline of a glyph, you most likely want to pass the `FT_LOAD_NO_HINTING` option when creating the face object, or the hinting will distort the outline.
 
-AUTHORS
-=======
+Authors
+-------
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
-COPYRIGHT
-=========
+Copyright
+---------
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 2017.
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

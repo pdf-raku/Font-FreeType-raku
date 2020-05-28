@@ -1,10 +1,10 @@
-NAME
-====
+class Font::FreeType::NamedInfo
+-------------------------------
 
-Font::FreeType::NamedInfo - information from 'names table' in font file
+Information from 'names table' in font file
 
-SYNOPSIS
-========
+Synopsis
+--------
 
     use Font::FreeType;
 
@@ -15,15 +15,15 @@ SYNOPSIS
       say .Str for @$infos;
     }
 
-DESCRIPTION
-===========
+Description
+-----------
 
 The TrueType and OpenType specifications allow the inclusion of a special _names table_ in font files. This table contains textual (and internationalized) information regarding the font, like family name, copyright, version, etc.
 
 Possible values for _platform-id_, _encoding-id_, _language-id_, and _name\_id_ are given in the file _ttnameid.h_ from FreeType distribution. For details please refer to the TrueType or OpenType specification.
 
-METHODS
-=======
+Methods
+-------
 
 ### platform-id
 
@@ -37,17 +37,17 @@ METHODS
 
 The _name_ string. Note that its format differs depending on the (platform, encoding) pair. It can be a Pascal String, a UTF-16 one, etc.
 
-AUTHORS
-=======
+Authors
+-------
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
-COPYRIGHT
-=========
+Copyright
+---------
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Ported from Perl to Raku by David Warring <david.warring@gmail.com>
 

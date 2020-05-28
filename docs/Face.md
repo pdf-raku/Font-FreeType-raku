@@ -1,10 +1,10 @@
-NAME
-====
+class Font::FreeType::Face
+--------------------------
 
-Font::FreeType::Face - font typefaces loaded from Font::FreeType
+Font typefaces loaded from Font::FreeType
 
-SYNOPSIS
-========
+Synopsis
+--------
 
     use Font::FreeType;
     use Font::FreeType::Face;
@@ -12,15 +12,15 @@ SYNOPSIS
     my Font::FreeType $freetype .= new;
     my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
 
-DESCRIPTION
-===========
+Description
+-----------
 
 This class represents a font face (or typeface) loaded from a font file. Usually a face represents all the information in the font file (such as a TTF file), although it is possible to have multiple faces in a single file.
 
 Never 'use' this module directly; the class is loaded automatically from Font::FreeType. Use the `Font::FreeType.face()` method to create a new Font::FreeType::Face object from a filename and then use the `forall-chars()` or `for-glyphs()` methods to iterate through the glyphs.
 
-METHODS
-=======
+Methods
+-------
 
 Unless otherwise stated, all methods will die if there is an error.
 
@@ -74,13 +74,13 @@ Returns an array of Font::FreeType::BitMap::Size objects which detail sizes. Eac
 
 ### glyph-images(str)
 
-Returns an array of [glyphs-images](GlyphImage.md) for the Unicode string.
+Returns an array of [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage) objects for the Unicode string.
 
 ### forall-chars(_code-ref_)
 
 Iterates through all the characters in the font, and calls _code-ref_ for each of them in turn. Glyphs which don't correspond to Unicode characters are ignored.
 
-Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph.
+Each time your callback code is called, a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) object is passed for the current glyph.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 
@@ -90,17 +90,17 @@ For an example see the program _list-characters.pl_ provided in the distribution
 
 Iterates through all the glyphs in the font, and calls _code-ref_ for each of them in turn.
 
-Each time your callback code is called, a [Font::FreeType::Glyph](Glyph.md) object is passed for the current glyph. 
+Each time your callback code is called, a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) object is passed for the current glyph. 
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 
 ### for-glyphs(str, _code-ref_)
 
-Execute a callback for each glyph in a string, passing a [Font::FreeType::Glyph](Glyph.md) object on each invocation.
+Execute a callback for each glyph in a string, passing a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) object on each invocation.
 
 ### has-glyph-names()
 
-True if individual glyphs have names. If so, the names can be retrieved with the `name()` method on [Font::FreeType::Glyph](Glyph.md) objects.
+True if individual glyphs have names. If so, the names can be retrieved with the `name()` method on [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) objects.
 
 See also `has-reliable-glyph-names()` below.
 
@@ -205,11 +205,11 @@ The size of the em square used by the font designer. This can be used to scale f
 
 ### charmap()
 
-The current active [charmap](CharMap.md) for this face.
+The current active [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) object for this face.
 
 ### charmaps()
 
-An array of the [charmaps](CharMap.md) of the face.
+An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) objects for the face.
 
 ### bounding-box()
 
@@ -232,26 +232,30 @@ This method provides access to the underlying native FT_Face native struct; for 
 
 The `FT_Reference_Face` and `FT_Done_Face` methods will need to be called if the struct outlives the parent `$face` object.
 
-SEE ALSO
-========
+See Also
+--------
 
-[Font::FreeType](../../../README.md), [Font::FreeType::Glyph](Glyph.md) [Font::FreeType::GlyphImage](GlyphImage.md)
+  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
 
-AUTHOR
-======
+  * [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph)
+
+  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage)
+
+Author
+------
 
 Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
 COPYRIGHT
 =========
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring Copyright 2017.
+Ported from Perl to Raku by David Warring Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 

@@ -1,3 +1,4 @@
+#| iterator for font typeface glyphs
 class Font::FreeType::Glyph is rw {
 
     use NativeCall;
@@ -53,11 +54,7 @@ class Font::FreeType::Glyph is rw {
 
 =begin pod
 
-=head1 NAME
-
-Font::FreeType::Glyph - iterator for font typeface glyphs
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
     use Font::FreeType;
     use Font::FreeType::Glyph;
@@ -75,17 +72,17 @@ Font::FreeType::Glyph - iterator for font typeface glyphs
     }
 
 
-=head1 DESCRIPTION
+=head2 Description
 
 This is an iterator class that represents individual glyphs loaded from a font.
 
-See [Font::FreeType::Face](Face.md) for how to obtain glyph objects, in particular the `for-glyph-slots` method.
+See L<Font::FreeType::Face> for how to obtain glyph objects, in particular the `for-glyph-slots` method.
 
 For a detailed description of the meaning of glyph metrics, and
 the structure of vectorial outlines,
 see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sourceforge.net/freetype2/docs/glyphs/)
 
-=head1 METHODS
+=head2 Methods
 
 Unless otherwise stated, all methods will die if there is an error,
 and the metrics are scaled to the size of the font face.
@@ -156,17 +153,17 @@ the `horizontal_advance()` method.
 
 The Unicode character represented by the glyph.
 
-=head1 SEE ALSO
+=head2 See Also
 
-[Font::FreeType](../../../README.md),
-[Font::FreeType::Face](Face.md)
-[Font::FreeType::GlyphImage](GlyphImage.md)
+=item L<Font::FreeType>
+=item L<Font::FreeType::Face>
+=item L<Font::FreeType::GlyphImage>
 
-=head1 COPYRIGHT
+=head2 Copyright
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Ported from Perl to Raku by David Warring <david.warring@gmail.com>
 Copyright 2017.
 
 This library is free software; you can redistribute it and/or modify

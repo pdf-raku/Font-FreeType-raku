@@ -56,7 +56,7 @@ class Font::FreeType:ver<0.2.2> {
 
 =head1 NAME
 
-Font::FreeType - read font files and render glyphs from Perl using FreeType2
+Font::FreeType - read font files and render glyphs from Raku using FreeType2
 
 =head1 SYNOPSIS
 
@@ -74,7 +74,7 @@ Font::FreeType - read font files and render glyphs from Perl using FreeType2
 
 =head1 DESCRIPTION
 
-This module allows Perl programs to conveniently read information from
+This module allows Raku programs to conveniently read information from
 font files.  All the font access is done through the FreeType2 library,
 which supports many formats.  It can render images of characters with
 high-quality hinting and anti-aliasing, extract metrics information, and
@@ -277,14 +277,14 @@ To checkout and test this module from the Git repository:
 
 =head1 SEE ALSO
 
-=item [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Face.md) - Font Properties
-=item  [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Glyph.md) - Glyph properties
-=item2    [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/GlyphImage.md) - Glyph outlines and bitmaps
-=item2    [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Outline.md) - Scalable glyph images
-=item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/BitMap.md) - Rendered glyph bitmaps
-=item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/CharMap.md) - Font Encodings
-=item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native.md) - Bindings to the FreeType library
-=item2   [Font::FreeType::Native::Defs](https://github.com/p6-pdf/Font-FreeType-raku/blob/master/doc/Native/Defs.md) - Data types and enumerations
+=item L<Font::FreeType::Face> - Font Properties
+=item L<Font::FreeType::Glyph> - Glyph properties
+  =item L<Font::FreeType::GlyphImage> - Glyph outlines and bitmaps
+  =item L<Font::FreeType::Outline> - Scalable glyph images
+  =item L<Font::FreeType::BitMap> - Rendered glyph bitmaps
+=item L<Font::FreeType::CharMap> - Font Encodings
+=item L<Font::FreeType::Native> - Bindings to the FreeType library
+=item   L<Font::FreeType::Native::Defs> - Data types and enumerations
 
 =head1 AUTHORS
 
@@ -292,13 +292,13 @@ Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
 =head1 COPYRIGHT
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com> Copyright 2017.
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

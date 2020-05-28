@@ -1,10 +1,10 @@
-NAME
-====
+module Font::FreeType::Native::Defs
+-----------------------------------
 
-Font::FreeType::Native::Defs - type and enumeration declarations
+Type and Enumeration declarations
 
-SYNOPSIS
-========
+Synopsis
+--------
 
     use Font::FreeType::Native::Defs;
     # Examples
@@ -13,8 +13,8 @@ SYNOPSIS
     # 2. Compare against an enumeration
     if $bitmap.pixel-mode == FT_PIXEL_MODE_LCD { ... }
 
-DESCRIPTION
-===========
+Description
+-----------
 
-This class contains datatype and enumerations for the FreeType library.
+This module contains datatype and enumerations for the FreeType library.
 

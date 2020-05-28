@@ -20,52 +20,49 @@ $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS% $(CF)
 
-doc : README.md doc/BitMap.md doc/CharMap.md doc/Face.md doc/Glyph.md doc/GlyphImage.md doc/Outline.md doc/NamedInfo.md doc/Native.md doc/Native/Defs.md
+doc : docs/index.md docs/BitMap.md docs/CharMap.md docs/Face.md docs/Glyph.md docs/GlyphImage.md docs/Outline.md docs/NamedInfo.md docs/Native.md docs/Native/Defs.md
 
-README.md : lib/Font/FreeType.rakumod
+docs/index.md : lib/Font/FreeType.rakumod
 	(\
 	    echo '[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)'; \
             echo '';\
-            perl6 -I . --doc=Markdown lib/Font/FreeType.rakumod\
-        ) > README.md
+            perl6 -I . --doc=Markdown $< \
+	    | raku -p -n etc/resolve-links.raku \
+        ) > $@
 
-doc/BitMap.md : lib/Font/FreeType/BitMap.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/BitMap.rakumod > doc/BitMap.md
+docs/%.md : lib/Font/FreeType/%.rakumod
+	raku -I . --doc=Markdown $< \
+	| raku -p -n etc/resolve-links.raku \
+        > $@
 
-doc/CharMap.md : lib/Font/FreeType/CharMap.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/CharMap.rakumod > doc/CharMap.md
+docs/BitMap.md : lib/Font/FreeType/BitMap.rakumod
 
-doc/Face.md : lib/Font/FreeType/Face.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Face.rakumod > doc/Face.md
+docs/CharMap.md : lib/Font/FreeType/CharMap.rakumod
 
-doc/Glyph.md : lib/Font/FreeType/Glyph.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Glyph.rakumod > doc/Glyph.md
+docs/Face.md : lib/Font/FreeType/Face.rakumod
 
-doc/GlyphImage.md : lib/Font/FreeType/GlyphImage.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/GlyphImage.rakumod > doc/GlyphImage.md
+docs/Glyph.md : lib/Font/FreeType/Glyph.rakumod
 
-doc/NamedInfo.md : lib/Font/FreeType/NamedInfo.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/NamedInfo.rakumod > doc/NamedInfo.md
+docs/GlyphImage.md : lib/Font/FreeType/GlyphImage.rakumod
 
-doc/Outline.md : lib/Font/FreeType/Outline.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Outline.rakumod > doc/Outline.md
+docs/NamedInfo.md : lib/Font/FreeType/NamedInfo.rakumod
 
-doc/Native.md : lib/Font/FreeType/Native.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Native.rakumod > doc/Native.md
+docs/Outline.md : lib/Font/FreeType/Outline.rakumod
 
-doc/Native/Defs.md : lib/Font/FreeType/Native/Defs.rakumod
-	perl6 -I . --doc=Markdown lib/Font/FreeType/Native/Defs.rakumod > doc/Native/Defs.md
+docs/Native.md : lib/Font/FreeType/Native.rakumod
+
+docs/Native/Defs.md : lib/Font/FreeType/Native/Defs.rakumod
 
 test : all
-	@prove -e"perl6 -I ." t
+	@prove -e"raku -I ." t
 
 loudtest : all
-	@prove -e"perl6 -I ." -v t
+	@prove -e"raku -I ." -v t
 
 clean :
 	@rm -f $(SRC)/ft6_*%O% resources/libraries/*%LIB-NAME%
 
 realclean : clean
-	@rm -f Makefile README.md doc/*.md doc/*/*.md
+	@rm -f Makefile README.md docs/*.md docs/*/*.md
 
 

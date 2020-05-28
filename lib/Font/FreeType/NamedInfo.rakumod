@@ -1,7 +1,8 @@
-use NativeCall;
-use Font::FreeType::Native;
-
+#| Information from 'names table' in font file
 class Font::FreeType::NamedInfo {
+    use NativeCall;
+    use Font::FreeType::Native;
+
     has FT_SfntName $!native handles <platform-id encoding-id language-id name-id string-len>;
     submethod TWEAK(FT_SfntName:D :$!native!) { }
 
@@ -19,11 +20,7 @@ class Font::FreeType::NamedInfo {
 
 =begin pod
 
-=head1 NAME
-
-Font::FreeType::NamedInfo - information from 'names table' in font file
-
-=head1 SYNOPSIS
+=head2 Synopsis
 
     use Font::FreeType;
 
@@ -34,7 +31,7 @@ Font::FreeType::NamedInfo - information from 'names table' in font file
       say .Str for @$infos;
     }
 
-=head1 DESCRIPTION
+=head2 Description
 
 The TrueType and OpenType specifications allow the inclusion of a special
 _names table_ in font files. This table contains textual (and internationalized)
@@ -44,7 +41,7 @@ Possible values for _platform-id_, _encoding-id_, _language-id_, and
 _name\_id_ are given in the file _ttnameid.h_ from FreeType distribution. For
 details please refer to the TrueType or OpenType specification.
 
-=head1 METHODS
+=head2 Methods
 
 =head3 platform-id
 =head3 encoding-id
@@ -55,16 +52,16 @@ details please refer to the TrueType or OpenType specification.
 The _name_ string. Note that its format differs depending on the (platform,
  encoding) pair. It can be a Pascal String, a UTF-16 one, etc.
 
-=head1 AUTHORS
+=head2 Authors
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail.com> (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Raku Port)
 
-=head1 COPYRIGHT
+=head2 Copyright
 
 Copyright 2004, Geoff Richards.
 
-Ported from Perl 5 to 6 by David Warring <david.warring@gmail.com>
+Ported from Perl to Raku by David Warring <david.warring@gmail.com>
 
 =end pod
