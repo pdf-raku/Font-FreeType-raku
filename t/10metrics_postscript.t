@@ -2,7 +2,7 @@ use v6;
 use Test;
 plan 53;
 use Font::FreeType;
-use Font::FreeType::Native::Defs;
+use Font::FreeType::Raw::Defs;
 
 my Font::FreeType $ft .= new;
 my $ft-version = $ft.version;

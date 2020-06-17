@@ -1,12 +1,12 @@
-module Font::FreeType::Native::Defs
------------------------------------
+module Font::FreeType::Raw::Defs
+--------------------------------
 
 Type and Enumeration declarations
 
 Synopsis
 --------
 
-    use Font::FreeType::Native::Defs;
+    use Font::FreeType::Raw::Defs;
     # Examples
     # 1. Declare a native variable of type FT_Ulong
     my FT_ULong $char-code;

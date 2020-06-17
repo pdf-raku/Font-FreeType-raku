@@ -1,17 +1,17 @@
 #| Information from 'names table' in font file
 class Font::FreeType::NamedInfo {
     use NativeCall;
-    use Font::FreeType::Native;
+    use Font::FreeType::Raw;
 
-    has FT_SfntName $!native handles <platform-id encoding-id language-id name-id string-len>;
-    submethod TWEAK(FT_SfntName:D :$!native!) { }
+    has FT_SfntName $!raw handles <platform-id encoding-id language-id name-id string-len>;
+    submethod TWEAK(FT_SfntName:D :$!raw!) { }
 
     method Str {
         my $len = $.string-len;
         my buf8 $buf .= new;
         if $len {
             $buf[$len - 1] = 0;
-            Font::FreeType::Native::memcpy(nativecast(Pointer, $buf), $!native.string, $len);
+            Font::FreeType::Raw::memcpy(nativecast(Pointer, $buf), $!raw.string, $len);
         }
         # todo various encoding schemes
         $buf.decode;

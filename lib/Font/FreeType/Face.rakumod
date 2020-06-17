@@ -5,80 +5,80 @@ class Font::FreeType::Face {
 
     use NativeCall;
     use Font::FreeType::Error;
-    use Font::FreeType::Native;
-    use Font::FreeType::Native::Defs;
+    use Font::FreeType::Raw;
+    use Font::FreeType::Raw::Defs;
 
     use Font::FreeType::BitMap;
     use Font::FreeType::Glyph;
     use Font::FreeType::NamedInfo;
     use Font::FreeType::CharMap;
+    use Method::Also;
 
     has $.ft-lib is required; # keep a reference to library root object. Just to avoid destroying it
-    has FT_Face $.native handles <num-faces face-index face-flags style-flags
+    has FT_Face $.raw handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
         height max-advance-width max-advance-height size>;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
 
-    submethod TWEAK(FT_Face:D :$!native!) { }
-    method unbox is DEPRECATED("please use .native() method") { $!native }
-    method struct is DEPRECATED("please use .native() method") { $!native }
-    method units-per-EM { self.is-scalable ?? $!native.units-per-EM !! Mu }
-    method underline-position { self.is-scalable ?? $!native.underline-position !! Mu }
-    method underline-thickness { self.is-scalable ?? $!native.underline-thickness !! Mu }
-    method bounding-box { self.is-scalable ?? $!native.bbox !! Mu }
+    submethod TWEAK(FT_Face:D :$!raw!) { }
+    method native is also<unbox struct> is DEPRECATED("please use .raw() method") { $!raw }
+    method units-per-EM { self.is-scalable ?? $!raw.units-per-EM !! Mu }
+    method underline-position { self.is-scalable ?? $!raw.underline-position !! Mu }
+    method underline-thickness { self.is-scalable ?? $!raw.underline-thickness !! Mu }
+    method bounding-box { self.is-scalable ?? $!raw.bbox !! Mu }
 
-    method ascender { self.is-scalable ?? $!native.ascender !! Mu }
-    method descender { self.is-scalable ?? $!native.descender !! Mu }
+    method ascender { self.is-scalable ?? $!raw.ascender !! Mu }
+    method descender { self.is-scalable ?? $!raw.descender !! Mu }
 
     subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT';
     method font-format returns FontFormat {
-        $!native.FT_Get_Font_Format;
+        $!raw.FT_Get_Font_Format;
     }
 
     method fixed-sizes {
         my int $n-sizes = self.num-fixed-sizes;
-        my $ptr = $!native.available-sizes;
+        my $ptr = $!raw.available-sizes;
         (0 ..^ $n-sizes).map: {
-            my FT_Bitmap_Size $native = $ptr[$_];
-            Font::FreeType::BitMap::Size.new: :$native, :face(self);
+            my FT_Bitmap_Size $raw = $ptr[$_];
+            Font::FreeType::BitMap::Size.new: :$raw, :face(self);
         }
     }
 
     method charmap {
-        my Font::FreeType::CharMap $charmap .= new: :face(self), :native($_)
-            with $!native.charmap;
+        my Font::FreeType::CharMap $charmap .= new: :face(self), :raw($_)
+            with $!raw.charmap;
         $charmap;
     }
 
     method charmaps {
         my int $n-sizes = self.num-charmaps;
-        my $ptr = $!native.charmaps;
+        my $ptr = $!raw.charmaps;
         (0 ..^ $n-sizes).map: {
-            my FT_CharMap $native = $ptr[$_];
-            Font::FreeType::CharMap.new: :face(self), :$native;
+            my FT_CharMap $raw = $ptr[$_];
+            Font::FreeType::CharMap.new: :face(self), :$raw;
         }
     }
 
     my class Vector {
-        has FT_Vector $!native;
-        submethod TWEAK(FT_Vector:D :$!native!) { }
-        method x { $!native.x / Px }
-        method y { $!native.y / Px }
+        has FT_Vector $!raw;
+        submethod TWEAK(FT_Vector:D :$!raw!) { }
+        method x { $!raw.x / Px }
+        method y { $!raw.y / Px }
     }
 
     method named-infos {
         return Mu unless self.is-scalable;
-        my int $n-sizes = $!native.FT_Get_Sfnt_Name_Count;
+        my int $n-sizes = $!raw.FT_Get_Sfnt_Name_Count;
         (0 ..^ $n-sizes).map: -> $i {
             my FT_SfntName $sfnt .= new;
-            ft-try({ $!native.FT_Get_Sfnt_Name($i, $sfnt); });
-            Font::FreeType::NamedInfo.new: :native($sfnt);
+            ft-try({ $!raw.FT_Get_Sfnt_Name($i, $sfnt); });
+            Font::FreeType::NamedInfo.new: :raw($sfnt);
         }
     }
 
-    method postscript-name { $!native.FT_Get_Postscript_Name }
+    method postscript-name { $!raw.FT_Get_Postscript_Name }
 
-    method !flag-set(FT_FACE_FLAG $f) { ?($!native.face-flags +& $f) }
+    method !flag-set(FT_FACE_FLAG $f) { ?($!raw.face-flags +& $f) }
     method is-scalable { self!flag-set: FT_FACE_FLAG_SCALABLE }
     method has-fixed-sizes { self!flag-set: FT_FACE_FLAG_FIXED_SIZES }
     method is-fixed-width { self!flag-set: FT_FACE_FLAG_FIXED_WIDTH }
@@ -87,18 +87,18 @@ class Font::FreeType::Face {
     method has-vertical-metrics { self!flag-set: FT_FACE_FLAG_VERTICAL }
     method has-kerning { self!flag-set: FT_FACE_FLAG_KERNING }
     method has-glyph-names { self!flag-set: FT_FACE_FLAG_GLYPH_NAMES }
-    method has-reliable-glyph-names { self.has-glyph-names && ? $!native.FT_Has_PS_Glyph_Names }
-    method is-bold { ?($!native.style-flags +& FT_STYLE_FLAG_BOLD) }
-    method is-italic { ?($!native.style-flags +& FT_STYLE_FLAG_ITALIC) }
+    method has-reliable-glyph-names { self.has-glyph-names && ? $!raw.FT_Has_PS_Glyph_Names }
+    method is-bold { ?($!raw.style-flags +& FT_STYLE_FLAG_BOLD) }
+    method is-italic { ?($!raw.style-flags +& FT_STYLE_FLAG_ITALIC) }
 
     method !get-glyph-name(UInt $glyph-index) {
         my buf8 $buf .= allocate(256);
-        ft-try({ $!native.FT_Get_Glyph_Name($glyph-index, $buf, $buf.bytes); });
+        ft-try({ $!raw.FT_Get_Glyph_Name($glyph-index, $buf, $buf.bytes); });
         nativecast(Str, $buf);
     }
 
     multi method glyph-name(Str:D $char) {
-        my FT_UInt $index = $!native.FT_Get_Char_Index( $char.ord );
+        my FT_UInt $index = $!raw.FT_Get_Char_Index( $char.ord );
         $.glyph-name($index);
     }
     multi method glyph-name(Int $glyph-index) {
@@ -109,15 +109,15 @@ class Font::FreeType::Face {
 
     method forall-chars(&code, Bool :$load = True, Int :$flags = $!load-flags) {
         my FT_UInt $glyph-idx;
-        my Font::FreeType::Glyph $glyph .= new: :face(self), :native($!native.glyph);
-        $glyph.char-code = $!native.FT_Get_First_Char( $glyph-idx);
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :raw($!raw.glyph);
+        $glyph.char-code = $!raw.FT_Get_First_Char( $glyph-idx);
 
         while $glyph-idx {
-            $glyph.stat = $!native.FT_Load_Glyph( $glyph-idx, $flags )
+            $glyph.stat = $!raw.FT_Load_Glyph( $glyph-idx, $flags )
                 if $load;
             $glyph.glyph-index = $glyph-idx;
             &code($glyph);
-            $glyph.char-code = $!native.FT_Get_Next_Char( $glyph.char-code, $glyph-idx);
+            $glyph.char-code = $!raw.FT_Get_Next_Char( $glyph.char-code, $glyph-idx);
         }
     }
 
@@ -126,10 +126,10 @@ class Font::FreeType::Face {
         $!unicode-map //= do {
             my uint16 @to-unicode[$.num-glyphs];
             my FT_UInt  $glyph-idx;
-            my FT_ULong $char-code = $!native.FT_Get_First_Char( $glyph-idx);
+            my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-idx);
             while $glyph-idx {
                 @to-unicode[ $glyph-idx ] = $char-code;
-                $char-code = $!native.FT_Get_Next_Char( $char-code, $glyph-idx);
+                $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-idx);
             }
             @to-unicode;
         }
@@ -138,11 +138,11 @@ class Font::FreeType::Face {
     method forall-glyphs(&code, Int :$flags = $!load-flags) {
         my FT_UInt $glyph-idx;
         my FT_UInt $num-glyphs = $.num-glyphs;
-        my Font::FreeType::Glyph $glyph .= new: :face(self), :native($!native.glyph);
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :raw($!raw.glyph);
         my $to-unicode := self!unicode-map;
 
         loop ($glyph-idx = 0; $glyph-idx < $num-glyphs; $glyph-idx++) {
-            $glyph.stat = $!native.FT_Load_Glyph( $glyph-idx, $flags );
+            $glyph.stat = $!raw.FT_Load_Glyph( $glyph-idx, $flags );
             $glyph.glyph-index = $glyph-idx;
             $glyph.char-code = $to-unicode[$glyph-idx];
             &code($glyph);
@@ -150,9 +150,9 @@ class Font::FreeType::Face {
     }
 
     method for-glyphs(Str $text, &code, Int :$flags = $!load-flags) {
-        my Font::FreeType::Glyph $glyph .= new: :face(self), :native($!native.glyph);
+        my Font::FreeType::Glyph $glyph .= new: :face(self), :raw($!raw.glyph);
         for $text.ords -> $char-code {
-            $glyph.stat = $!native.FT_Load_Char( $char-code, $flags );
+            $glyph.stat = $!raw.FT_Load_Char( $char-code, $flags );
             $glyph.glyph-index = 0;
             $glyph.char-code = $char-code;
             &code($glyph);
@@ -170,23 +170,23 @@ class Font::FreeType::Face {
     method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
         my FT_F26Dot6 $w = ($width * Px + 0.5).Int;
         my FT_F26Dot6 $h = ($height * Px + 0.5).Int;
-        ft-try({ $!native.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
+        ft-try({ $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
     }
 
     method set-pixel-sizes(UInt $width, UInt $height) {
-        ft-try({ $!native.FT_Set_Pixel_Sizes($width, $height) });
+        ft-try({ $!raw.FT_Set_Pixel_Sizes($width, $height) });
     }
 
     method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_UNFITTED) {
-        my FT_UInt $left-idx = $!native.FT_Get_Char_Index( $left.ord );
-        my FT_UInt $right-idx = $!native.FT_Get_Char_Index( $right.ord );
+        my FT_UInt $left-idx = $!raw.FT_Get_Char_Index( $left.ord );
+        my FT_UInt $right-idx = $!raw.FT_Get_Char_Index( $right.ord );
         my FT_Vector $vec .= new;
-        ft-try({ $!native.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); });
-        Vector.new: :native($vec);
+        ft-try({ $!raw.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); });
+        Vector.new: :raw($vec);
     }
 
     submethod DESTROY {
-        with $!native {
+        with $!raw {
             ft-try({ .FT_Done_Face });
             $_ = Nil;
         }
@@ -468,20 +468,20 @@ An array of the available L<Font::FreeType::CharMap> objects for the face.
 
 The outline's bounding box for this face.
 
-=head3 native
+=head3 raw
 
-    use Font::FreeType::Native;
+    use Font::FreeType::Raw;
     use Cairo;
-    my FT_Face $ft-face-native = $face.native;
-    $ft-face-native.FT_Reference_Face;
+    my FT_Face $ft-face-raw = $face.raw;
+    $ft-face-raw.FT_Reference_Face;
     my Cairo::Font $font .= create(
-         $ft-face-native, :free-type,
+         $ft-face-raw, :free-type,
     );
     # some time later...
     $ft-face.FT_Done_Face;
     $ft-face = Nil;
 
-This method provides access to the underlying native FT_Face native struct;
+This method provides access to the underlying raw FT_Face native struct;
 for example, for integration with the L<Cairo> graphics library.
 
 The C<FT_Reference_Face> and C<FT_Done_Face> methods will need to be called

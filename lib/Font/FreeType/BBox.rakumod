@@ -1,6 +1,6 @@
 class Font::FreeType::BBox {
 
-    use Font::FreeType::Native;
+    use Font::FreeType::Raw;
 
     has Numeric  ($.x-min, $.y-min);
     has Numeric  ($.x-max, $.y-max);

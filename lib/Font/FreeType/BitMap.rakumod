@@ -3,48 +3,48 @@ class Font::FreeType::BitMap {
 
     use NativeCall;
     use Font::FreeType::Error;
-    use Font::FreeType::Native;
-    use Font::FreeType::Native::Defs;
+    use Font::FreeType::Raw;
+    use Font::FreeType::Raw::Defs;
 
     has $.face;
-    has FT_Bitmap $!native handles <rows width pitch num-grays pixel-mode pallette>;
+    has FT_Bitmap $!raw handles <rows width pitch num-grays pixel-mode pallette>;
     has Int $.left is required;
     has Int $.top is required;
     has FT_ULong     $.char-code is required;
 
-    submethod TWEAK(FT_Bitmap:D :$!native!) {
+    submethod TWEAK(FT_Bitmap:D :$!raw!) {
         $!top *= 3
-            if $!native.pixel-mode == +FT_PIXEL_MODE_LCD_V;
+            if $!raw.pixel-mode == +FT_PIXEL_MODE_LCD_V;
     }
 
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.native;
+        $!face.ft-lib.raw;
     }
 
     constant Dpi = 72.0;
     constant Px = 64.0;
 
-    method size { $!native.size / Px }
-    multi method x-res(:$ppem! where .so) { $!native.x-ppem / Px }
-    multi method x-res(:$dpi!  where .so) { Dpi/Px * $!native.x-ppem / self.size }
-    multi method y-res(:$ppem! where .so) { $!native.y-ppem / Px }
-    multi method y-res(:$dpi!  where .so) { Dpi/Px * $!native.y-ppem / self.size }
+    method size { $!raw.size / Px }
+    multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Px }
+    multi method x-res(:$dpi!  where .so) { Dpi/Px * $!raw.x-ppem / self.size }
+    multi method y-res(:$ppem! where .so) { $!raw.y-ppem / Px }
+    multi method y-res(:$dpi!  where .so) { Dpi/Px * $!raw.y-ppem / self.size }
 
     method convert(UInt :$alignment = 1) {
         my FT_Bitmap $target .= new;
-        ft-try({ self!library.FT_Bitmap_Convert($!native, $target, $alignment); });
-        self.new: :$!face, :native($target), :$!left, :$!top;
+        ft-try({ self!library.FT_Bitmap_Convert($!raw, $target, $alignment); });
+        self.new: :$!face, :raw($target), :$!left, :$!top;
     }
 
     method depth {
         constant @BitsPerPixel = [Mu, 1, 8, 2, 4, 8, 8, 24];
-        with $!native.pixel-mode {
+        with $!raw.pixel-mode {
             @BitsPerPixel[$_];
         }
     }
 
     method pixels(Bool :$color = False) {
-        my $buf = $!native.buffer;
+        my $buf = $!raw.buffer;
         my \rows = $.rows;
         my \width = $.width;
         my uint8 @pixels[rows;width];
@@ -128,23 +128,23 @@ class Font::FreeType::BitMap {
 
     method clone {
         return self unless self.defined;
-        my $bitmap = $!native.clone(self!library);
-        self.new: :$!face, :native($bitmap), :$!top, :$!left; 
+        my $bitmap = $!raw.clone(self!library);
+        self.new: :$!face, :raw($bitmap), :$!top, :$!left; 
     }
 
     method DESTROY {
-        ft-try({ self!library.FT_Bitmap_Done($!native) });
-        $!native = Nil;
+        ft-try({ self!library.FT_Bitmap_Done($!raw) });
+        $!raw = Nil;
     }
 
     class Size {
-        submethod BUILD(:$!native) {}
-        has FT_Bitmap_Size $!native is required handles <width height x-ppem y-ppem>;
-        method size { $!native.size / Px }
-        multi method x-res(:$ppem! where .so) { $!native.x-ppem / Px }
-        multi method x-res(:$dpi!  where .so) { Dpi/Px * $!native.x-ppem / self.size }
-        multi method y-res(:$ppem! where .so) { $!native.y-ppem / Px }
-        multi method y-res(:$dpi!  where .so) { Dpi/Px * $!native.y-ppem / self.size }
+        submethod BUILD(:$!raw) {}
+        has FT_Bitmap_Size $!raw is required handles <width height x-ppem y-ppem>;
+        method size { $!raw.size / Px }
+        multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Px }
+        multi method x-res(:$dpi!  where .so) { Dpi/Px * $!raw.x-ppem / self.size }
+        multi method y-res(:$ppem! where .so) { $!raw.y-ppem / Px }
+        multi method y-res(:$dpi!  where .so) { Dpi/Px * $!raw.y-ppem / self.size }
     }
 
 }

@@ -215,20 +215,20 @@ An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/F
 
 The outline's bounding box for this face.
 
-### native
+### raw
 
-    use Font::FreeType::Native;
+    use Font::FreeType::Raw;
     use Cairo;
-    my FT_Face $ft-face-native = $face.native;
-    $ft-face-native.FT_Reference_Face;
+    my FT_Face $ft-face-raw = $face.raw;
+    $ft-face-raw.FT_Reference_Face;
     my Cairo::Font $font .= create(
-         $ft-face-native, :free-type,
+         $ft-face-raw, :free-type,
     );
     # some time later...
     $ft-face.FT_Done_Face;
     $ft-face = Nil;
 
-This method provides access to the underlying native FT_Face native struct; for example, for integration with the [Cairo](Cairo) graphics library.
+This method provides access to the underlying raw FT_Face native struct; for example, for integration with the [Cairo](Cairo) graphics library.
 
 The `FT_Reference_Face` and `FT_Done_Face` methods will need to be called if the struct outlives the parent `$face` object.
 

@@ -3,8 +3,8 @@ class Font::FreeType::Glyph is rw {
 
     use NativeCall;
     use Font::FreeType::GlyphImage;
-    use Font::FreeType::Native;
-    use Font::FreeType::Native::Defs;
+    use Font::FreeType::Raw;
+    use Font::FreeType::Raw::Defs;
     use Font::FreeType::Error;
 
     use Font::FreeType::BitMap;
@@ -13,15 +13,15 @@ class Font::FreeType::Glyph is rw {
     constant Px = 64.0;
 
     has $.face is required; # parent object
-    has FT_GlyphSlot $!native handles <metrics>;
+    has FT_GlyphSlot $!raw handles <metrics>;
     has FT_ULong     $.char-code;
     has FT_UInt      $.glyph-index;
     has FT_Error     $.stat;
-    submethod TWEAK(FT_GlyphSlot:D :$!native!) { }
+    submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
     method error  { Font::FreeType::Error.new: :error($!stat) }
     method name { $!face.glyph-name: $.index }
     method index {
-        $!glyph-index ||= $!face.native.FT_Get_Char_Index: $!char-code;
+        $!glyph-index ||= $!face.raw.FT_Get_Char_Index: $!char-code;
     }
     method left-bearing { $.metrics.hori-bearing-x / Px; }
     method right-bearing {
@@ -37,17 +37,17 @@ class Font::FreeType::Glyph is rw {
     method width { $.metrics.width / Px }
     method height { $.metrics.height / Px }
     method Str   { $!char-code.chr }
-    method format { FT_GLYPH_FORMAT($!native.format) }
+    method format { FT_GLYPH_FORMAT($!raw.format) }
 
     method is-outline {
         $.format == FT_GLYPH_FORMAT_OUTLINE;
     }
 
     method glyph-image {
-        my $top = $!native.bitmap-top;
-        my $left = $!native.bitmap-left;
+        my $top = $!raw.bitmap-top;
+        my $left = $!raw.bitmap-left;
         my $index = $.index;
-        Font::FreeType::GlyphImage.new: :$!face, :glyph($!native), :$left, :$top, :$!char-code, :$index;
+        Font::FreeType::GlyphImage.new: :$!face, :glyph($!raw), :$left, :$top, :$!char-code, :$index;
     }
 
 }

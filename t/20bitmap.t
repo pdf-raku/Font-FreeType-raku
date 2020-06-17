@@ -5,7 +5,7 @@ use Test;
 plan 28;
 
 use Font::FreeType;
-use Font::FreeType::Native;
+use Font::FreeType::Raw;
 
 my Font::FreeType $ft .= new;
 my $bitmap_file = 't/fonts/bdf_bitmaps.txt';

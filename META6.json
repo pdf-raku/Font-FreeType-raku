@@ -8,6 +8,7 @@
     "Pod::To::Markdown"
   ],
   "depends": [
+      "Method::Also"
   ],
   "description": "read font files and render glyphs from Raku using FreeType2",
   "license": "Artistic-2.0",
@@ -23,9 +24,11 @@
     "Font::FreeType::Glyph": "lib/Font/FreeType/Glyph.rakumod",
     "Font::FreeType::GlyphImage": "lib/Font/FreeType/GlyphImage.rakumod",
     "Font::FreeType::NamedInfo": "lib/Font/FreeType/NamedInfo.rakumod",
+    "Font::FreeType::Outline": "lib/Font/FreeType/Outline.rakumod",
     "Font::FreeType::Native": "lib/Font/FreeType/Native.rakumod",
     "Font::FreeType::Native::Defs": "lib/Font/FreeType/Native/Defs.rakumod",
-    "Font::FreeType::Outline": "lib/Font/FreeType/Outline.rakumod"
+    "Font::FreeType::Raw": "lib/Font/FreeType/Raw.rakumod",
+    "Font::FreeType::Raw::Defs": "lib/Font/FreeType/Raw/Defs.rakumod"
   },
   "resources": [
     "libraries/ft6"
@@ -37,5 +40,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.2.3"
+  "version": "0.3.0"
 }

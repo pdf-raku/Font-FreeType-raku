@@ -175,9 +175,9 @@ SEE ALSO
 
   * [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) - Font Encodings
 
-  * [Font::FreeType::Native](https://pdf-raku.github.io/Font-FreeType-raku/Native) - Bindings to the FreeType library
+  * [Font::FreeType::Raw](https://pdf-raku.github.io/Font-FreeType-raku/Raw) - Bindings to the FreeType library
 
-  * [Font::FreeType::Native::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Native/Defs) - Data types and enumerations
+  * [Font::FreeType::Raw::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Raw/Defs) - Data types and enumerations
 
 AUTHORS
 =======

@@ -1,12 +1,12 @@
 #| Character map from font typefaces
 class Font::FreeType::CharMap {
-    use Font::FreeType::Native;
-    use Font::FreeType::Native::Defs;
+    use Font::FreeType::Raw;
+    use Font::FreeType::Raw::Defs;
 
     has $.face;
-    has FT_CharMap $!native handles <platform-id encoding-id>;
-    submethod TWEAK(:$!native!) { }
-    method encoding { FT_ENCODING($!native.encoding) }
+    has FT_CharMap $!raw handles <platform-id encoding-id>;
+    submethod TWEAK(:$!raw!) { }
+    method encoding { FT_ENCODING($!raw.encoding) }
 }
 
 =begin pod

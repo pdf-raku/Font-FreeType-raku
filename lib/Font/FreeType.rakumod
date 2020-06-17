@@ -1,26 +1,26 @@
 use v6;
 
-class Font::FreeType:ver<0.2.3> {
+class Font::FreeType:ver<0.3.0> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;
-    use Font::FreeType::Native;
-    use Font::FreeType::Native::Defs;
+    use Font::FreeType::Raw;
+    use Font::FreeType::Raw::Defs;
+    use Method::Also;
 
-    has FT_Library $.native;
+    has FT_Library $.raw;
     our $lock = Lock.new;
 
     submethod BUILD {
         my $p = Pointer[FT_Library].new;
         ft-try({ FT_Init_FreeType( $p ); });
-        $!native = $p.deref;
+        $!raw = $p.deref;
     }
-    method struct is DEPRECATED("Please use the 'native' method") { $!native }
-    method unbox is DEPRECATED("Please use the 'native' method") { $!native }
+    method native is also<struct unbox> is DEPRECATED("Please use the 'raw' method") { $!raw }
 
     submethod DESTROY {
         $lock.protect: {
-            with $!native {
+            with $!raw {
                 ft-try({ .FT_Done_FreeType });
             }
         }
@@ -29,10 +29,10 @@ class Font::FreeType:ver<0.2.3> {
     multi method face(Str $file-path-name, Int :$index = 0, |c) {
         my $p = Pointer[FT_Face].new;
         $lock.protect: {
-            ft-try({ $!native.FT_New_Face($file-path-name, $index, $p); });
+            ft-try({ $!raw.FT_New_Face($file-path-name, $index, $p); });
         }
-        my FT_Face $native = $p.deref;
-        Font::FreeType::Face.new: :$native, :ft-lib(self), |c;
+        my FT_Face $raw = $p.deref;
+        Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
     }
 
     multi method face(Blob $file-buf,
@@ -41,13 +41,13 @@ class Font::FreeType:ver<0.2.3> {
                       |c
         ) {
         my $p = Pointer[FT_Face].new;
-        ft-try({ $!native.FT_New_Memory_Face($file-buf, $size, $index, $p); });
-        my FT_Face $native = $p.deref;
-        Font::FreeType::Face.new: :$native, :ft-lib(self), |c;
+        ft-try({ $!raw.FT_New_Memory_Face($file-buf, $size, $index, $p); });
+        my FT_Face $raw = $p.deref;
+        Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
     }
 
     method version returns Version {
-        $!native.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
+        $!raw.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
         Version.new: "{$major}.{$minor}.{$patch}";
     }
 }
@@ -283,8 +283,8 @@ To checkout and test this module from the Git repository:
   =item L<Font::FreeType::Outline> - Scalable glyph images
   =item L<Font::FreeType::BitMap> - Rendered glyph bitmaps
 =item L<Font::FreeType::CharMap> - Font Encodings
-=item L<Font::FreeType::Native> - Bindings to the FreeType library
-=item   L<Font::FreeType::Native::Defs> - Data types and enumerations
+=item L<Font::FreeType::Raw> - Bindings to the FreeType library
+=item   L<Font::FreeType::Raw::Defs> - Data types and enumerations
 
 =head1 AUTHORS
 

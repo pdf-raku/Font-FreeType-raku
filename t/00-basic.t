@@ -3,8 +3,8 @@ use Test;
 use Font::FreeType;
 use Font::FreeType::Face;
 use Font::FreeType::Error;
-use Font::FreeType::Native;
-use Font::FreeType::Native::Defs;
+use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
 use NativeCall;
 
 # sanity check our libraries

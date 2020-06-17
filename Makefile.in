@@ -20,7 +20,7 @@ $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS% $(CF)
 
-doc : docs/index.md docs/BitMap.md docs/CharMap.md docs/Face.md docs/Glyph.md docs/GlyphImage.md docs/Outline.md docs/NamedInfo.md docs/Native.md docs/Native/Defs.md
+doc : docs/index.md docs/BitMap.md docs/CharMap.md docs/Face.md docs/Glyph.md docs/GlyphImage.md docs/Outline.md docs/NamedInfo.md docs/Raw.md docs/Raw/Defs.md
 
 docs/index.md : lib/Font/FreeType.rakumod
 	(\
@@ -49,9 +49,9 @@ docs/NamedInfo.md : lib/Font/FreeType/NamedInfo.rakumod
 
 docs/Outline.md : lib/Font/FreeType/Outline.rakumod
 
-docs/Native.md : lib/Font/FreeType/Native.rakumod
+docs/Raw.md : lib/Font/FreeType/Raw.rakumod
 
-docs/Native/Defs.md : lib/Font/FreeType/Native/Defs.rakumod
+docs/Raw/Defs.md : lib/Font/FreeType/Raw/Defs.rakumod
 
 test : all
 	@prove -e"raku -I ." t

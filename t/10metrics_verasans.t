@@ -9,7 +9,7 @@ use v6;
 use Test;
 plan 63  +  256 * 2  +  268 * 3 + 1;
 use Font::FreeType;
-use Font::FreeType::Native::Defs;
+use Font::FreeType::Raw::Defs;
 
 # Load the Vera Sans face.
 my Font::FreeType $ft .= new;

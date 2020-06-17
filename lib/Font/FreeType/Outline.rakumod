@@ -4,11 +4,11 @@ class Font::FreeType::Outline {
     has $.face is required;
     use NativeCall;
     use Font::FreeType::Error;
-    use Font::FreeType::Native;
-    use Font::FreeType::Native::Defs;
+    use Font::FreeType::Raw;
+    use Font::FreeType::Raw::Defs;
 
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.native;
+        $!face.ft-lib.raw;
     }
 
     enum FT_OUTLINE_OP «
@@ -43,20 +43,20 @@ class Font::FreeType::Outline {
         }
     }
 
-    has FT_Outline $!native handles <n-contours n-points points tags contours flags>;
+    has FT_Outline $!raw handles <n-contours n-points points tags contours flags>;
 
-    submethod TWEAK(:$!native!) { }
+    submethod TWEAK(:$!raw!) { }
 
     method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
-        my int32 $max-points = $!native.n-points * 6;
+        my int32 $max-points = $!raw.n-points * 6;
         my ft_shape_t $shape .= new: :$max-points;
-        ft-try({ $shape.gather_outlines($!native, $shift, $delta, $conic ?? 1 !! 0); });
+        ft-try({ $shape.gather_outlines($!raw, $shift, $delta, $conic ?? 1 !! 0); });
         $shape;
     }
 
     method bbox {
         my FT_BBox $bbox .= new;
-        ft-try({ $!native.FT_Outline_Get_BBox($bbox); });
+        ft-try({ $!raw.FT_Outline_Get_BBox($bbox); });
         $bbox;
     }
 
@@ -100,17 +100,17 @@ class Font::FreeType::Outline {
     }
 
     method bold(Int $strength) {
-        $!native.FT_Outline_Embolden($strength);
+        $!raw.FT_Outline_Embolden($strength);
     }
 
     method clone {
-        my $outline = $!native.clone(self!library);
-        self.new: :native($outline), :$!face;
+        my $outline = $!raw.clone(self!library);
+        self.new: :raw($outline), :$!face;
     }
 
     method DESTROY {
-        ft-try({ self!library.FT_Outline_Done($!native) });
-        $!native = Nil;
+        ft-try({ self!library.FT_Outline_Done($!raw) });
+        $!raw = Nil;
     }
 }
 
