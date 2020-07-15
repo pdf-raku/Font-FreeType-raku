@@ -1,6 +1,6 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font-FreeType-raku](https://pdf-raku.github.io/Font-FreeType-raku-raku)
- :: [NamedInfo](https://pdf-raku.github.io/Font-FreeType-raku-raku/NamedInfo)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
+ :: [NamedInfo](https://pdf-raku.github.io/Font-FreeType-raku/NamedInfo)
 
 class Font::FreeType::NamedInfo
 -------------------------------

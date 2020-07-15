@@ -1,6 +1,6 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font-FreeType-raku](https://pdf-raku.github.io/Font-FreeType-raku-raku)
- :: [Glyph](https://pdf-raku.github.io/Font-FreeType-raku-raku/Glyph)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
+ :: [Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph)
 
 class Font::FreeType::Glyph
 ---------------------------
