@@ -1,7 +1,6 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font](https://pdf-raku.github.io/Font-raku)
- :: [FreeType](https://pdf-raku.github.io/Font-raku/FreeType)
- :: [Face](https://pdf-raku.github.io/Font-raku/FreeType/Face)
+ / [Font-FreeType-raku](https://pdf-raku.github.io/Font-FreeType-raku-raku)
+ :: [Face](https://pdf-raku.github.io/Font-FreeType-raku-raku/Face)
 
 class Font::FreeType::Face
 --------------------------

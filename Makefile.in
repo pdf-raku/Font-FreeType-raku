@@ -25,15 +25,16 @@ $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
 
 docs/index.md : lib/Font/FreeType.rakumod
 	(\
+	    echo '[[Raku PDF Project]]($(DocRepo))'; \
+            echo '/ [Font::FreeType](Font::FreeType)'; \
 	    echo '[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)'; \
-            echo '';\
+            echo ''; \
             perl6 -I . --doc=Markdown $< \
-	    | raku -p -n $(DocLinker) \
-        ) > $@
+        ) | raku -p -n $(DocLinker) > $@
 
 docs/%.md : lib/Font/FreeType/%.rakumod
 	raku -I . --doc=Markdown $< \
-	| raku -p -n  $(DocLinker) \
+	| TRAIL=Font/FreeType/$* raku -p -n  $(DocLinker) \
         > $@
 
 $(DocLinker) :

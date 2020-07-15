@@ -1,7 +1,6 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font](https://pdf-raku.github.io/Font-raku)
- :: [FreeType](https://pdf-raku.github.io/Font-raku/FreeType)
- :: [CharMap](https://pdf-raku.github.io/Font-raku/FreeType/CharMap)
+ / [Font-FreeType-raku](https://pdf-raku.github.io/Font-FreeType-raku-raku)
+ :: [CharMap](https://pdf-raku.github.io/Font-FreeType-raku-raku/CharMap)
 
 class Font::FreeType::CharMap
 -----------------------------
