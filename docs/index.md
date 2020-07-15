@@ -1,12 +1,32 @@
+
+[[Raku PDF Project]](https://github.com/pdf-raku/pdf-raku.github.io)
+/ [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
 [![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)
 
-NAME
-====
+class Font::FreeType - read font files and render glyphs from Raku using FreeType2
+==================================================================================
 
-Font::FreeType - read font files and render glyphs from Raku using FreeType2
+Classes in this Distribution
+----------------------------
 
-SYNOPSIS
-========
+  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face) - Font Properties
+
+  * [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) - Glyph properties
+
+  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage) - Glyph outlines and bitmaps
+
+  * [Font::FreeType::Outline](https://pdf-raku.github.io/Font-FreeType-raku/Outline) - Scalable glyph images
+
+  * [Font::FreeType::BitMap](https://pdf-raku.github.io/Font-FreeType-raku/BitMap) - Rendered glyph bitmaps
+
+  * [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) - Font Encodings
+
+  * [Font::FreeType::Raw](https://pdf-raku.github.io/Font-FreeType-raku/Raw) - Bindings to the FreeType library
+
+  * [Font::FreeType::Raw::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Raw/Defs) - Data types and enumerations
+
+Synopsis
+--------
 
     use Font::FreeType;
 
@@ -20,8 +40,8 @@ SYNOPSIS
         # ...
     }
 
-DESCRIPTION
-===========
+Description
+-----------
 
 This module allows Raku programs to conveniently read information from font files. All the font access is done through the FreeType2 library, which supports many formats. It can render images of characters with high-quality hinting and anti-aliasing, extract metrics information, and extract the outlines of characters in scalable formats like TrueType.
 
@@ -44,8 +64,8 @@ Then load particular glyphs (an image of a character):
         say $bitmap.Str;
     }
 
-METHODS
-=======
+Methods
+-------
 
 Unless otherwise stated, all methods will die if there is an error.
 
@@ -119,8 +139,8 @@ The following load flags are available. They can be combined with the bit-wise O
 
 Returns the version number of the underlying FreeType library being used. If called in scalar context returns a Version consisting of a number in the format "major.minor.patch".
 
-SCRIPTS
-=======
+Scripts
+-------
 
 ### font-say
 
@@ -149,8 +169,8 @@ This script displays text as bitmapped characters, using a given font. For examp
                                                                  #####        ###
                                                                  ###          ###
 
-INSTALL
-=======
+Install
+-------
 
 Font::FreeType depends on the [freetype](https://www.freetype.org/download.html) native library, so you must install that prior to using this module.
 
@@ -160,27 +180,8 @@ To checkout and test this module from the Git repository:
     $ zef build .  # -OR- rakudo Build.pm
     $ prove -e'rakudo -I .' -v t
 
-SEE ALSO
-========
-
-  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face) - Font Properties
-
-  * [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) - Glyph properties
-
-  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage) - Glyph outlines and bitmaps
-
-  * [Font::FreeType::Outline](https://pdf-raku.github.io/Font-FreeType-raku/Outline) - Scalable glyph images
-
-  * [Font::FreeType::BitMap](https://pdf-raku.github.io/Font-FreeType-raku/BitMap) - Rendered glyph bitmaps
-
-  * [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) - Font Encodings
-
-  * [Font::FreeType::Raw](https://pdf-raku.github.io/Font-FreeType-raku/Raw) - Bindings to the FreeType library
-
-  * [Font::FreeType::Raw::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Raw/Defs) - Data types and enumerations
-
-AUTHORS
-=======
+Authors
+-------
 
 Geoff Richards <qef@laxan.com>
 
@@ -188,8 +189,8 @@ Ivan Baidakou <dmol@cpan.org>
 
 David Warring <david.warring@gmail.com> (Raku Port)
 
-COPYRIGHT
-=========
+Copyright
+---------
 
 Copyright 2004, Geoff Richards.
 

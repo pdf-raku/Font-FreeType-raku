@@ -1,3 +1,8 @@
+[[Raku PDF Project]](https://pdf-raku.github.io)
+ / [Font](https://pdf-raku.github.io/Font-raku)
+ :: [FreeType](https://pdf-raku.github.io/Font-raku/FreeType)
+ :: [GlyphImage](https://pdf-raku.github.io/Font-raku/FreeType/GlyphImage)
+
 class Font::FreeType::GlyphImage
 --------------------------------
 

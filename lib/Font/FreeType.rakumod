@@ -54,11 +54,22 @@ class Font::FreeType:ver<0.3.0> {
 
 =begin pod
 
-=head1 NAME
+=head1 class Font::FreeType - read font files and render glyphs from Raku using FreeType2
 
-Font::FreeType - read font files and render glyphs from Raku using FreeType2
+=head2 Classes in this Distribution
 
-=head1 SYNOPSIS
+
+=item L<Font::FreeType::Face> - Font Properties
+=item L<Font::FreeType::Glyph> - Glyph properties
+  =item L<Font::FreeType::GlyphImage> - Glyph outlines and bitmaps
+  =item L<Font::FreeType::Outline> - Scalable glyph images
+  =item L<Font::FreeType::BitMap> - Rendered glyph bitmaps
+=item L<Font::FreeType::CharMap> - Font Encodings
+=item L<Font::FreeType::Raw> - Bindings to the FreeType library
+=item   L<Font::FreeType::Raw::Defs> - Data types and enumerations
+
+
+=head2 Synopsis
 
     use Font::FreeType;
 
@@ -72,7 +83,7 @@ Font::FreeType - read font files and render glyphs from Raku using FreeType2
         # ...
     }
 
-=head1 DESCRIPTION
+=head2 Description
 
 This module allows Raku programs to conveniently read information from
 font files.  All the font access is done through the FreeType2 library,
@@ -105,7 +116,7 @@ Then load particular glyphs (an image of a character):
         say $bitmap.Str;
     }
 
-=head1 METHODS
+=head2 Methods
 
 Unless otherwise stated, all methods will die if there is an error.
 
@@ -234,7 +245,7 @@ Returns the version number of the underlying FreeType library being
 used.  If called in scalar context returns a Version consisting of
 a number in the format "major.minor.patch".
 
-=head1 SCRIPTS
+=head2 Scripts
 
 =head3 font-say
 
@@ -264,7 +275,7 @@ This script displays text as bitmapped characters, using a given font. For examp
                                                               ###          ###
 
 
-=head1 INSTALL
+=head2 Install
 
 Font::FreeType depends on the [freetype](https://www.freetype.org/download.html) native library, so you must install that prior to using this module.
 
@@ -275,18 +286,7 @@ To checkout and test this module from the Git repository:
     $ prove -e'rakudo -I .' -v t
 
 
-=head1 SEE ALSO
-
-=item L<Font::FreeType::Face> - Font Properties
-=item L<Font::FreeType::Glyph> - Glyph properties
-  =item L<Font::FreeType::GlyphImage> - Glyph outlines and bitmaps
-  =item L<Font::FreeType::Outline> - Scalable glyph images
-  =item L<Font::FreeType::BitMap> - Rendered glyph bitmaps
-=item L<Font::FreeType::CharMap> - Font Encodings
-=item L<Font::FreeType::Raw> - Bindings to the FreeType library
-=item   L<Font::FreeType::Raw::Defs> - Data types and enumerations
-
-=head1 AUTHORS
+=head2 Authors
 
 Geoff Richards <qef@laxan.com>
 
@@ -294,7 +294,7 @@ Ivan Baidakou <dmol@cpan.org>
 
 David Warring <david.warring@gmail.com> (Raku Port)
 
-=head1 COPYRIGHT
+=head2 Copyright
 
 Copyright 2004, Geoff Richards.
 
