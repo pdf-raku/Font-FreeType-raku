@@ -1,6 +1,7 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
- :: [Outline](https://pdf-raku.github.io/Font-FreeType-raku/Outline)
+ / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
+ :: [Outline](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Outline)
 
 class Font::FreeType::Outline
 -----------------------------

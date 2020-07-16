@@ -1,1 +1,111 @@
-docs/index.md
+[[Raku PDF Project]](https://github.com/pdf-raku/pdf-raku.github.io)
+/ [module Font-FreeType](https://pdf-raku.github.io/Font-FreeType-raku/)
+[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)
+
+module Font-FreeType-raku - Raku FreeType2 (font library) bindings
+=============================================================
+
+Classes in this Distribution
+----------------------------
+
+  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType) - Font Library Instance
+
+  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face) - Font Properties
+
+  * [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) - Glyph properties
+
+  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage) - Glyph outlines and bitmaps
+
+  * [Font::FreeType::Outline](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Outline) - Scalable glyph images
+
+  * [Font::FreeType::BitMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/BitMap) - Rendered glyph bitmaps
+
+  * [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap) - Font Encodings
+
+  * [Font::FreeType::Raw](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw) - Bindings to the FreeType library
+
+  * [Font::FreeType::Raw::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw/Defs) - Data types and enumerations
+
+Synopsis
+--------
+
+    use Font::FreeType;
+
+    my Font::FreeType $freetype .= new;
+    my $face = $freetype.face('t/fonts/Vera.ttf');
+
+    $face.set-char-size(24, 24, 100, 100);
+    for $face.glyph-images('ABC') {
+        my $outline = .outline;
+        my $bitmap = .bitmap;
+        # ...
+    }
+
+Description
+-----------
+
+This module allows Raku programs to conveniently read information from font files. All the font access is done through the FreeType2 library, which supports many formats. It can render images of characters with high-quality hinting and anti-aliasing, extract metrics information, and extract the outlines of characters in scalable formats like TrueType.
+
+
+Please see L<Font::FreeType>.
+
+
+Scripts
+-------
+
+### font-say
+
+    font-say [--resolution=<Int>] [--kern] [--hint] [--ascend=<Int>] [--descend=<Int>] [--char-spacing=<Int>] [--word-spacing=<Int>] [--bold=<Int>] [--mode=<Mode> (lcd lcd-v light mono normal)] [--verbose] <font-file> <text>
+
+This script displays text as bitmapped characters, using a given font. For example:
+
+    % bin/font-say t/fonts/Vera.ttf 'FreeType!'
+    ##########                                     ##############                                       ##
+    ##########                                     ##############                                       ##
+    ###             ###      ###          ###            ###                      ####         ###      ##
+    ###        ########    #######      #######          ###    ###      ###  #########      #######    ##
+    ###        ########   #########    #########         ###     ###    ###   ##########    #########   ##
+    #########  ####      ####   ###   ####   ###         ###     ###    ###   ####   ####  ####   ###   ##
+    #########  ####      ###     ###  ###     ###        ###     ####  ###    ####    ###  ###     ###  ##
+    #########  ###       ###########  ###########        ###      ###  ###    ###     ###  ###########  ##
+    ###        ###       ###########  ###########        ###      ###  ###    ###     ###  ###########  ##
+    ###        ###       ###          ###                ###       ######     ###     ###  ###          ##
+    ###        ###       ###          ###                ###       ######     ####    ###  ###
+    ###        ###       ####     #   ####     #         ###       #####      ####   ####  ####     #   ##
+    ###        ###        #########    #########         ###        ####      ##########    #########   ##
+    ###        ###         ########     ########         ###        ####      #########      ########   ##
+                            #####        #####                      ###       ### ####        #####
+                                                                    ###       ###
+                                                                 #####        ###
+                                                                 #####        ###
+                                                                 ###          ###
+
+Install
+-------
+
+Font::FreeType depends on the [freetype](https://www.freetype.org/download.html) native library, so you must install that prior to using this module.
+
+To checkout and test this module from the Git repository:
+
+    $ git checkout https://github.com/pdf-raku/Font-FreeType-raku.git
+    $ zef build .  # -OR- rakudo Build.pm
+    $ prove -e'rakudo -I .' -v t
+
+Authors
+-------
+
+Geoff Richards <qef@laxan.com>
+
+Ivan Baidakou <dmol@cpan.org>
+
+David Warring <david.warring@gmail.com> (Raku Port)
+
+Copyright
+---------
+
+Copyright 2004, Geoff Richards.
+
+Ported from Perl to Raku by David Warring <david.warring@gmail.com> Copyright 2017.
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+

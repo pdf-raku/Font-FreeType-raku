@@ -1,6 +1,7 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
- :: [Raw](https://pdf-raku.github.io/Font-FreeType-raku/Raw)
+ / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
+ :: [Raw](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw)
 
 NAME
 ====

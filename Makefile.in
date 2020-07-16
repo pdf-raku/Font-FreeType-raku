@@ -23,42 +23,38 @@ $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS% $(CF)
 
-docs/index.md : lib/Font/FreeType.rakumod
-	(\
-	    echo '[[Raku PDF Project]]($(DocRepo))'; \
-            echo '/ [Font::FreeType](Font::FreeType)'; \
-	    echo '[![Build Status](https://travis-ci.org/p6-pdf/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/p6-pdf/Font-FreeType-raku)'; \
-            echo ''; \
-            perl6 -I . --doc=Markdown $< \
-        ) | raku -p -n $(DocLinker) > $@
+docs/index.md : README.md
+	cp $< $@
 
-docs/%.md : lib/Font/FreeType/%.rakumod
+docs/%.md : lib/%.rakumod
 	raku -I . --doc=Markdown $< \
-	| TRAIL=Font/FreeType/$* raku -p -n  $(DocLinker) \
+	| TRAIL=$* raku -p -n  $(DocLinker) \
         > $@
 
 $(DocLinker) :
 	(cd .. && git clone $(DocRepo) $(DocProj))
 
-doc : $(DocLinker) docs/index.md docs/BitMap.md docs/CharMap.md docs/Face.md docs/Glyph.md docs/GlyphImage.md docs/Outline.md docs/NamedInfo.md docs/Raw.md docs/Raw/Defs.md
+doc : $(DocLinker) docs/index.md docs/Font/FreeType.md docs/Font/FreeType/BitMap.md docs/Font/FreeType/CharMap.md docs/Font/FreeType/Face.md docs/Font/FreeType/Glyph.md docs/Font/FreeType/GlyphImage.md docs/Font/FreeType/Outline.md docs/Font/FreeType/NamedInfo.md docs/Font/FreeType/Raw.md docs/Font/FreeType/Raw/Defs.md
 
-docs/BitMap.md : lib/Font/FreeType/BitMap.rakumod
+docs/Font/FreeType.md : lib/Font/FreeType.rakumod
 
-docs/CharMap.md : lib/Font/FreeType/CharMap.rakumod
+docs/Font/FreeType/BitMap.md : lib/Font/FreeType/BitMap.rakumod
 
-docs/Face.md : lib/Font/FreeType/Face.rakumod
+docs/Font/FreeType/CharMap.md : lib/Font/FreeType/CharMap.rakumod
 
-docs/Glyph.md : lib/Font/FreeType/Glyph.rakumod
+docs/Font/FreeType/Face.md : lib/Font/FreeType/Face.rakumod
 
-docs/GlyphImage.md : lib/Font/FreeType/GlyphImage.rakumod
+docs/Font/FreeType/Glyph.md : lib/Font/FreeType/Glyph.rakumod
 
-docs/NamedInfo.md : lib/Font/FreeType/NamedInfo.rakumod
+docs/Font/FreeType/GlyphImage.md : lib/Font/FreeType/GlyphImage.rakumod
 
-docs/Outline.md : lib/Font/FreeType/Outline.rakumod
+docs/Font/FreeType/NamedInfo.md : lib/Font/FreeType/NamedInfo.rakumod
 
-docs/Raw.md : lib/Font/FreeType/Raw.rakumod
+docs/Font/FreeType/Outline.md : lib/Font/FreeType/Outline.rakumod
 
-docs/Raw/Defs.md : lib/Font/FreeType/Raw/Defs.rakumod
+docs/Font/FreeType/Raw.md : lib/Font/FreeType/Raw.rakumod
+
+docs/Font/FreeType/Raw/Defs.md : lib/Font/FreeType/Raw/Defs.rakumod
 
 test : all
 	@prove -e"raku -I ." t
@@ -70,6 +66,6 @@ clean :
 	@rm -f $(SRC)/ft6_*%O% resources/libraries/*%LIB-NAME%
 
 realclean : clean
-	@rm -f Makefile README.md docs/*.md docs/*/*.md
+	@rm -f Makefile README.md docs/index.md docs/Font/FreeType/*.md docs/Font/FreeType/*/*.md
 
 

@@ -1,6 +1,7 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
- :: [BitMap](https://pdf-raku.github.io/Font-FreeType-raku/BitMap)
+ / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
+ :: [BitMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/BitMap)
 
 class Font::FreeType::BitMap
 ----------------------------

@@ -1,6 +1,7 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
- :: [GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage)
+ / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
+ :: [GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage)
 
 class Font::FreeType::GlyphImage
 --------------------------------
@@ -87,14 +88,14 @@ True if the glyph has a vector outline, in which case it is safe to call `outlin
 
 ### outline()
 
-Returns an object of type [Font::FreeType::Outline](https://pdf-raku.github.io/Font-FreeType-raku/Outline)
+Returns an object of type [Font::FreeType::Outline](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Outline)
 
 See Also
 --------
 
-  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
+  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
 
-  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face)
+  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face)
 
 Authors
 -------

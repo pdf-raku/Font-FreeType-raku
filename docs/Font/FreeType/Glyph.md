@@ -1,6 +1,7 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
- :: [Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph)
+ / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
+ :: [Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph)
 
 class Font::FreeType::Glyph
 ---------------------------
@@ -30,7 +31,7 @@ Description
 
 This is an iterator class that represents individual glyphs loaded from a font.
 
-See [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face) for how to obtain glyph objects, in particular the `for-glyph-slots` method.
+See [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face) for how to obtain glyph objects, in particular the `for-glyph-slots` method.
 
 For a detailed description of the meaning of glyph metrics, and the structure of vectorial outlines, see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sourceforge.net/freetype2/docs/glyphs/)
 
@@ -90,11 +91,11 @@ The Unicode character represented by the glyph.
 See Also
 --------
 
-  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
+  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
 
-  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Face)
+  * [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face)
 
-  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage)
+  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage)
 
 Copyright
 ---------

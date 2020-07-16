@@ -1,6 +1,7 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
- :: [CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap)
+ / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
+ :: [CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap)
 
 class Font::FreeType::CharMap
 -----------------------------
@@ -27,7 +28,7 @@ A charmap is used to translate character codes in a given encoding into glyph in
 Constants
 ---------
 
-The following encoding constants are exported by default by [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku). See [freetype documentation](http://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Encoding)
+The following encoding constants are exported by default by [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType). See [freetype documentation](http://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Encoding)
 
 - FT_ENCODING_NONE
 

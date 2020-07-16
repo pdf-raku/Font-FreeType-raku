@@ -1,6 +1,7 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
- / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
- :: [Face](https://pdf-raku.github.io/Font-FreeType-raku/Face)
+ / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku)
+ / [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
+ :: [Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face)
 
 class Font::FreeType::Face
 --------------------------
@@ -27,6 +28,75 @@ Methods
 -------
 
 Unless otherwise stated, all methods will die if there is an error.
+
+### face()
+
+    use Font::FreeType;
+    use Font::FreeType::Face;
+    my Font::FreeType $freetype .= new;
+    my Font::FreeType::Face $face = $freetype.face('Vera.ttf');
+
+If your font is scalable (i.e., not a bit-mapped font) then set the size and resolution you want to see it at, for example 24pt at 100dpi:
+
+    $face.set-char-size(24, 24, 100, 100);
+
+Return a [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face) object representing a font face from the specified file or Blob.
+
+The :index option specifies which face to load from the file. It defaults to 0, and since most fonts only contain one face it rarely needs to be provided.
+
+The :load-flags option takes various flags which alter the way glyphs are loaded. The default is usually OK for rendering fonts to bitmap images. When extracting outlines from fonts, be sure to set the FT\_LOAD\_NO\_HINTING flag.
+
+The following load flags are available. They can be combined with the bit-wise OR operator (`|`). The symbols are exported by the module and so will be available once you do `use Font::FreeType`.
+
+  * *FT_LOAD_DEFAULT*
+
+    The same as doing nothing special.
+
+  * *FT_LOAD_CROP_BITMAP*
+
+    Remove extraneous black bits round the edges of bitmaps when loading embedded bitmaps.
+
+  * *FT_LOAD_FORCE_AUTOHINT*
+
+    Use FreeType's own automatic hinting algorithm rather than the normal TrueType one. Probably only useful for testing the FreeType library.
+
+  * *FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH*
+
+    Probably only useful for loading fonts with wrong metrics.
+
+  * *FT_LOAD_IGNORE_TRANSFORM*
+
+    Don't transform glyphs. This module doesn't yet have support for transformations.
+
+  * *FT_LOAD_LINEAR_DESIGN*
+
+    Don't scale the metrics.
+
+  * *FT_LOAD_NO_AUTOHINT*
+
+    Don't use the FreeType auto-hinting algorithm. Hinting with other algorithms (such as the TrueType one) will still be done if possible. Apparently some fonts look worse with the auto-hinter than without any hinting.
+
+    This option is only available with FreeType 2.1.3 or newer.
+
+  * *FT_LOAD_NO_BITMAP*
+
+    Don't load embedded bitmaps provided with scalable fonts. Bitmap fonts are still loaded normally. This probably doesn't make much difference in the current version of this module, as embedded bitmaps aren't deliberately used.
+
+  * *FT_LOAD_NO_HINTING*
+
+    Prevents the coordinates of the outline from being adjusted ('grid fitted') to the current size. Hinting should be turned on when rendering bitmap images of glyphs, and off when extracting the outline information if you don't know at what resolution it will be rendered. For example, when converting glyphs to PostScript or PDF, use this to turn the hinting off.
+
+  * *FT_LOAD_NO_SCALE*
+
+    Don't scale the font's outline or metrics to the right size. This will currently generate bad numbers. To be fixed in a later version.
+
+  * *FT_LOAD_PEDANTIC*
+
+    Raise errors when a font file is broken, rather than trying to work around it.
+
+  * *FT_LOAD_VERTICAL_LAYOUT*
+
+    Return metrics and glyphs suitable for vertical layout. This module doesn't yet provide any intentional support for vertical layout, so this probably won't be much use.
 
 ### ascender()
 
@@ -78,13 +148,21 @@ Returns an array of Font::FreeType::BitMap::Size objects which detail sizes. Eac
 
 ### glyph-images(str)
 
-Returns an array of [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage) objects for the Unicode string.
+Returns an array of [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage) objects for the Unicode string.
+
+For example, to load particular glyphs (character images):
+
+    for $face.glyph-images('ABC') {
+        # Glyphs can be rendered to bitmap images, among other things:
+        my $bitmap = .bitmap;
+        say $bitmap.Str;
+    }
 
 ### forall-chars(_code-ref_)
 
 Iterates through all the characters in the font, and calls _code-ref_ for each of them in turn. Glyphs which don't correspond to Unicode characters are ignored.
 
-Each time your callback code is called, a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) object is passed for the current glyph.
+Each time your callback code is called, a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) object is passed for the current glyph.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 
@@ -94,17 +172,17 @@ For an example see the program _list-characters.pl_ provided in the distribution
 
 Iterates through all the glyphs in the font, and calls _code-ref_ for each of them in turn.
 
-Each time your callback code is called, a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) object is passed for the current glyph. 
+Each time your callback code is called, a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) object is passed for the current glyph. 
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 
 ### for-glyphs(str, _code-ref_)
 
-Execute a callback for each glyph in a string, passing a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) object on each invocation.
+Execute a callback for each glyph in a string, passing a [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) object on each invocation.
 
 ### has-glyph-names()
 
-True if individual glyphs have names. If so, the names can be retrieved with the `name()` method on [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph) objects.
+True if individual glyphs have names. If so, the names can be retrieved with the `name()` method on [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) objects.
 
 See also `has-reliable-glyph-names()` below.
 
@@ -209,11 +287,11 @@ The size of the em square used by the font designer. This can be used to scale f
 
 ### charmap()
 
-The current active [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) object for this face.
+The current active [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap) object for this face.
 
 ### charmaps()
 
-An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/CharMap) objects for the face.
+An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap) objects for the face.
 
 ### bounding-box()
 
@@ -239,11 +317,11 @@ The `FT_Reference_Face` and `FT_Done_Face` methods will need to be called if the
 See Also
 --------
 
-  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku)
+  * [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType)
 
-  * [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Glyph)
+  * [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph)
 
-  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/GlyphImage)
+  * [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage)
 
 Author
 ------
