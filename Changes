@@ -1,3 +1,5 @@
+0.3.1
+    - documentation changes
 0.3.0
     - native -> raw in class names and attributes. Follow lead of LibXML
       -- Font::FreeType::Native -> Font::FreeeType::Raw
