@@ -1,6 +1,6 @@
 # prints an ascii banner, using the supplied font
 use Font::FreeType;
-use Font::FreeType::Native::Types;
+use Font::FreeType::Raw::Defs;
 
 enum Mode «
     :normal(0)
