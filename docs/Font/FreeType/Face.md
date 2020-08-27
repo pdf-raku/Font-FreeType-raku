@@ -249,17 +249,29 @@ The `mode` option controls how the kerning is calculated, with the following opt
 
     Leave the measurements in font units, without scaling, and without hinting.
 
-### number-of-faces()
+### num-faces()
 
 The number of faces contained in the file from which this one was created. Usually there is only one. See `Font::FreeType.face()` for how to load the others if there are more.
 
-### number-of-glyphs()
+### num-glyphs()
 
 The number of glyphs in the font face.
 
 ### postscript-name()
 
 A string containing the PostScript name of the font, or _undef_ if it doesn't have one.
+
+### glyph-name(char)
+
+Returns the name for the given character, where `char` can be a string or code-point number
+
+### glyph-index(char)
+
+Returns the glyph index in the font, or 0 if the character does not exist. `char` can be a string or code-point number
+
+### glyph-name-from-index(index)
+
+Returns the name for the given character.
 
 ### set-char-size(_width_, _height_, _x-res_, _y-res_)
 

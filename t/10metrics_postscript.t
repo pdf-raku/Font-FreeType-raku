@@ -2,6 +2,7 @@ use v6;
 use Test;
 plan 53;
 use Font::FreeType;
+use Font::FreeType::Glyph;
 use Font::FreeType::Raw::Defs;
 
 my Font::FreeType $ft .= new;
@@ -100,7 +101,7 @@ $tnr.set-char-size(2048, 2048, 72, 72);
 
 # 5*2 tests.
 my $chars = %glyph-metrics.keys.sort.join;
-$tnr.for-glyphs: $chars, -> $glyph {
+$tnr.for-glyphs: $chars, -> Font::FreeType::Glyph $glyph {
     my $char = $glyph.Str;
     with %glyph-metrics{$char} {
         is $glyph.name, .<name>,

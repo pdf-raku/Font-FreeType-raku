@@ -35,13 +35,12 @@ This class contains structure definitions and bindings for the FreeType library.
 Containing classes, by convention, have a `raw()` accessor, which can be used, if needed, to gain access to native objects from this class:
 
 <table class="pod-table">
-    
-    <thead>
-        <tr><th>Class</th><th>raw() binding</th><th>Description</th></tr>
-    </thead>
-    <tbody>
-        <tr><td>L&lt;Font::FreeType&gt;</td><td>L&lt;FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library&gt;</td><td>A handle to a freetype library instance</td></tr><tr><td>L&lt;Font::FreeType::Face&gt;</td><td>L&lt;FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face&gt;</td><td>A Handle to a typographic face object</td></tr><tr><td>L&lt;Font::FreeType::Glyph&gt;</td><td>L&lt;FT_GlyphSlot|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot&gt;</td><td>A handle to a glyph container</td></tr><tr><td>L&lt;Font::FreeType::GlyphImage&gt;</td><td>L&lt;FT_Glyph|https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html&gt;</td><td>A specific glyph bitmap or outline object</td></tr><tr><td>L&lt;Font::FreeType::BitMap&gt;</td><td>L&lt;FT_Bitmap|https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html&gt;</td><td>A rendered bitmap for a glyph</td></tr><tr><td>L&lt;Font::FreeType::Outline&gt;</td><td>L&lt;FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html&gt;</td><td>A scalable glyph outline</td></tr>
-    </tbody>
+<thead><tr>
+<th>Class</th> <th>raw() binding</th> <th>Description</th>
+</tr></thead>
+<tbody>
+<tr> <td>L&lt;Font::FreeType&gt;</td> <td>L&lt;FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library&gt;</td> <td>A handle to a freetype library instance</td> </tr> <tr> <td>L&lt;Font::FreeType::Face&gt;</td> <td>L&lt;FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face&gt;</td> <td>A Handle to a typographic face object</td> </tr> <tr> <td>L&lt;Font::FreeType::Glyph&gt;</td> <td>L&lt;FT_GlyphSlot|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot&gt;</td> <td>A handle to a glyph container</td> </tr> <tr> <td>L&lt;Font::FreeType::GlyphImage&gt;</td> <td>L&lt;FT_Glyph|https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html&gt;</td> <td>A specific glyph bitmap or outline object</td> </tr> <tr> <td>L&lt;Font::FreeType::BitMap&gt;</td> <td>L&lt;FT_Bitmap|https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html&gt;</td> <td>A rendered bitmap for a glyph</td> </tr> <tr> <td>L&lt;Font::FreeType::Outline&gt;</td> <td>L&lt;FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html&gt;</td> <td>A scalable glyph outline</td> </tr>
+</tbody>
 </table>
 
 class Font::FreeType::Raw::FT_Bitmap

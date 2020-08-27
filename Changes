@@ -1,3 +1,6 @@
+0.3.2
+    - documentation fixes #5
+    - add method $face.glyph-name-from-index
 0.3.1
     - documentation changes
 0.3.0

@@ -99,9 +99,19 @@ class Font::FreeType::Face {
 
     multi method glyph-name(Str:D $char) {
         my FT_UInt $index = $!raw.FT_Get_Char_Index( $char.ord );
-        $.glyph-name($index);
+        $.glyph-name-from-index($index);
     }
-    multi method glyph-name(Int $glyph-index) {
+    multi method glyph-name(UInt:D $char-code) {
+        my FT_UInt $index = $!raw.FT_Get_Char_Index( $char-code );
+        $.glyph-name-from-index($index);
+    }
+    multi method glyph-index(Str:D $char) {
+        $!raw.FT_Get_Char_Index($char.ord);
+    }
+    multi method glyph-index(UInt $char-code) {
+        $!raw.FT_Get_Char_Index($char-code);
+    }
+    multi method glyph-name-from-index(UInt $glyph-index) {
         self.has-glyph-names
             ?? self!get-glyph-name($glyph-index)
             !! Mu;
@@ -537,13 +547,13 @@ I<FT_KERNING_UNSCALED>
 Leave the measurements in font units, without scaling, and without hinting.
 =end item
 
-=head3 number-of-faces()
+=head3 num-faces()
 
 The number of faces contained in the file from which this one
 was created.  Usually there is only one.  See `Font::FreeType.face()`
 for how to load the others if there are more.
 
-=head3 number-of-glyphs()
+=head3 num-glyphs()
 
 The number of glyphs in the font face.
 
@@ -551,6 +561,18 @@ The number of glyphs in the font face.
 
 A string containing the PostScript name of the font, or _undef_
 if it doesn't have one.
+
+=head3 glyph-name(char)
+
+Returns the name for the given character, where `char` can be a string or code-point number
+
+=head3 glyph-index(char)
+
+Returns the glyph index in the font, or 0 if the character does not exist. `char` can be a string or code-point number
+
+=head3 glyph-name-from-index(index)
+
+Returns the name for the given character.
 
 =head3 set-char-size(_width_, _height_, _x-res_, _y-res_)
 
