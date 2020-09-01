@@ -55,11 +55,7 @@ use Font::FreeType::Raw::Defs;
 
 constant FT_Byte   = uint8;
 constant FT_Encoding = uint32;
-constant FT_Fixed  = long;
-constant FT_Long   = long;
-constant FT_Short  = int16;
 constant FT_String = Str;
-constant FT_UShort = uint16;
 constant FT_Glyph_Format = int32; # enum
 constant FT_Render_Mode = int32; # enum
 

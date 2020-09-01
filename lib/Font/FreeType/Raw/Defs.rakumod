@@ -38,10 +38,14 @@ constant FT_Int    is export = int32;
 constant FT_Int32  is export = int32;
 constant FT_Pos    is export = long;
 constant FT_UInt   is export = uint32;
+constant FT_Long   is export = long;
 constant FT_ULong  is export = ulong;
+constant FT_Short  is export = int16;
+constant FT_UShort is export = uint16;
 constant FT_F26Dot6 is export = long;
+constant FT_Fixed   is export = long;
 
-sub ft-code(Str $s) {
+sub ft-tag-encode(Str $s) is export {
     my uint32 $enc = 0;
     for $s.ords {
         $enc *= 256;
@@ -53,19 +57,19 @@ sub ft-code(Str $s) {
 # FT_ENCODING - An enumeration to specify character sets supported by charmaps.
 enum FT_ENCODING is export «
     :FT_ENCODING_NONE(0)
-    :FT_ENCODING_SYMBOL(ft-code("symb"))
-    :FT_ENCODING_UNICODE(ft-code("unic"))
-    :FT_ENCODING_SJIS(ft-code("sjis"))
-    :FT_ENCODING_PRC(ft-code("gb  "))
-    :FT_ENCODING_BIG5(ft-code("big5"))
-    :FT_ENCODING_WANGSUNG(ft-code("wang"))
-    :FT_ENCODING_JOHAB(ft-code("joha"))
-    :FT_ENCODING_ADOBE_STANDARD(ft-code("ADOB"))
-    :FT_ENCODING_ADOBE_EXPERT(ft-code("ADBE"))
-    :FT_ENCODING_ADOBE_CUSTOM(ft-code("ADBC"))
-    :FT_ENCODING_ADOBE_LATIN_1(ft-code("lat1"))
-    :FT_ENCODING_OLD_LATIN_2(ft-code("lat2"))
-    :FT_ENCODING_APPLE_ROMAN(ft-code("armn"))
+    :FT_ENCODING_SYMBOL(ft-tag-encode("symb"))
+    :FT_ENCODING_UNICODE(ft-tag-encode("unic"))
+    :FT_ENCODING_SJIS(ft-tag-encode("sjis"))
+    :FT_ENCODING_PRC(ft-tag-encode("gb  "))
+    :FT_ENCODING_BIG5(ft-tag-encode("big5"))
+    :FT_ENCODING_WANGSUNG(ft-tag-encode("wang"))
+    :FT_ENCODING_JOHAB(ft-tag-encode("joha"))
+    :FT_ENCODING_ADOBE_STANDARD(ft-tag-encode("ADOB"))
+    :FT_ENCODING_ADOBE_EXPERT(ft-tag-encode("ADBE"))
+    :FT_ENCODING_ADOBE_CUSTOM(ft-tag-encode("ADBC"))
+    :FT_ENCODING_ADOBE_LATIN_1(ft-tag-encode("lat1"))
+    :FT_ENCODING_OLD_LATIN_2(ft-tag-encode("lat2"))
+    :FT_ENCODING_APPLE_ROMAN(ft-tag-encode("armn"))
     »;
 
 # FT_FACE - A list of bit flags used in the ‘face-flags’ field of the FT_FaceRec structure. They inform client applications of properties of the corresponding face.
@@ -97,10 +101,10 @@ enum FT_KERNING is export «
 # FT_GLYPH_FORMAT - An enumeration type used to describe the format of a given glyph image. 
 enum FT_GLYPH_FORMAT is export «
     :FT_GLYPH_FORMAT_NONE(0)
-    :FT_GLYPH_FORMAT_COMPOSITE(ft-code('comp'))
-    :FT_GLYPH_FORMAT_BITMAP(ft-code('bits'))
-    :FT_GLYPH_FORMAT_OUTLINE(ft-code('outl'))
-    :FT_GLYPH_FORMAT_PLOT(ft-code('plot'))
+    :FT_GLYPH_FORMAT_COMPOSITE(ft-tag-encode('comp'))
+    :FT_GLYPH_FORMAT_BITMAP(ft-tag-encode('bits'))
+    :FT_GLYPH_FORMAT_OUTLINE(ft-tag-encode('outl'))
+    :FT_GLYPH_FORMAT_PLOT(ft-tag-encode('plot'))
     »;
 
 # FT_LOAD - A list of bit field constants for FT_Load_Glyph to indicate what kind of operations to perform during glyph loading.
@@ -161,4 +165,14 @@ enum FT_RENDER_MODE is export «
 enum FT_STYLE_FLAG is export «
     :FT_STYLE_FLAG_ITALIC(1 +< 0)
     :FT_STYLE_FLAG_BOLD(1 +< 1)
+    »;
+
+enum FT_Sfnt_Tag is export «
+    :Ft_Sfnt_head(0)
+    :Ft_Sfnt_maxp(1)
+    :Ft_Sfnt_os2(2)
+    :Ft_Sfnt_hhea(3)
+    :Ft_Sfnt_vhea(4)
+    :Ft_Sfnt_post(5)
+    :Ft_Sfnt_pclt(6)
     »;
