@@ -45,7 +45,7 @@ constant FT_UShort is export = uint16;
 constant FT_F26Dot6 is export = long;
 constant FT_Fixed   is export = long;
 
-sub ft-tag-encode(Str $s) is export {
+sub ft-tag-encode(Str $s --> UInt) is export {
     my uint32 $enc = 0;
     for $s.ords {
         $enc *= 256;
@@ -53,6 +53,16 @@ sub ft-tag-encode(Str $s) is export {
     }
     $enc;
 }
+
+sub ft-tag-decode(UInt $tag is copy --> Str) is export {
+    my @chrs = (1..4).map: {
+        my $chr = ($tag mod 256).chr;
+        $tag div= 256;
+        $chr;
+    }
+    @chrs.reverse.join;
+}
+
 
 # FT_ENCODING - An enumeration to specify character sets supported by charmaps.
 enum FT_ENCODING is export «

@@ -195,6 +195,22 @@ class Font::FreeType::Face {
         Vector.new: :raw($vec);
     }
 
+    method sfnt-info(UInt $idx = 0) {
+        my FT_ULong $count = 0;
+        my FT_ULong $tag-code = 0;
+        ft-try({
+            $!raw.FT_Sfnt_Table_Info($idx, $tag-code, $count);
+        });
+        
+        if $idx {
+            my Str $tag = ft-tag-decode($tag-code);
+            %(:$tag, offset => $count)
+        }
+        else {
+            %(:$count,);
+        }
+    }
+
     submethod DESTROY {
         with $!raw {
             ft-try({ .FT_Done_Face });

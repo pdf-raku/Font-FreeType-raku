@@ -431,7 +431,24 @@ class FT_Face is export {
         is symbol('FT_Get_X11_Font_Format') # for FreeType < v2.0.0 compat
         is native($FT-LIB) {*};
 
+    method FT_Get_Sfnt_Table(
+        int32     $tag)
+    returns Pointer is native($FT-LIB) {*}
+
+    method FT_Load_Sfnt_Table(
+        FT_ULong  $tag,
+        FT_Long   $offset,
+        Blob      $buffer,
+        FT_ULong  $length is rw)
+    returns FT_Error is native($FT-LIB) {*}
+
+    method FT_Sfnt_Table_Info(
+        FT_UInt   $table_index,
+        FT_ULong  $tag is rw,
+        FT_ULong  $length is rw)
+    returns FT_Error is native($FT-LIB) {*}
     #| A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
+
     method FT_Reference_Face
         returns FT_Error
         is export

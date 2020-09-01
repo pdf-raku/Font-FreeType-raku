@@ -1,4 +1,4 @@
-unit module Font::FreeType::Raw::TrueType;
+unit class Font::FreeType::Raw::TrueType;
 
 use Font::FreeType::Raw;
 use Font::FreeType::Error;
@@ -7,26 +7,14 @@ use Font::FreeType::Face;
 use NativeCall;
 
 role TT-table[FT_Sfnt_Tag \Tag] {
-    sub FT_Get_Sfnt_Table( FT_Face      $face,
-                           int32  $tag
-                           --> Pointer)
-        is native($FT-LIB) {*}
-
-    sub FT_Load_Sfnt_Table(FT_Face   $face,
-                           FT_ULong  $tag,
-                           FT_Long   $offset,
-                           Blob      $buffer,
-                           FT_ULong  $length is rw
-                          --> FT_Error)
-        is native($FT-LIB) {*}
 
     multi method load(Font::FreeType::Face :face($_)!) {
         my FT_Face:D $face = .raw;
-        $.load: :$face;
+        $.load(:$face);
     }
 
     multi method load(FT_Face:D :$face!) {
-        my Pointer $p := FT_Get_Sfnt_Table($face, +Tag)
+        my Pointer $p := $face.FT_Get_Sfnt_Table(+Tag)
             // die "unable to load font table";
         my $obj = self;
         $_ .= new without $obj;
@@ -35,7 +23,6 @@ role TT-table[FT_Sfnt_Tag \Tag] {
         $obj;
     }
 }
-
 
 class TT_Header does TT-table[Ft_Sfnt_head] is export is repr('CStruct') {
 
