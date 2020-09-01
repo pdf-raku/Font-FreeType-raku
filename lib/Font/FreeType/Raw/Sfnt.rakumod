@@ -1,4 +1,4 @@
-unit class Font::FreeType::Raw::TrueType;
+unit class Font::FreeType::Raw::Sfnt;
 
 use Font::FreeType::Raw;
 use Font::FreeType::Error;
@@ -6,7 +6,7 @@ use Font::FreeType::Raw::Defs;
 use Font::FreeType::Face;
 use NativeCall;
 
-role TT-table[FT_Sfnt_Tag \Tag] {
+role Sfnt[FT_Sfnt_Tag \Tag] {
 
     multi method load(Font::FreeType::Face :face($_)!) {
         my FT_Face:D $face = .raw;
@@ -24,7 +24,7 @@ role TT-table[FT_Sfnt_Tag \Tag] {
     }
 }
 
-class TT_Header does TT-table[Ft_Sfnt_head] is export is repr('CStruct') {
+class TT_Header does Sfnt[Ft_Sfnt_head] is export is repr('CStruct') {
 
     has FT_Fixed   $.Table-Version;
     method Table-Version { Version.new: ($!Table-Version / (2  ** 16 )).round(.01) }
