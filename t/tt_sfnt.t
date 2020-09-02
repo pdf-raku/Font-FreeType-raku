@@ -44,7 +44,7 @@ is $os2.usWinDescent, 483;
 is $os2.usUpperOpticalPointSize, -1|255;
 
 my TT_Postscript $post .= load: :$face;
-is $post.FormatType, 2;
+is $post.format, 2;
 is $post.underlinePosition, -130;
 is $post.underlineThickness, 90;
 

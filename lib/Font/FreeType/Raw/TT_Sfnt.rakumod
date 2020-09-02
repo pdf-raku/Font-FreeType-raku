@@ -26,15 +26,16 @@ This module maps to FreeType methods that directly expose the data in
 the following TrueType `Sfnt` tables.
 
 =begin table
-Code | Class         | Description
+Code | Class         | Description | Accessors
 ====================================================
-head | TT_Header     | The head table for a TTF Font
-vhea | TT_VertHeader | Vertical Header table
-hhea | TT_HoriHeader | Horizontal Header table
-maxp | TT_MaxProfile | Maximum Profile table
-post | TT_Postscript | Postscript properties
-os2  | TT_OS2        | OS2 Specific property table
-pclt | TT_PCLT       | PCLT Specific property table
+head | TT_Header     | The head table for a TTF Font | checkSumAdjustment flags fontDirectionHint fontRevision glyphDataFormat indexToLocFormat lowestRecPPEM macStyle magicNumber unitsPerEm version xMax xMin yMax yMin
+vhea | TT_VertHeader | Vertical Header table | advanceHeightMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap metricDataFormat minBottomSideBearing minTopSideBearing numOfLongVerMetrics version yMaxExtent
+hhea | TT_HoriHeader | Horizontal Header table | advanceWidthMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap metricDataFormat minLeftSideBearing minRightSideBearing numOfLongHorMetrics version xMaxExtent
+maxp | TT_MaxProfile | Maximum Profile table | maxComponentDepth maxComponentElements maxCompositeContours maxCompositePoints maxContours maxFunctionDefs maxInstructionDefs maxPoints maxSizeOfInstructions maxStackElements maxStorage maxTwilightPoints maxZones numGlyphs version
+post | TT_Postscript | Postscript properties | advanceWidthMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap load metricDataFormat minBottomSideBearing minTopSideBearing numOfLongVerMetrics version yMaxExtent
+os2  | TT_OS2        | OS2 Specific property table | fsSelection fsType sCapHeight sFamilyClass sTypoAscender sTypoDescender sTypoLineGap sxHeight ulCodePageRange1 ulCodePageRange2 ulUnicodeRange1 ulUnicodeRange2 ulUnicodeRange3 ulUnicodeRange4 usBreakChar usDefaultChar usFirstCharIndex usLastCharIndex usLowerOpticalPointSize usMaxContext usUpperOpticalPointSize usWeightClass usWidthClass usWinAscent usWinDescent version xAvgCharWidth yStrikeoutPosition yStrikeoutSize ySubscriptXOffset ySubscriptXSize ySubscriptYOffset ySubscriptYSize ySuperscriptXOffset ySuperscriptXSize ySuperscriptYOffset ySuperscriptYSize
+pclt | TT_PCLT       | PCLT Specific property table | capHeight fontNumber pitch reserved serifStyle strokeWeight style symbolSet typeFamily version widthType xHeight
+
 =end table
 
 =end pod
@@ -100,11 +101,11 @@ my class MetricsHeader is repr('CStruct') {
     has FT_Short   $.descent;
     has FT_Short   $.lineGap;
 
-    has FT_UShort  $.advanceWidthMax;      # advance width maximum
+    has FT_UShort  $._advanceMax;      # advance width maximum
 
-    has FT_Short   $.minLeftSideBearing;   # minimum left-sb
-    has FT_Short   $.minRightSideBearing;  # minimum right-sb
-    has FT_Short   $.xMaxExtent;           # xmax extents
+    has FT_Short   $._minSideBearing1;   #
+    has FT_Short   $._minSideBearing2;   #
+    has FT_Short   $._MaxExtent;         # x or y max extents
     has FT_Short   $.caretSlopeRise;
     has FT_Short   $.caretSlopeRun;
     has FT_Short   $.caretOffset;
@@ -112,11 +113,23 @@ my class MetricsHeader is repr('CStruct') {
     has FT_Short   ($!reserved, $!r2, $!r3, $!r4);
 
     has FT_Short   $.metricDataFormat;
-    has FT_UShort  $.numOfLongHorMetrics;
+    has FT_UShort  $._numOfMetrics;
 };
 
-class TT_HoriHeader is MetricsHeader does TT_Sfnt[Ft_Sfnt_hhea] is export is repr('CStruct') { }
-class TT_VertHeader is MetricsHeader does TT_Sfnt[Ft_Sfnt_vhea] is export is repr('CStruct') { }
+class TT_HoriHeader is MetricsHeader does TT_Sfnt[Ft_Sfnt_hhea] is export is repr('CStruct') {
+    method advanceWidthMax      { $._advanceMax }
+    method minLeftSideBearing   { $._minSideBearing1 }
+    method minRightSideBearing  { $._minSideBearing2 }
+    method xMaxExtent           { $._MaxExtent }
+    method numOfLongHorMetrics  { $._numOfMetrics }
+}
+class TT_VertHeader is MetricsHeader does TT_Sfnt[Ft_Sfnt_vhea] is export is repr('CStruct') {
+    method advanceHeightMax     { $._advanceMax }
+    method minTopSideBearing    { $._minSideBearing1 }
+    method minBottomSideBearing { $._minSideBearing2 }
+    method yMaxExtent           { $._MaxExtent }
+    method numOfLongVerMetrics  { $._numOfMetrics }
+}
 
 class TT_OS2 does TT_Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
 
@@ -220,7 +233,7 @@ class TT_PCLT does TT_Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
 
 class TT_Postscript does TT_Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
     has FT_Fixed  $.format;
-    method FormatType { Version.new: ($!format / (2  ** 16 )).round(.01) }
+    method format { Version.new: ($!format / (2  ** 16 )).round(.01) }
     has FT_Fixed  $.italicAngle;
     has FT_Short  $.underlinePosition;
     has FT_Short  $.underlineThickness;
