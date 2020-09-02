@@ -9,9 +9,37 @@ use NativeCall;
 
 =begin pod
 
+=head3 Example
+
+    use Font::FreeType;
+    use Font::Font::FreeType::Raw::TT_Snft;
+    my  Font::FreeType $freetype .= new;
+    my $face = $freetype.face: "t/fonts/Vera.ttf";
+    # Get some metrics from the font's PCLT table, if available
+    my TT_PCLT $pclt .= load: :$face;
+    my $x-height   = .xHeight with $pclt;
+    my $cap-height = .capHeight with $pclt;
+
+=head2 Description
+
+This module maps to FreeType methods that directly expose the data in
+the following TrueType `Sfnt` tables.
+
+=begin table
+Code | Class         | Description
+====================================================
+head | TT_Header     | The head table for a TTF Font
+vhea | TT_VertHeader | Vertical Header table
+hhea | TT_HoriHeader | Horizontal Header table
+maxp | TT_MaxProfile | Maximum Profile table
+post | TT_Postscript | Postscript properties
+os2  | TT_OS2        | OS2 Specific property table
+pclt | TT_PCLT       | PCLT Specific property table
+=end table
+
 =end pod
 
-role Sfnt[FT_Sfnt_Tag \Tag] {
+role TT_Sfnt[FT_Sfnt_Tag \Tag] is export {
 
     multi method load(Font::FreeType::Face :face($_)!) {
         my FT_Face:D $face = .raw;
@@ -32,7 +60,7 @@ role Sfnt[FT_Sfnt_Tag \Tag] {
     }
 }
 
-class TT_Header does Sfnt[Ft_Sfnt_head] is export is repr('CStruct') {
+class TT_Header does TT_Sfnt[Ft_Sfnt_head] is export is repr('CStruct') {
 
     has FT_Fixed   $.version;
     method version { Version.new: ($!version / (2  ** 16 )).round(.01) }
@@ -87,10 +115,10 @@ my class MetricsHeader is repr('CStruct') {
     has FT_UShort  $.numOfLongHorMetrics;
 };
 
-class TT_HoriHeader is MetricsHeader does Sfnt[Ft_Sfnt_hhea] is export is repr('CStruct') { }
-class TT_VertHeader is MetricsHeader does Sfnt[Ft_Sfnt_vhea] is export is repr('CStruct') { }
+class TT_HoriHeader is MetricsHeader does TT_Sfnt[Ft_Sfnt_hhea] is export is repr('CStruct') { }
+class TT_VertHeader is MetricsHeader does TT_Sfnt[Ft_Sfnt_vhea] is export is repr('CStruct') { }
 
-class TT_OS2 does Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
+class TT_OS2 does TT_Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
 
     has FT_UShort  $.version;
     has FT_Short   $.xAvgCharWidth;
@@ -155,7 +183,7 @@ class TT_OS2 does Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
 
 }
 
-class TT_PCLT does Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
+class TT_PCLT does TT_Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
     has FT_Fixed   $.version;
     method version { Version.new: ($!version / (2  ** 16 )).round(.01) }
     has FT_ULong   $.fontNumber;
@@ -190,7 +218,7 @@ class TT_PCLT does Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
     has FT_Byte    $.reserved;
 }
 
-class TT_Postscript does Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
+class TT_Postscript does TT_Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
     has FT_Fixed  $.format;
     method FormatType { Version.new: ($!format / (2  ** 16 )).round(.01) }
     has FT_Fixed  $.italicAngle;
@@ -203,7 +231,7 @@ class TT_Postscript does Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
     has FT_ULong  $.maxMemType1;
 }
 
-class TT_MaxProfile does Sfnt[Ft_Sfnt_maxp] is export is repr('CStruct') {
+class TT_MaxProfile does TT_Sfnt[Ft_Sfnt_maxp] is export is repr('CStruct') {
     has FT_Fixed   $.version;
     method version { Version.new: ($!version / (2  ** 16 )).round(.01) }
     has FT_UShort  $.numGlyphs;

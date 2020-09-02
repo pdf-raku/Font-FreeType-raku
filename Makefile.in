@@ -34,7 +34,7 @@ docs/%.md : lib/%.rakumod
 $(DocLinker) :
 	(cd .. && git clone $(DocRepo) $(DocProj))
 
-doc : $(DocLinker) docs/index.md docs/Font/FreeType.md docs/Font/FreeType/BitMap.md docs/Font/FreeType/CharMap.md docs/Font/FreeType/Face.md docs/Font/FreeType/Glyph.md docs/Font/FreeType/GlyphImage.md docs/Font/FreeType/Outline.md docs/Font/FreeType/NamedInfo.md docs/Font/FreeType/Raw.md docs/Font/FreeType/Raw/Defs.md
+doc : $(DocLinker) docs/index.md docs/Font/FreeType.md docs/Font/FreeType/BitMap.md docs/Font/FreeType/CharMap.md docs/Font/FreeType/Face.md docs/Font/FreeType/Glyph.md docs/Font/FreeType/GlyphImage.md docs/Font/FreeType/Outline.md docs/Font/FreeType/NamedInfo.md docs/Font/FreeType/Raw.md docs/Font/FreeType/Raw/Defs.md docs/Font/FreeType/Raw/TT_Sfnt.md
 
 docs/Font/FreeType.md : lib/Font/FreeType.rakumod
 
@@ -55,6 +55,8 @@ docs/Font/FreeType/Outline.md : lib/Font/FreeType/Outline.rakumod
 docs/Font/FreeType/Raw.md : lib/Font/FreeType/Raw.rakumod
 
 docs/Font/FreeType/Raw/Defs.md : lib/Font/FreeType/Raw/Defs.rakumod
+
+docs/Font/FreeType/Raw/TT_Sfnt.md : lib/Font/FreeType/Raw/TT_Sfnt.rakumod
 
 test : all
 	@prove -e"raku -I ." t
