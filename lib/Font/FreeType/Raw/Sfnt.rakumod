@@ -34,17 +34,16 @@ role Sfnt[FT_Sfnt_Tag \Tag] {
 
 class TT_Header does Sfnt[Ft_Sfnt_head] is export is repr('CStruct') {
 
-    has FT_Fixed   $.table-version;
-    method table-version { Version.new: ($!table-version / (2  ** 16 )).round(.01) }
-    has FT_Fixed   $.font-revision;
-    method font-revision { Version.new: ($!font-revision / (2  ** 16 )).round(.01) }
+    has FT_Fixed   $.version;
+    method version { Version.new: ($!version / (2  ** 16 )).round(.01) }
+    has FT_Fixed   $.fontRevision;
+    method fontRevision { Version.new: ($!fontRevision / (2  ** 16 )).round(.01) }
 
-    has FT_Long    $.checksum-adjust;
-    has FT_Long    $.magic-number;
+    has FT_Long    $.checkSumAdjustment;
+    has FT_Long    $.magicNumber;
 
     has FT_UShort  $.flags;
-    method Flags { my FT_UShort $ = $!flags } # rakudobug
-    has FT_UShort  $.units-per-em;
+    has FT_UShort  $.unitsPerEm;
 
     has FT_ULong   $!created1;
     has FT_ULong   $!created2;
@@ -52,40 +51,40 @@ class TT_Header does Sfnt[Ft_Sfnt_head] is export is repr('CStruct') {
     has FT_ULong   $!modified1;
     has FT_ULong   $!modified2;
 
-    has FT_Short   $.x-min;
-    has FT_Short   $.y-min;
-    has FT_Short   $.x-max;
-    has FT_Short   $.y-max;
+    has FT_Short   $.xMin;
+    has FT_Short   $.yMin;
+    has FT_Short   $.xMax;
+    has FT_Short   $.yMax;
 
-    has FT_UShort  $.mac-style;
-    has FT_UShort  $.lowest-rec-ppem;
+    has FT_UShort  $.macStyle;
+    has FT_UShort  $.lowestRecPPEM;
 
-    has FT_Short   $.font-direction;
-    has FT_Short   $.index-to-loc-format;
-    has FT_Short   $.glyph-data-format;
+    has FT_Short   $.fontDirectionHint;
+    has FT_Short   $.indexToLocFormat;
+    has FT_Short   $.glyphDataFormat;
 
 }
 
 my class MetricsHeader is repr('CStruct') {
     has FT_Fixed   $.version;
     method version { Version.new: ($!version / (2  ** 16 )).round(.01) }
-    has FT_Short   $.ascender;
-    has FT_Short   $.descender;
-    has FT_Short   $.line-gap;
+    has FT_Short   $.ascent;
+    has FT_Short   $.descent;
+    has FT_Short   $.lineGap;
 
-    has FT_UShort  $.advance-width-max;      # advance width maximum
+    has FT_UShort  $.advanceWidthMax;      # advance width maximum
 
-    has FT_Short   $.min-left-side-bearing;  # minimum left-sb
-    has FT_Short   $.min-right-side-bearing; # minimum right-sb
-    has FT_Short   $.xmax-extent;            # xmax extents
-    has FT_Short   $.caret-slope-rise;
-    has FT_Short   $.caret-slope-run;
-    has FT_Short   $.caret-offset;
+    has FT_Short   $.minLeftSideBearing;     # minimum left-sb
+    has FT_Short   $.minRightSideBearing; # minimum right-sb
+    has FT_Short   $.xMaxExtent;            # xmax extents
+    has FT_Short   $.caretSlopeRise;
+    has FT_Short   $.caretSlopeRun;
+    has FT_Short   $.caretOffset;
 
     has FT_Short   ($!reserved, $!r2, $!r3, $!r4);
 
-    has FT_Short   $.metric-data-format;
-    has FT_UShort  $.number-of-hmetrics;
+    has FT_Short   $.metricDataFormat;
+    has FT_UShort  $.numOfLongHorMetrics;
 };
 
 class TT_HoriHeader is MetricsHeader does Sfnt[Ft_Sfnt_hhea] is export is repr('CStruct') { }
@@ -191,8 +190,8 @@ class TT_PCLT does Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
 }
 
 class TT_Postscript does Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
-    has FT_Fixed  $.FormatType;
-    method FormatType { Version.new: ($!FormatType / (2  ** 16 )).round(.01) }
+    has FT_Fixed  $.format;
+    method FormatType { Version.new: ($!format / (2  ** 16 )).round(.01) }
     has FT_Fixed  $.italicAngle;
     has FT_Short  $.underlinePosition;
     has FT_Short  $.underlineThickness;
