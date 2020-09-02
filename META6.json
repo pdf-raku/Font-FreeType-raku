@@ -29,7 +29,7 @@
     "Font::FreeType::Native::Defs": "lib/Font/FreeType/Native/Defs.rakumod",
     "Font::FreeType::Raw": "lib/Font/FreeType/Raw.rakumod",
     "Font::FreeType::Raw::Defs": "lib/Font/FreeType/Raw/Defs.rakumod",
-    "Font::FreeType::Raw::Sfnt": "lib/Font/FreeType/Raw/Sfnt.rakumod"
+    "Font::FreeType::Raw::TT_Sfnt": "lib/Font/FreeType/Raw/TT_Sfnt.rakumod"
   },
   "resources": [
     "libraries/ft6"
@@ -41,5 +41,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.3.2"
+  "version": "0.3.3"
 }

@@ -1,5 +1,5 @@
 #| Direct access to TrueType (Sfnt) records
-unit class Font::FreeType::Raw::Sfnt;
+unit module Font::FreeType::Raw::TT_Sfnt;
 
 use Font::FreeType::Raw;
 use Font::FreeType::Error;
@@ -74,9 +74,9 @@ my class MetricsHeader is repr('CStruct') {
 
     has FT_UShort  $.advanceWidthMax;      # advance width maximum
 
-    has FT_Short   $.minLeftSideBearing;     # minimum left-sb
-    has FT_Short   $.minRightSideBearing; # minimum right-sb
-    has FT_Short   $.xMaxExtent;            # xmax extents
+    has FT_Short   $.minLeftSideBearing;   # minimum left-sb
+    has FT_Short   $.minRightSideBearing;  # minimum right-sb
+    has FT_Short   $.xMaxExtent;           # xmax extents
     has FT_Short   $.caretSlopeRise;
     has FT_Short   $.caretSlopeRun;
     has FT_Short   $.caretOffset;
@@ -156,37 +156,38 @@ class TT_OS2 does Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
 }
 
 class TT_PCLT does Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
-    has FT_Fixed   $.Version;
-    has FT_ULong   $.FontNumber;
-    has FT_UShort  $.Pitch;
+    has FT_Fixed   $.version;
+    method version { Version.new: ($!version / (2  ** 16 )).round(.01) }
+    has FT_ULong   $.fontNumber;
+    has FT_UShort  $.pitch;
     has FT_UShort  $.xHeight;
-    has FT_UShort  $.Style;
-    has FT_UShort  $.TypeFamily;
-    has FT_UShort  $.CapHeight;
-    has FT_UShort  $.SymbolSet;
+    has FT_UShort  $.style;
+    has FT_UShort  $.typeFamily;
+    has FT_UShort  $.capHeight;
+    has FT_UShort  $.symbolSet;
     # todo
     my class TypeFace is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5,
                      $!b6, $!b7, $!b8, $!b9, $!b10,
                     );
     }
-    has TypeFace   $!TypeFace;
+    has TypeFace   $!typeface;
     # todo
     my class CharComp is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5,
                      $!b6, $!b7, $!b8
                     );
     }
-    has CharComp   $!CharacterComplement;
+    has CharComp   $!characterComplement;
     # todo
     my class FileName is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5, $!b6);
     }
-    has FileName   $!FileName;
-    has FT_Char    $.StrokeWeight;
-    has FT_Char    $.WidthType;
-    has FT_Byte    $.SerifStyle;
-    has FT_Byte    $.Reserved;
+    has FileName   $!fileName;
+    has FT_Char    $.strokeWeight;
+    has FT_Char    $.widthType;
+    has FT_Byte    $.serifStyle;
+    has FT_Byte    $.reserved;
 }
 
 class TT_Postscript does Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
@@ -203,7 +204,6 @@ class TT_Postscript does Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
 }
 
 class TT_MaxProfile does Sfnt[Ft_Sfnt_maxp] is export is repr('CStruct') {
-
     has FT_Fixed   $.version;
     method version { Version.new: ($!version / (2  ** 16 )).round(.01) }
     has FT_UShort  $.numGlyphs;

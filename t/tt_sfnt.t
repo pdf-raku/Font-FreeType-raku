@@ -1,9 +1,9 @@
 use v6;
 use Test;
-plan 44;
+plan 48;
 use Font::FreeType;
 use Font::FreeType::Face;
-use Font::FreeType::Raw::Sfnt;
+use Font::FreeType::Raw::TT_Sfnt;
 use NativeCall;
 
 my Font::FreeType $freetype .= new;
@@ -43,9 +43,6 @@ is $os2.usWeightClass, 400;
 is $os2.usWinDescent, 483;
 is $os2.usUpperOpticalPointSize, -1|255;
 
-my TT_PCLT $pclt .= load: :$face;
-is-deeply $pclt, TT_PCLT;
-
 my TT_Postscript $post .= load: :$face;
 is $post.FormatType, 2;
 is $post.underlinePosition, -130;
@@ -67,5 +64,13 @@ is $maxp.maxSizeOfInstructions, 534;
 is $maxp.maxComponentElements, 8;
 is $maxp.maxComponentDepth, 4;
 
+# load a font with a pclt table
+$face = $freetype.face: "t/fonts/Vera.ttf";
+my TT_PCLT $pclt .= load: :$face;
+is $pclt.version, 1;
+is $pclt.pitch, 651;
+is $pclt.xHeight, 1120;
+is $pclt.capHeight, 1493;
+is $pclt.strokeWeight, 48;
 
 done-testing;

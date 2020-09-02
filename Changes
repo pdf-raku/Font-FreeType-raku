@@ -1,13 +1,16 @@
+0.3.3
+    - Added Font::FreeType::Raw::TT_SFnt - mappings to raw TrueType
+      font tables
 0.3.2
-    - documentation fixes #5
-    - add method $face.glyph-name-from-index
+    - Documentation fixes #5
+    - Add method $face.glyph-name-from-index
 0.3.1
-    - documentation changes
+    - Documentation changes
 0.3.0
     - native -> raw in class names and attributes. Follow lead of LibXML
       -- Font::FreeType::Native -> Font::FreeeType::Raw
       -- $obj.native -> $obj.raw
-      As LibXML demonstrates the outer classes can also use native
+      As LibXML demonstrates, the outer classes can also use native
       representations, mostly for performance reasons.
 0.2.3
     - Convert documentation to github pages. New documentation
