@@ -26,7 +26,7 @@ Classes in this Distribution
 
   * [Font::FreeType::Raw::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw/Defs) - Data types and enumerations
 
-  * [Font::FreeType::Raw::TT_Fnt](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw/TT_Fnt) - Direct access to raw font tables
+  * [Font::FreeType::Raw::TT_Sfnt](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw/TT_Sfnt) - Direct access to raw font tables
 
 Synopsis
 --------
