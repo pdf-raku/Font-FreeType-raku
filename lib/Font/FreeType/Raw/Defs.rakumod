@@ -33,6 +33,8 @@ our $FT-WRAPPER-LIB is export = %?RESOURCES<libraries/ft6>;
 our $CLIB = Rakudo::Internals.IS-WIN ?? 'msvcrt' !! Str;
 
 constant FT_Bool   is export = uint8;
+constant FT_Byte   is export = byte;
+constant FT_Char   is export = int8;
 constant FT_Error  is export = uint32;
 constant FT_Int    is export = int32;
 constant FT_Int32  is export = int32;
@@ -42,6 +44,7 @@ constant FT_Long   is export = long;
 constant FT_ULong  is export = ulong;
 constant FT_Short  is export = int16;
 constant FT_UShort is export = uint16;
+constant FT_String is export = Str;
 constant FT_F26Dot6 is export = long;
 constant FT_Fixed   is export = long;
 

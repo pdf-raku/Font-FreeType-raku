@@ -53,9 +53,7 @@ use NativeCall::Types;
 use Font::FreeType::Error;
 use Font::FreeType::Raw::Defs;
 
-constant FT_Byte   = uint8;
 constant FT_Encoding = uint32;
-constant FT_String = Str;
 constant FT_Glyph_Format = int32; # enum
 constant FT_Render_Mode = int32; # enum
 
@@ -427,7 +425,6 @@ class FT_Face is export {
     #| Return a string describing the format of a given face. Possible values are ‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’, and ‘Windows FNT’.
     method FT_Get_Font_Format
         returns Str
-        is export
         is symbol('FT_Get_X11_Font_Format') # for FreeType < v2.0.0 compat
         is native($FT-LIB) {*};
 
@@ -437,15 +434,11 @@ class FT_Face is export {
 
     #| A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
     method FT_Reference_Face
-        returns FT_Error
-        is export
-        is native($FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 
     #| Discard a given face object, as well as all of its child slots and sizes.
     method FT_Done_Face
-        returns FT_Error
-        is export
-        is native($FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 }
 
 #| A handle to a FreeType library instance. Each ‘library’ is completely independent from the others; it is the ‘root’ of a set of objects like fonts, faces, sizes, etc.
@@ -525,9 +518,7 @@ class FT_Library is export {
 
     #| Destroy a given FreeType library object and all of its children, including resources, drivers, faces, sizes, etc.
     method FT_Done_FreeType
-        returns FT_Error
-        is export
-        is native($FT-LIB) {*};
+        returns FT_Error is native($FT-LIB) {*};
 }
 
 #| Convert a given glyph object to a bitmap glyph object.
