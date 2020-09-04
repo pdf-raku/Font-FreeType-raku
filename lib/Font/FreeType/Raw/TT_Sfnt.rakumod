@@ -12,7 +12,7 @@ use NativeCall;
 =head3 Example
 
     use Font::FreeType;
-    use Font::Font::FreeType::Raw::TT_Snft;
+    use Font::FreeType::Raw::TT_Sfnt;
     my  Font::FreeType $freetype .= new;
     my $face = $freetype.face: "t/fonts/Vera.ttf";
     # Get some metrics from the font's PCLT table, if available
@@ -23,7 +23,7 @@ use NativeCall;
 =head2 Description
 
 This module maps to FreeType methods that directly expose the data in
-the following TrueType `Sfnt` tables.
+the following TrueType/OpenType `Sfnt` tables.
 
 =begin table
 Code | Class         | Description | Accessors
@@ -33,7 +33,7 @@ vhea | TT_VertHeader | Vertical Header table | advanceHeightMax ascent caretOffs
 hhea | TT_HoriHeader | Horizontal Header table | advanceWidthMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap metricDataFormat minLeftSideBearing minRightSideBearing numOfLongHorMetrics version xMaxExtent
 maxp | TT_MaxProfile | Maximum Profile table | maxComponentDepth maxComponentElements maxCompositeContours maxCompositePoints maxContours maxFunctionDefs maxInstructionDefs maxPoints maxSizeOfInstructions maxStackElements maxStorage maxTwilightPoints maxZones numGlyphs version
 post | TT_Postscript | Postscript properties | advanceWidthMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap load metricDataFormat minBottomSideBearing minTopSideBearing numOfLongVerMetrics version yMaxExtent
-os2  | TT_OS2        | OS2 Specific property table | fsSelection fsType sCapHeight sFamilyClass sTypoAscender sTypoDescender sTypoLineGap sxHeight ulCodePageRange1 ulCodePageRange2 ulUnicodeRange1 ulUnicodeRange2 ulUnicodeRange3 ulUnicodeRange4 usBreakChar usDefaultChar usFirstCharIndex usLastCharIndex usLowerOpticalPointSize usMaxContext usUpperOpticalPointSize usWeightClass usWidthClass usWinAscent usWinDescent version xAvgCharWidth yStrikeoutPosition yStrikeoutSize ySubscriptXOffset ySubscriptXSize ySubscriptYOffset ySubscriptYSize ySuperscriptXOffset ySuperscriptXSize ySuperscriptYOffset ySuperscriptYSize
+os2  | TT_OS2        | OS2 Specific property table | fsSelection fsType sCapHeight sFamilyClass sTypoAscender sTypoDescender sTypoLineGap sxHeight ulCodePageRange1 ulCodePageRange2 ulUnicodeRange1 ulUnicodeRange2 ulUnicodeRange3 ulUnicodeRange4 usBreakChar usDefaultChar usFirstCharIndex usLastCharIndex usLowerPointSize usMaxContext usUpperPointSize usWeightClass usWidthClass usWinAscent usWinDescent version xAvgCharWidth yStrikeoutPosition yStrikeoutSize ySubscriptXOffset ySubscriptXSize ySubscriptYOffset ySubscriptYSize ySuperscriptXOffset ySuperscriptXSize ySuperscriptYOffset ySuperscriptYSize
 pclt | TT_PCLT       | PCLT Specific property table | capHeight fontNumber pitch reserved serifStyle strokeWeight style symbolSet typeFamily version widthType xHeight
 
 =end table
@@ -191,8 +191,8 @@ class TT_OS2 does TT_Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
 
     # only version 5 and higher:
 
-    has FT_UShort  $.usLowerOpticalPointSize;       # in twips (1/20th points)
-    has FT_UShort  $.usUpperOpticalPointSize;       # in twips (1/20th points)
+    has FT_UShort  $.usLowerPointSize;       # in twips (1/20th points)
+    has FT_UShort  $.usUpperPointSize;       # in twips (1/20th points)
 
 }
 
@@ -208,23 +208,24 @@ class TT_PCLT does TT_Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
     has FT_UShort  $.symbolSet;
     # todo
     my class TypeFace is repr('CStruct') {
-        has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5,
-                     $!b6, $!b7, $!b8, $!b9, $!b10,
+        has FT_Byte ($!b1,  $!b2,  $!b3,  $!b4,  $!b5,
+                     $!b6,  $!b7,  $!b8,  $!b9,  $!b10,
+                     $!b11, $!b12, $!b13, $!b14, $!b15, $!b16
                     );
     }
-    has TypeFace   $!typeface;
+    HAS TypeFace   $!typeface;
     # todo
     my class CharComp is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5,
                      $!b6, $!b7, $!b8
                     );
     }
-    has CharComp   $!characterComplement;
+    HAS CharComp   $!characterComplement;
     # todo
     my class FileName is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5, $!b6);
     }
-    has FileName   $!fileName;
+    HAS FileName   $!fileName;
     has FT_Char    $.strokeWeight;
     has FT_Char    $.widthType;
     has FT_Byte    $.serifStyle;

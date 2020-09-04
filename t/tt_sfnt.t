@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 48;
+plan 49;
 use Font::FreeType;
 use Font::FreeType::Face;
 use Font::FreeType::Raw::TT_Sfnt;
@@ -41,7 +41,7 @@ my TT_OS2 $os2 .= load: :$face;
 is $os2.version, 1;
 is $os2.usWeightClass, 400;
 is $os2.usWinDescent, 483;
-is $os2.usUpperOpticalPointSize, -1|255;
+is $os2.usUpperPointSize, -1|255;
 
 my TT_Postscript $post .= load: :$face;
 is $post.format, 2;
@@ -71,6 +71,7 @@ is $pclt.version, 1;
 is $pclt.pitch, 651;
 is $pclt.xHeight, 1120;
 is $pclt.capHeight, 1493;
-is $pclt.strokeWeight, 48;
+is $pclt.strokeWeight, 0;
+is $pclt.serifStyle, 64;
 
 done-testing;
