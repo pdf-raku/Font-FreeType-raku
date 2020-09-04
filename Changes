@@ -1,3 +1,6 @@
+0.3.4
+    - Corrections to TT_PCLT record structure and TT_Post.italicAngle()
+      accessor
 0.3.3
     - Added Font::FreeType::Raw::TT_SFnt - mappings to raw TrueType
       font tables
