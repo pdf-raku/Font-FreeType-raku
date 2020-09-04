@@ -236,6 +236,7 @@ class TT_Postscript does TT_Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
     has FT_Fixed  $.format;
     method format { Version.new: ($!format / (2  ** 16 )).round(.01) }
     has FT_Fixed  $.italicAngle;
+    method italicAngle { ($!italicAngle / (2  ** 16 )).round(.01) }
     has FT_Short  $.underlinePosition;
     has FT_Short  $.underlineThickness;
     has FT_ULong  $.isFixedPitch;

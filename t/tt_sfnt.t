@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 49;
+plan 50;
 use Font::FreeType;
 use Font::FreeType::Face;
 use Font::FreeType::Raw::TT_Sfnt;
@@ -47,6 +47,7 @@ my TT_Postscript $post .= load: :$face;
 is $post.format, 2;
 is $post.underlinePosition, -130;
 is $post.underlineThickness, 90;
+is $post.italicAngle, 0;
 
 my TT_MaxProfile $maxp .= load: :$face;
 is $maxp.version, 1;
