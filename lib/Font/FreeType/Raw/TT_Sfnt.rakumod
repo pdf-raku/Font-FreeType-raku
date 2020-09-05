@@ -32,7 +32,7 @@ head | TT_Header     | The head table for a TTF Font | checkSumAdjustment flags 
 vhea | TT_VertHeader | Vertical Header table | advanceHeightMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap metricDataFormat minBottomSideBearing minTopSideBearing numOfLongVerMetrics version yMaxExtent
 hhea | TT_HoriHeader | Horizontal Header table | advanceWidthMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap metricDataFormat minLeftSideBearing minRightSideBearing numOfLongHorMetrics version xMaxExtent
 maxp | TT_MaxProfile | Maximum Profile table | maxComponentDepth maxComponentElements maxCompositeContours maxCompositePoints maxContours maxFunctionDefs maxInstructionDefs maxPoints maxSizeOfInstructions maxStackElements maxStorage maxTwilightPoints maxZones numGlyphs version
-post | TT_Postscript | Postscript properties | format italicAngle underlinePosition underlineThickness isFixedPitch
+post | TT_Postscript | Postscript properties | format italicAngle underlinePosition underlineThickness isFixedPitch minMemType42 maxMemType42 minMemType1 maxMemType1
 os2  | TT_OS2        | OS2 Specific property table | fsSelection fsType sCapHeight sFamilyClass sTypoAscender sTypoDescender sTypoLineGap sxHeight ulCodePageRange1 ulCodePageRange2 ulUnicodeRange1 ulUnicodeRange2 ulUnicodeRange3 ulUnicodeRange4 usBreakChar usDefaultChar usFirstCharIndex usLastCharIndex usLowerPointSize usMaxContext usUpperPointSize usWeightClass usWidthClass usWinAscent usWinDescent version xAvgCharWidth yStrikeoutPosition yStrikeoutSize ySubscriptXOffset ySubscriptXSize ySubscriptYOffset ySubscriptYSize ySuperscriptXOffset ySuperscriptXSize ySuperscriptYOffset ySuperscriptYSize
 pclt | TT_PCLT       | PCLT Specific property table | capHeight fontNumber pitch reserved serifStyle strokeWeight style symbolSet typeFamily version widthType xHeight
 
@@ -240,10 +240,10 @@ class TT_Postscript does TT_Sfnt[Ft_Sfnt_post] is export is repr('CStruct') {
     has FT_Short  $.underlinePosition;
     has FT_Short  $.underlineThickness;
     has FT_ULong  $.isFixedPitch;
-    has FT_ULong  $!minMemType42a;
-    has FT_ULong  $!maxMemType42b;
-    has FT_ULong  $!minMemType1a;
-    has FT_ULong  $!maxMemType1b;
+    has FT_ULong  $.minMemType42;
+    has FT_ULong  $.maxMemType42;
+    has FT_ULong  $.minMemType1;
+    has FT_ULong  $.maxMemType1;
 }
 
 class TT_MaxProfile does TT_Sfnt[Ft_Sfnt_maxp] is export is repr('CStruct') {
