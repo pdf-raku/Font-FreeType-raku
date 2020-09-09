@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 54;
+plan 59;
 use Font::FreeType;
 use Font::FreeType::Face;
 use Font::FreeType::Raw::TT_Sfnt;
@@ -42,6 +42,9 @@ is $os2.version, 1;
 is $os2.usWeightClass, 400;
 is $os2.usWinDescent, 483;
 is $os2.usUpperPointSize, -1|255;
+is $os2.achVendID, 'PfEd';
+is $os2.panose.bSerifStyle, 11;
+is $os2.panose.bXHeight, 4;
 
 my TT_Postscript $post .= load: :$face;
 is $post.format, 2;
@@ -78,5 +81,7 @@ is $pclt.xHeight, 1120;
 is $pclt.capHeight, 1493;
 is $pclt.strokeWeight, 0;
 is $pclt.serifStyle, 64;
+is $pclt.typeface, 'VeraSans';
+is $pclt.fileName, '628R00';
 
 done-testing;

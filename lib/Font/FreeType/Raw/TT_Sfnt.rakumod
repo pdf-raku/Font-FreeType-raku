@@ -150,22 +150,37 @@ class TT_OS2 does TT_Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
     has FT_Short   $.yStrikeoutPosition;
     has FT_Short   $.sFamilyClass;
 
-    # todo
     my class Panose is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5, $!b6, $!b7, $!b8, $b9, $b10);
+        method bFamilyType       { $!b1 }
+        method bSerifStyle       { $!b2 }
+        method bWeight           { $!b3 }
+        method bProportion       { $!b4 }
+        method bContrast         { $!b5 }
+        method bStrokeVariation  { $!b6 }
+        method bArmStyle         { $!b7 }
+        method bLetterForm       { $!b8 }
+        method bMidline          { $!b9 }
+        method bXHeight          { $!b10 }
+
+        method Blob {
+            buf8.new($!b1, $!b2, $!b3, $!b4, $!b5, $!b6, $!b7, $!b8, $b9, $b10);
+        }
     }
-    HAS Panose     $!panose;
+    HAS Panose     $.panose;
 
     has FT_ULong   $.ulUnicodeRange1;        # Bits 0-31
     has FT_ULong   $.ulUnicodeRange2;        # Bits 32-63
     has FT_ULong   $.ulUnicodeRange3;        # Bits 64-95
     has FT_ULong   $.ulUnicodeRange4;        # Bits 96-127
 
-    # todo
-    my class achVenID is repr('CStruct') {
+    my class achVendID is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4);
+        method Str handles<gist> {
+            ($!b1, $!b2, $!b3, $!b4).grep(* > 0).map(*.chr).join;
+        }
     }
-    HAS achVenID    $!achVendID;
+    HAS achVendID    $.achVendID;
 
     has FT_UShort  $.fsSelection;
     has FT_UShort  $.usFirstCharIndex;
@@ -206,26 +221,34 @@ class TT_PCLT does TT_Sfnt[Ft_Sfnt_pclt] is export is repr('CStruct') {
     has FT_UShort  $.typeFamily;
     has FT_UShort  $.capHeight;
     has FT_UShort  $.symbolSet;
-    # todo
+
     my class TypeFace is repr('CStruct') {
         has FT_Byte ($!b1,  $!b2,  $!b3,  $!b4,  $!b5,
                      $!b6,  $!b7,  $!b8,  $!b9,  $!b10,
                      $!b11, $!b12, $!b13, $!b14, $!b15, $!b16
                     );
+        method Str handles<gist> {
+            ($!b1, $!b2, $!b3, $!b4, $!b5,
+             $!b6,  $!b7,  $!b8,  $!b9,  $!b10,
+             $!b11, $!b12, $!b13, $!b14, $!b15, $!b16).grep(* > 0).map(*.chr).join;
+        }
     }
-    HAS TypeFace   $!typeface;
-    # todo
+    HAS TypeFace   $.typeface;
+
     my class CharComp is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5,
                      $!b6, $!b7, $!b8
                     );
     }
     HAS CharComp   $!characterComplement;
-    # todo
+
     my class FileName is repr('CStruct') {
         has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5, $!b6);
+        method Str handles<gist> {
+            ($!b1, $!b2, $!b3, $!b4, $!b5, $!b6).grep(* > 0).map(*.chr).join;
+        }
     }
-    HAS FileName   $!fileName;
+    HAS FileName   $.fileName;
     has FT_Char    $.strokeWeight;
     has FT_Char    $.widthType;
     has FT_Byte    $.serifStyle;
