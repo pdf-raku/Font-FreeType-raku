@@ -164,7 +164,7 @@ class TT_OS2 does TT_Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
 
         method Blob {
             my $c = nativecast(CArray[FT_Char], self);
-            buf8.new: (0..7).map: {$c[$_]};
+            buf8.new: (0 ..^ nativesizeof(self)).map: {$c[$_]};
         }
     }
     HAS Panose     $.panose;
