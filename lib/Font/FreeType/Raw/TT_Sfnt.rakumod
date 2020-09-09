@@ -22,7 +22,7 @@ use NativeCall;
 
 =head2 Description
 
-This module maps to FreeType methods that directly expose the data in
+This module maps to FreeType functions that directly expose the data in
 the following TrueType/OpenType `Sfnt` tables.
 
 =begin table
@@ -33,8 +33,8 @@ vhea | TT_VertHeader | Vertical Header table | advanceHeightMax ascent caretOffs
 hhea | TT_HoriHeader | Horizontal Header table | advanceWidthMax ascent caretOffset caretSlopeRise caretSlopeRun descent lineGap metricDataFormat minLeftSideBearing minRightSideBearing numOfLongHorMetrics version xMaxExtent
 maxp | TT_MaxProfile | Maximum Profile table | maxComponentDepth maxComponentElements maxCompositeContours maxCompositePoints maxContours maxFunctionDefs maxInstructionDefs maxPoints maxSizeOfInstructions maxStackElements maxStorage maxTwilightPoints maxZones numGlyphs version
 post | TT_Postscript | Postscript properties | format italicAngle underlinePosition underlineThickness isFixedPitch minMemType42 maxMemType42 minMemType1 maxMemType1
-os2  | TT_OS2        | OS2 Specific property table | fsSelection fsType sCapHeight sFamilyClass sTypoAscender sTypoDescender sTypoLineGap sxHeight ulCodePageRange1 ulCodePageRange2 ulUnicodeRange1 ulUnicodeRange2 ulUnicodeRange3 ulUnicodeRange4 usBreakChar usDefaultChar usFirstCharIndex usLastCharIndex usLowerPointSize usMaxContext usUpperPointSize usWeightClass usWidthClass usWinAscent usWinDescent version xAvgCharWidth yStrikeoutPosition yStrikeoutSize ySubscriptXOffset ySubscriptXSize ySubscriptYOffset ySubscriptYSize ySuperscriptXOffset ySuperscriptXSize ySuperscriptYOffset ySuperscriptYSize
-pclt | TT_PCLT       | PCLT Specific property table | capHeight fontNumber pitch reserved serifStyle strokeWeight style symbolSet typeFamily version widthType xHeight
+OS/2  | TT_OS2        | OS2 Specific property table | achVendID fsSelection fsType panose sCapHeight sFamilyClass sTypoAscender sTypoDescender sTypoLineGap sxHeight ulCodePageRange1 ulCodePageRange2 ulUnicodeRange1 ulUnicodeRange2 ulUnicodeRange3 ulUnicodeRange4 usBreakChar usDefaultChar usFirstCharIndex usLastCharIndex usLowerPointSize usMaxContext usUpperPointSize usWeightClass usWidthClass usWinAscent usWinDescent version xAvgCharWidth yStrikeoutPosition yStrikeoutSize ySubscriptXOffset ySubscriptXSize ySubscriptYOffset ySubscriptYSize ySuperscriptXOffset ySuperscriptXSize ySuperscriptYOffset ySuperscriptYSize
+PCLT | TT_PCLT       | PCLT Specific property table | capHeight characterComplement fileName fontNumber pitch reserved serifStyle strokeWeight style symbolSet typeFace typeFamily version widthType xHeight
 
 =end table
 
