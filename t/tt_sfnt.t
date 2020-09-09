@@ -42,9 +42,9 @@ is $os2.version, 1;
 is $os2.usWeightClass, 400;
 is $os2.usWinDescent, 483;
 is $os2.usUpperPointSize, -1|255;
-is $os2.achVendID, 'PfEd';
 is $os2.panose.bSerifStyle, 11;
 is $os2.panose.bXHeight, 4;
+is $os2.achVendID, 'PfEd';
 
 my TT_Postscript $post .= load: :$face;
 is $post.format, 2;

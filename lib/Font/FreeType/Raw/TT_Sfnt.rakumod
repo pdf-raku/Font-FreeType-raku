@@ -151,20 +151,20 @@ class TT_OS2 does TT_Sfnt[Ft_Sfnt_os2] is export is repr('CStruct') {
     has FT_Short   $.sFamilyClass;
 
     my class Panose is repr('CStruct') {
-        has FT_Byte ($!b1, $!b2, $!b3, $!b4, $!b5, $!b6, $!b7, $!b8, $b9, $b10);
-        method bFamilyType       { $!b1 }
-        method bSerifStyle       { $!b2 }
-        method bWeight           { $!b3 }
-        method bProportion       { $!b4 }
-        method bContrast         { $!b5 }
-        method bStrokeVariation  { $!b6 }
-        method bArmStyle         { $!b7 }
-        method bLetterForm       { $!b8 }
-        method bMidline          { $!b9 }
-        method bXHeight          { $!b10 }
+        has FT_Char $.bFamilyType;
+        has FT_Char $.bSerifStyle;
+        has FT_Char $.bWeight;
+        has FT_Char $.bProportion;
+        has FT_Char $.bContrast;
+        has FT_Char $.bStrokeVariation;
+        has FT_Char $.bArmStyle;
+        has FT_Char $.bLetterForm;
+        has FT_Char $.bMidline;
+        has FT_Char $.bXHeight;
 
         method Blob {
-            buf8.new($!b1, $!b2, $!b3, $!b4, $!b5, $!b6, $!b7, $!b8, $b9, $b10);
+            my $c = nativecast(CArray[FT_Char], self);
+            buf8.new: (0..7).map: {$c[$_]};
         }
     }
     HAS Panose     $.panose;
