@@ -178,8 +178,8 @@ class Font::FreeType::Face {
     }
 
     method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
-        my FT_F26Dot6 $w = ($width * Px + 0.5).Int;
-        my FT_F26Dot6 $h = ($height * Px + 0.5).Int;
+        my FT_F26Dot6 $w = ($width * Px).round;
+        my FT_F26Dot6 $h = ($height * Px).round;
         ft-try({ $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
     }
 

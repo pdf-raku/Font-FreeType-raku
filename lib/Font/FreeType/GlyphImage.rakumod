@@ -51,7 +51,8 @@ class Font::FreeType::GlyphImage {
         my FT_Outline $raw = $outline.clone(self!library);
         Font::FreeType::Outline.new: :$raw, :$!face;
     }
-    method bold(Int $strength) {
+    method bold(Int $s) is DEPRECATED<set-bold> { self.set-bold($s) }
+    method set-bold(Int $strength) {
         if self.is-outline {
             my FT_Outline:D $outline = $!raw.outline;
             ft-try({ $outline.FT_Outline_Embolden($strength); });
@@ -113,7 +114,7 @@ class Font::FreeType::GlyphImage {
 This class represents individual glyph images (character image) loaded from
 a font.
 
-=head3 bold(int strength)
+=head3 set-bold(int strength)
 
 Embolden the glyph. This needs to be done before calling either the
 `bitmap()` or `outline()` methods.

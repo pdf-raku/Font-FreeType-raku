@@ -41,7 +41,7 @@ sub MAIN(Str $font-file,
         !! 1;
     $word-spacing //= $char-spacing * 4;
     my @bitmaps = $face.glyph-images($text).map: {
-        .bold($bold) if $bold;
+        .set-bold($bold) if $bold;
         my $bitmap = .bitmap(:render-mode($mode));
         note "{.char-code.chr} U+{.char-code.fmt('%06X')} [{.index}]: {$bitmap.width} X {$bitmap.rows}"
             if $verbose;

@@ -28,7 +28,7 @@ Description
 
 This class represents individual glyph images (character image) loaded from a font.
 
-### bold(int strength)
+### set-bold(int strength)
 
 Embolden the glyph. This needs to be done before calling either the `bitmap()` or `outline()` methods.
 
