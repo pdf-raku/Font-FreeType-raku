@@ -26,24 +26,29 @@ class Font::FreeType:ver<0.3.6> {
         }
     }
 
-    multi method face(Str $file-path-name, Int :$index = 0, |c) {
+    multi method face(Str:D $file-path-name, Int :$index = 0, |c) {
         my $p = Pointer[FT_Face].new;
         $lock.protect: {
             ft-try({ $!raw.FT_New_Face($file-path-name, $index, $p); });
         }
-        my FT_Face $raw = $p.deref;
+        my FT_Face:D $raw = $p.deref;
         Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
     }
 
-    multi method face(Blob $file-buf,
-                      Int :$size = $file-buf.bytes,
+    multi method face(Blob:D $buf,
+                      Int :$size = $buf.bytes,
                       Int :$index = 0,
                       |c
         ) {
         my $p = Pointer[FT_Face].new;
-        ft-try({ $!raw.FT_New_Memory_Face($file-buf, $size, $index, $p); });
-        my FT_Face $raw = $p.deref;
+        ft-try({ $!raw.FT_New_Memory_Face($buf, $size, $index, $p); });
+        my FT_Face:D $raw = $p.deref;
         Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
+    }
+
+    multi method face(IO::Handle:D $fh, |c) {
+        $fh.seek(0, SeekFromBeginning);
+        $.face($fh.slurp(:bin), |c);
     }
 
     method version returns Version {
