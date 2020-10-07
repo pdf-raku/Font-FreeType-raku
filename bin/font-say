@@ -74,7 +74,7 @@ sub MAIN(Str $font-file,
 }
 
 sub scan-line($bitmap, $pix-buf, $row) {
-    my uint8 @pix[$bitmap.width];
+    my uint8 @pix[$bitmap.width||1];
     my int $y = $bitmap.top - $row;
     if $bitmap.rows > $y >= 0 {
         my int $i = 0;

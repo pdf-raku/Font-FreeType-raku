@@ -338,6 +338,16 @@ method FT_Get_Font_Format() returns Str
 
 Return a string describing the format of a given face. Possible values are ‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’, and ‘Windows FNT’.
 
+### method FT_Get_Sfnt_Table
+
+```perl6
+method FT_Get_Sfnt_Table(
+    int32 $tag
+) returns NativeCall::Types::Pointer
+```
+
+Return a pointer to a given SFNT table stored within a face.
+
 ### method FT_Reference_Face
 
 ```perl6
@@ -375,7 +385,7 @@ Call FT_Open_Face to open a font by its pathname.
 
 ```perl6
 method FT_New_Memory_Face(
-    Blob[uint8] $buffer,
+    Blob[byte] $buffer,
     NativeCall::Types::long $buffer-size,
     NativeCall::Types::long $face-index,
     NativeCall::Types::Pointer[Font::FreeType::Raw::FT_Face] $aface is rw

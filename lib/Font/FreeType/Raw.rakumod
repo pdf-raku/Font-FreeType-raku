@@ -428,6 +428,7 @@ class FT_Face is export {
         is symbol('FT_Get_X11_Font_Format') # for FreeType < v2.0.0 compat
         is native($FT-LIB) {*};
 
+    #| Return a pointer to a given SFNT table stored within a face.
     method FT_Get_Sfnt_Table(
         int32     $tag)
     returns Pointer is native($FT-LIB) {*}
