@@ -113,7 +113,7 @@ $vera.set-char-size(2048, 2048, 72, 72);
 my $character-list-filename = 't/fonts/vera_characters.txt';
 my @character-list = $character-list-filename.IO.lines;
 my $i = 0;
-$vera.forall-chars: -> $_ {
+for $vera.iterate-chars {
     my $line = @character-list[$i++];
     die "not enough characters in listing file '$character-list-filename'"
         unless defined $line;
@@ -160,12 +160,12 @@ $vera.for-glyphs: $chars, -> $glyph {
 my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;
 $i = 0;
-$vera.forall-glyphs: -> $_ {
+for $vera.iterate-glyphs {
     my $line = @glyph-list[$i++];
     die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;
     my ($index, $unicode, $name) = split /\s+/, $line;
-    is .index, $index, "glyph $index index in forall-glyphs";
+    is .index, $index, "glyph $index index in iterate-glyphs";
     is .char-code, $unicode,
        "glyph $unicode char code in foreach-char()";
     is .name, $name, "glyph $index name in foreach-glyph";

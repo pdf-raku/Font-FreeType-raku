@@ -1,5 +1,6 @@
 0.3.6
     - Rename GlyphImage bold() method to set-bold().
+    - Add methods iterate-glyphs(), iterate-chars().
 0.3.5
     - Add TT_OS2 panose() and achVendID() accessors. Also TT_PCLT typeface()
       and fileName() accessors
