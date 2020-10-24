@@ -170,7 +170,7 @@ Each time your callback code is called, a object is passed for the current glyph
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 
-If `$text` is ommitted, all mapped characters in the font are iterated.
+If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
 
 ### iterate-glyphs
 
