@@ -373,8 +373,6 @@ For example, to load particular glyphs (character images):
 
 =head3 iterate-chars($text?)
 
-    my Font::FreeType::Glyph @glyphs = $face.iterate-chars;
-    @glyphs = $face.iterate-chars('ABC');
     for $face.iterate-chars -> Font::FreeType::Glyph $glyph { ... }
 
 Iterates through all the characters in the text, and returns the corresponding
@@ -389,7 +387,6 @@ If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
 
 =head3 iterate-glyphs
 
-    my Font::FreeType::Glyph @glyph = $face.iterate-glyphs;
     for $face.iterate-glyphs -> Font::FreeType::Glyph $glyph { ... }
 
 Iterates through all the glyphs in the font, and returns L<Font::FreeType::Glyph> objects.
