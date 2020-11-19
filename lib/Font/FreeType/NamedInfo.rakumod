@@ -7,10 +7,9 @@ class Font::FreeType::NamedInfo {
     submethod TWEAK(FT_SfntName:D :$!raw!) { }
 
     method Str {
-        my $len = $.string-len;
-        my buf8 $buf .= new;
+        my $len := $.string-len;
+        my buf8 $buf .= allocate($len);
         if $len {
-            $buf[$len - 1] = 0;
             Font::FreeType::Raw::memcpy(nativecast(Pointer, $buf), $!raw.string, $len);
         }
         # todo various encoding schemes

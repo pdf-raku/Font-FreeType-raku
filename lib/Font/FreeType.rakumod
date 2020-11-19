@@ -1,6 +1,6 @@
 use v6;
 
-class Font::FreeType:ver<0.3.6> {
+class Font::FreeType:ver<0.3.7> {
     use NativeCall;
     use Font::FreeType::Face;
     use Font::FreeType::Error;
@@ -26,7 +26,11 @@ class Font::FreeType:ver<0.3.6> {
         }
     }
 
-    multi method face(Str:D $file-path-name, Int :$index = 0, |c) {
+    multi method face(Font::FreeType:U \class: |c) {
+        class.new.face(|c);
+    }
+
+    multi method face(Font::FreeType:D: Str:D $file-path-name, Int :$index = 0, |c) {
         my $p = Pointer[FT_Face].new;
         $lock.protect: {
             ft-try({ $!raw.FT_New_Face($file-path-name, $index, $p); });
@@ -35,7 +39,8 @@ class Font::FreeType:ver<0.3.6> {
         Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
     }
 
-    multi method face(Blob:D $buf,
+    multi method face(Font::FreeType:D:
+                      Blob:D $buf,
                       Int :$size = $buf.bytes,
                       Int :$index = 0,
                       |c
@@ -46,12 +51,15 @@ class Font::FreeType:ver<0.3.6> {
         Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
     }
 
-    multi method face(IO::Handle:D $fh, |c) {
+    multi method face(Font::FreeType:D: IO::Handle:D $fh, |c) {
         $fh.seek(0, SeekFromBeginning);
         $.face($fh.slurp(:bin), |c);
     }
 
-    method version returns Version {
+    multi method version(Font::FreeType:U:) {
+        self.new.version;
+    }
+    multi method version(Font::FreeType:D:) returns Version {
         $!raw.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
         Version.new: "{$major}.{$minor}.{$patch}";
     }

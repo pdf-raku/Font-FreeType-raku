@@ -49,7 +49,7 @@ Description
 This module allows Raku programs to conveniently read information from font files. All the font access is done through the FreeType2 library, which supports many formats. It can render images of characters with high-quality hinting and anti-aliasing, extract metrics information, and extract the outlines of characters in scalable formats like TrueType.
 
 
-Please see L<Font::FreeType>.
+Please see [Font::FreeType](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType).
 
 
 Scripts

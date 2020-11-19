@@ -47,9 +47,8 @@ role TT_Sfnt[FT_Sfnt_Tag \Tag] is export {
         $.load(:$face);
     }
 
-    multi method load(FT_Face:D :$face!) {
+    multi method load($obj is copy: FT_Face:D :$face!) {
         with $face.FT_Get_Sfnt_Table(+Tag) -> $p {
-            my $obj = self;
             $_ .= new without $obj;
             my $size = nativesizeof($obj);
             Font::FreeType::Raw::memcpy( nativecast(Pointer, $obj), $p, $size);

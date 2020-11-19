@@ -154,7 +154,7 @@ class Font::FreeType::Face {
         my Font::FreeType::GlyphImage @ = self.iterate-chars($text).map(*.glyph-image);
     }
 
-    method set-char-size(Numeric $width, Numeric $height, UInt $horiz-res, UInt $vert-res) {
+    method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
         my FT_F26Dot6 $w = ($width * Px).round;
         my FT_F26Dot6 $h = ($height * Px).round;
         ft-try({ $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
@@ -187,7 +187,7 @@ class Font::FreeType::Face {
             method pull-one {
                 if $!idx < @!ords {
                     my $code := @!ords[$!idx++];
-                    $!glyph.stat = $!raw.FT_Load_Char($code, $!flags );
+                    $!glyph.stat = $!raw.FT_Load_Char($code, $!flags);
                     $!glyph.glyph-index = 0;
                     $!glyph.char-code = $code;
                     $!glyph;
@@ -218,7 +218,8 @@ class Font::FreeType::Face {
                         !! $!raw.FT_Get_First_Char($!idx);
 
                 if $!idx {
-                    $!glyph.stat = $!raw.FT_Load_Glyph($!idx, $!flags ) if $!load;
+                    $!glyph.stat = $!raw.FT_Load_Glyph($!idx, $!flags )
+                        if $!load;
                     $!glyph.glyph-index = $!idx;
                     $!glyph;
                 }

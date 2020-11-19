@@ -1,3 +1,7 @@
+0.3.7
+    - Allow Font::FreeType face() and version() methods to be called
+      at the class level. In particular allow `Font::FreeType.face(..)`
+      rather than `Font::FreeType.new.face(...)`
 0.3.6
     - Rename GlyphImage bold() method to set-bold().
     - Add methods iterate-glyphs(), iterate-chars().
