@@ -43,11 +43,10 @@ class Font::FreeType::Glyph is rw {
         $.format == FT_GLYPH_FORMAT_OUTLINE;
     }
 
-    method glyph-image {
+    method glyph-image handles<bitmap outline decompose> {
         my $top = $!raw.bitmap-top;
         my $left = $!raw.bitmap-left;
-        my $index = $.index;
-        Font::FreeType::GlyphImage.new: :$!face, :glyph($!raw), :$left, :$top, :$!char-code, :$index;
+        Font::FreeType::GlyphImage.new: :$!face, :glyph($!raw), :$left, :$top, :$!char-code, :$.index;
     }
 
 }
@@ -100,7 +99,7 @@ The index number of the glyph in the font face.
 =head3 is-outline()
 
 True if the glyph has a vector outline, in which case it is safe to
-call `outline_decompose()`.  Otherwise, the glyph only has a bitmap
+call `decompose()`.  Otherwise, the glyph only has a bitmap
 image.
 
 =head3 height()

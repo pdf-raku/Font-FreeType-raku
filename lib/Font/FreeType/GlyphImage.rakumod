@@ -44,7 +44,7 @@ class Font::FreeType::GlyphImage {
     method is-outline {
         .format == FT_GLYPH_FORMAT_OUTLINE with $!raw;
     }
-    method outline {
+    method outline handles<decompose> {
         die "not an outline glyph"
             unless self.is-outline;
         my FT_Outline:D $outline = $!raw.outline;

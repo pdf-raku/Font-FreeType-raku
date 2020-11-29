@@ -100,6 +100,10 @@ class Font::FreeType::BitMap {
         @pixels;
     }
 
+    method Buf {
+        buf8.new: @.pixels;
+    }
+
     method Str {
         return "\n" x $.rows
             unless $.width;

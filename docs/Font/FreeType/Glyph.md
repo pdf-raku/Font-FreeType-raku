@@ -50,7 +50,7 @@ The index number of the glyph in the font face.
 
 ### is-outline()
 
-True if the glyph has a vector outline, in which case it is safe to call `outline_decompose()`. Otherwise, the glyph only has a bitmap image.
+True if the glyph has a vector outline, in which case it is safe to call `decompose()`. Otherwise, the glyph only has a bitmap image.
 
 ### height()
 

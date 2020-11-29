@@ -112,6 +112,7 @@ class Font::FreeType::Face {
     multi method glyph-index(UInt $char-code) {
         $!raw.FT_Get_Char_Index($char-code);
     }
+
     multi method glyph-name-from-index(UInt $glyph-index) {
         self.has-glyph-names
             ?? self!get-glyph-name($glyph-index)

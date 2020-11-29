@@ -47,10 +47,49 @@ class Font::FreeType::Outline {
 
     submethod TWEAK(:$!raw!) { }
 
-    method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0) {
+     method !render-shape(ft_shape_t:D $shape, %cb) {
+
+        my $ops = $shape.ops;
+        my $pts = $shape.points;
+        my int $j = 0;
+        my $*cur-x = 0e0;
+        my $*cur-y = 0e0;
+
+        with %cb<cubic-to> -> &cubic-to {
+            %cb<conic-to> //= -> $x, $y, $cx, $cy {
+                &cubic-to(
+                    $x, $y,
+                    ($*cur-x  +  2 * $cx) / 3,
+                    ($*cur-y  +  2 * $cy) / 3,
+                    (2 * $cx + $x) / 3,
+                    (2 * $cy + $y) / 3,
+                );
+            }
+        }
+
+        for 0 ..^ $shape.n-ops -> int $i {
+            my $op = $ops[$i];
+            my $key = <move-to line-to cubic-to conic-to>[$op - 1];
+            my $n-args = $op == 1|2 ?? 2 !! 6;
+            my @args = $pts[$j++] xx $n-args;
+            with %cb{$key} {
+warn sprintf("\%s(\%s)", $key, @args>>.fmt('%.2f').join(', '));
+                $_(|@args);
+            }
+            else {
+                note sprintf("unhandled outline callback: \%s(\%s)", $key, @args>>.fmt('%.2f').join(', '));
+            }
+            $*cur-x = @args[0];
+            $*cur-y = @args[1];
+        }
+    }
+
+    method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0, :%callbacks) {
         my int32 $max-points = $!raw.n-points * 6;
         my ft_shape_t $shape .= new: :$max-points;
         ft-try({ $shape.gather_outlines($!raw, $shift, $delta, $conic ?? 1 !! 0); });
+        self!render-shape($shape, %callbacks)
+            if %callbacks;
         $shape;
     }
 
@@ -74,7 +113,7 @@ class Font::FreeType::Outline {
         my int $j = 0;
         for 0 ..^ $shape.n-ops -> int $i {
             my $op = $ops[$i];
-            my $ps-op = <moveto lineto curveto>[$op - 1];
+            my $ps-op = <moveto lineto curveto conicto>[$op - 1];
             my $n-args = $op == 1|2 ?? 2 !! 6;
             my @args = $pts[$j++] xx $n-args;
             @lines.push: @args>>.fmt('%.2f').join(' ') ~ " $ps-op";
@@ -181,7 +220,7 @@ transforming the outline to be the right way up.
 If you pass a file-handle to this method then it will write the path
 string to that file, otherwise it will return it as a string.
 
-=head3 decompose( :$conic, :$shift, :$delta)
+=head3 decompose( Bool :$conic, :$shift, :$delta, :%callbacks)
 
 A lower level method to extract a description of the glyph's outline,
 scaled to the face's current size.  It will die if the glyph doesn't
@@ -189,6 +228,48 @@ have an outline (if it comes from a bitmap font).
 
 It returns a struct of type Font::FreeType::Outline::ft\_shape\_t
 that describes the rendered outline.
+
+`:%callbacks` is an optional set of callbacks that are executed to render
+the glyph. The I<%callbacks> parameter should contain three or four of the
+following keys, each with a reference to a C<sub> as it's value.
+The C<conic-to> handler is optional, but the others are required.
+
+    =begin item
+    `move-to => sub ($x, $y) {...}`
+    =para
+    Move the pen to a new position, without adding anything to
+    the outline.  The first operation should always be C<move_to>, but
+    characters with disconnected parts, such as C<i>, might have several
+    of these.
+    =end item
+
+    =begin item
+    `line-to => sub ($x, $y) {...}`
+    =para
+    Move the pen to a new position, drawing a straight line from the
+    old position.
+    =end item
+
+    =begin item
+    `conic-to => sub ($x, $y, $cx, $cy) {...}`
+    =para
+    Move the pen to a new position, drawing a conic Bezier arc
+    (also known as a quadratic BE<eacute>zier curve)
+    from the old position, using a single control point.
+    =para
+    If you don't supply a C<conic-to> handler, all conic curves will be
+    automatically translated into cubic curves.
+    =end item
+
+    =begin item
+    `cubic-to => sub ($x, $y, $cx, $cy, $cx2, $cy2) {...}`
+    =para
+    Move the pen to a new position, drawing a cubic BE<eacute>zier arc
+    from the old position, using two control points.
+    =para
+    Cubic arcs are the ones produced in PostScript by the C<curveto>
+    operator.
+    =end item
 
 Note: when you intend to extract the outline of a glyph, you most
 likely want to pass the `FT_LOAD_NO_HINTING` option when creating

@@ -13,7 +13,7 @@ my @test = (
     { :char<.>, :x_sz(300), :y_sz(300), :x_res(72),  :y_res(72),  :aa(1) },
 );
 use Test;
-plan +@test * 4 + 16;
+plan +@test * 4 + 17;
 
 # Load the TTF file.
 # Hinting is turned off, because otherwise the compile-time option to turn
@@ -72,5 +72,6 @@ for $vera.glyph-images('B') {
     my $ps = $outline.postscript;
     my $bmp = .bitmap;
     ok($ps && $bmp, 'can get both outline and then bitmap from glyph');
+    is $ps.lines[0], '59.03 104.44 moveto';
 }
 
