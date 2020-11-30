@@ -75,6 +75,12 @@ class FT_Bitmap is repr('CStruct') is export {
     method FT_Bitmap_Init
         is native($FT-LIB) {*};
 
+    method get-pixels(Buf)
+        is native($FT-WRAPPER-LIB)
+        is symbol('ft6_bitmap_get_pixels')
+        returns FT_Error
+    {*}
+
     #| make a copy of the bitmap
     method clone(FT_Library $library) {
         my FT_Bitmap $bitmap .= new;

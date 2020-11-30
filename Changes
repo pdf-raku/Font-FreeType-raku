@@ -2,9 +2,11 @@
     - Allow Font::FreeType face() and version() methods to be called
       at the class level. In particular allow `Font::FreeType.face(..)`
       rather than `Font::FreeType.new.face(...)`
+    - port examples/magick.raku from Perl
     - Add :%callbacks option to Font::FreeType::Outline.decompose() method.
       Option ported from the Perl outline_decompose() method.
-    - port examples/magick.raku from Perl
+    - Add native method ft6_bitmap_get_pixels(). Speed up the bitmap pixels
+      method. Improve the performance of bin/fontsay examples/magick/raku, etc
 0.3.6
     - Rename GlyphImage bold() method to set-bold().
     - Add methods iterate-glyphs(), iterate-chars().

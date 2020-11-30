@@ -11,8 +11,10 @@ debug :
 
 lib : resources/libraries/%LIB-NAME%
 
-resources/libraries/%LIB-NAME% : $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O%
-	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/libraries/%LIB-NAME% $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% %LIB-LDFLAGS% $(CF)
+resources/libraries/%LIB-NAME% : $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% $(SRC)/ft6_bitmap%O%
+	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/libraries/%LIB-NAME% \
+        $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% $(SRC)/ft6_bitmap%O% \
+        %LIB-LDFLAGS% $(CF)
 
 $(SRC)/ft6_outline%O% : $(SRC)/ft6_outline.c $(SRC)/ft6_outline.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_outline%O% $(SRC)/ft6_outline.c %LIB-CFLAGS% $(CF)
@@ -22,6 +24,9 @@ $(SRC)/ft6_glyph%O% : $(SRC)/ft6_glyph.c $(SRC)/ft6_glyph.h
 
 $(SRC)/ft6_glyphslot%O% : $(SRC)/ft6_glyphslot.c $(SRC)/ft6_glyphslot.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_glyphslot%O% $(SRC)/ft6_glyphslot.c %LIB-CFLAGS% $(CF)
+
+$(SRC)/ft6_bitmap%O% : $(SRC)/ft6_bitmap.c $(SRC)/ft6_bitmap.h
+	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_bitmap%O% $(SRC)/ft6_bitmap.c %LIB-CFLAGS% $(CF)
 
 docs/index.md : README.md
 	cp $< $@

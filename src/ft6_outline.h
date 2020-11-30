@@ -1,13 +1,8 @@
 #ifndef __FT6_OUTLINE_H
 #define __FT6_OUTLINE_H
 
-#ifdef _WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT extern
-#endif
+#include "ft6.h"
 
-#include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 

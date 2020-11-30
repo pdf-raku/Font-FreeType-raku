@@ -43,60 +43,14 @@ class Font::FreeType::BitMap {
         }
     }
 
-    method pixels(Bool :$color = False) {
-        my $buf = $!raw.buffer;
-        my \rows = $.rows;
-        my \width = $.width;
-        my uint8 @pixels[rows;width];
-        my uint32 $bits;
-        given $.pixel-mode {
-            when FT_PIXEL_MODE_GRAY
-                | FT_PIXEL_MODE_LCD
-                | FT_PIXEL_MODE_LCD_V {
-                for ^rows -> int $y {
-                    my int $i = $y * $.pitch;
-                    for ^width -> int $x {
-                        @pixels[$y;$x] = $buf[$i++];
-                    }
-                }
-            }
-            when FT_PIXEL_MODE_MONO {
-                for ^rows -> int $y {
-                    my int $i = $y * $.pitch;
-                    for ^width -> int $x {
-                        $bits = $buf[$i++]
-                            if $x %% 8;
-                        @pixels[$y;$x] = $bits +& 0x80 ?? 0xFF !! 0x00;
-                        $bits +<= 1;
-                    }
-                }
-            }
-            when FT_PIXEL_MODE_GRAY2 {
-                for ^rows -> int $y {
-                    my int $i = $y * $.pitch;
-                    for ^width -> int $x {
-                        $bits = $buf[$i++]
-                            if $x %% 4;
-                        @pixels[$y;$x] = $bits +& 0xC0;
-                        $bits +<= 2;
-                    }
-                }
-            }
-            when FT_PIXEL_MODE_GRAY4 {
-                for ^rows -> int $y {
-                    my int $i = $y * $.pitch;
-                    for ^width -> int $x {
-                        $bits = $buf[$i++]
-                            if $x %% 2;
-                        @pixels[$y;$x] = $bits +& 0xF0;
-                        $bits +<= 4;
-                    }
-                }
-            }
-            default {
-                die "unsupported pixel mode: $_";
-            }
-        }
+    method !get-pixel-buf(Bool :$color = False) {
+        my buf8 $pixels .= allocate($.depth * $.rows * $.width);
+        ft-try({ $!raw.get-pixels($pixels); });
+        $pixels;
+    }
+
+    method pixels {
+        my uint8 @pixels[$.rows;$.width] Z= self!get-pixel-buf;
         @pixels;
     }
 
