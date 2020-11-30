@@ -73,8 +73,7 @@ class Font::FreeType::Outline {
             my $n-args = $op == 1|2 ?? 2 !! 6;
             my @args = $pts[$j++] xx $n-args;
             with %cb{$key} {
-warn sprintf("\%s(\%s)", $key, @args>>.fmt('%.2f').join(', '));
-                $_(|@args);
+                .(|@args);
             }
             else {
                 note sprintf("unhandled outline callback: \%s(\%s)", $key, @args>>.fmt('%.2f').join(', '));

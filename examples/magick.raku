@@ -67,7 +67,7 @@ sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$b
        my Font::FreeType::BitMap $bm = .bitmap;
        my $bmp_left = $bm.left;
        my $bmp_top  = $bm.top;
-       my $buf = $bm.Buf;
+       my $buf = $bm.pgm;
 
        my MagickWand $bmp_img .= new;
        if $bmp_img.read-buffer(nativecast(Pointer, $buf), $buf.bytes) {
@@ -87,7 +87,7 @@ sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$b
 
        do {
            my @*curr-pos = (0.0, 0.0);
-           my Code %render = (
+           my Code %callbacks = (
                move-to => sub {
                    @*curr-pos = adjust_position($^x, $^y);
                },
@@ -107,7 +107,7 @@ sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$b
                 },
             );
    
-           .decompose :%render;
+           .decompose :%callbacks;
        }
        $img.draw-line($adj_x, 0,  $adj_x, $*height);
        $*text-x += .horizontal-advance;
