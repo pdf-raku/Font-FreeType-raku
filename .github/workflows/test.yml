@@ -28,7 +28,8 @@ jobs:
         run: |
           # install and test if need be (includes [test-depends])
           #sudo apt-get install -y libfreetype6-dev
-          zef install --deps-only .
           zef install --/test App::Prove6
+          zef install --deps-only .
+          zef build .
       - name: Run Tests
         run: prove6 -l t
