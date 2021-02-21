@@ -26,13 +26,13 @@ class Font::FreeType:ver<0.3.7> {
         }
     }
 
-    multi method face(Font::FreeType:U \class: |c) {
+    multi method face(Font::FreeType:U \class: |c) is hidden-from-backtrace {
         class.new.face(|c);
     }
 
-    multi method face(Font::FreeType:D: Str:D $file-path-name, Int :$index = 0, |c) {
+    multi method face(Font::FreeType:D: Str:D $file-path-name, Int :$index = 0, |c) is hidden-from-backtrace {
         my $p = Pointer[FT_Face].new;
-        $lock.protect: {
+        $lock.protect: sub () is hidden-from-backtrace {
             ft-try({ $!raw.FT_New_Face($file-path-name, $index, $p); });
         }
         my FT_Face:D $raw = $p.deref;
@@ -44,14 +44,16 @@ class Font::FreeType:ver<0.3.7> {
                       Int :$size = $buf.bytes,
                       Int :$index = 0,
                       |c
-        ) {
+        ) is hidden-from-backtrace {
         my $p = Pointer[FT_Face].new;
-        ft-try({ $!raw.FT_New_Memory_Face($buf, $size, $index, $p); });
+        ft-try(sub () is hidden-from-backtrace {
+                      $!raw.FT_New_Memory_Face($buf, $size, $index, $p);
+                  });
         my FT_Face:D $raw = $p.deref;
         Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
     }
 
-    multi method face(Font::FreeType:D: IO::Handle:D $fh, |c) {
+    multi method face(Font::FreeType:D: IO::Handle:D $fh, |c) is hidden-from-backtrace {
         $fh.seek(0, SeekFromBeginning);
         $.face($fh.slurp(:bin), |c);
     }

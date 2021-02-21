@@ -1,3 +1,6 @@
+{{$NEXT}}
+    - hide ft-try() subroutine and face() method from backtrace.
+
 0.3.7
     - Allow Font::FreeType face() and version() methods to be called
       at the class level. In particular allow `Font::FreeType.face(..)`
@@ -6,7 +9,7 @@
     - Add :%callbacks option to Font::FreeType::Outline.decompose() method.
       Option ported from the Perl outline_decompose() method.
     - Add native method ft6_bitmap_get_pixels(). Speed up the bitmap pixels
-      method. Improve the performance of bin/fontsay examples/magick/raku, etc
+      method. Improve the performance of bin/font-say examples/magick.raku, etc
 0.3.6
     - Rename GlyphImage bold() method to set-bold().
     - Add methods iterate-glyphs(), iterate-chars().

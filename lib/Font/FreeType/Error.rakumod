@@ -137,7 +137,7 @@ class Font::FreeType::Error is Exception {
         "FreeType Error: $message";
     }
 
-    sub ft-try(&sub) is export {
+    sub ft-try(&sub) is export is hidden-from-backtrace {
         my FT_Error $error = &sub();
         Font::FreeType::Error.new(:$error).throw
             if $error;
