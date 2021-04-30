@@ -98,6 +98,7 @@ class Font::FreeType::Face {
         nativecast(Str, $buf);
     }
 
+    proto glyph-name($ --> Int) {*}
     multi method glyph-name(Str:D $char) {
         my FT_UInt $index = $!raw.FT_Get_Char_Index( $char.ord );
         $.glyph-name-from-index($index);
@@ -106,10 +107,11 @@ class Font::FreeType::Face {
         my FT_UInt $index = $!raw.FT_Get_Char_Index( $char-code );
         $.glyph-name-from-index($index);
     }
+    proto glyph-index($ --> Int) {*}
     multi method glyph-index(Str:D $char) {
         $!raw.FT_Get_Char_Index($char.ord);
     }
-    multi method glyph-index(UInt $char-code) {
+    multi method glyph-index(UInt:D $char-code) {
         $!raw.FT_Get_Char_Index($char-code);
     }
 
