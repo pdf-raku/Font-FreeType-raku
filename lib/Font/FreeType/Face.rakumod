@@ -121,6 +121,12 @@ class Font::FreeType::Face {
             !! Mu;
     }
 
+    method index-from-glyph-name(Str:D $glyph-name) {
+         self.has-glyph-names
+            ?? $!raw.FT_Get_Name_Index($glyph-name)
+            !! Mu;
+    }
+
     method forall-chars(&code, |c) {
         for self.iterate-chars(|c) -> $glyph {
             &code($glyph);
@@ -154,7 +160,7 @@ class Font::FreeType::Face {
     }
 
     method glyph-images(Str $text, Int :$flags = $!load-flags) {
-        my Font::FreeType::GlyphImage @ = self.iterate-chars($text).map(*.glyph-image);
+        my Font::FreeType::GlyphImage @ = self.iterate-chars($text)».glyph-image;
     }
 
     method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {

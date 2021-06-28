@@ -202,6 +202,10 @@ Returns the glyph index in the font, or 0 if the character does not exist. `char
 
 Returns the name for the given character.
 
+### glyph-index-from-glyph-name(index)
+
+Returns the glyph index for the given glyph name.
+
 ### set-char-size(_width_, _height_, _x-res_, _y-res_)
 
 Set the size at which glyphs should be rendered. Metrics are also scaled to match. The width and height will usually be the same, and are in points. The resolution is in dots-per-inch.

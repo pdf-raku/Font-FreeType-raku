@@ -79,13 +79,13 @@ It returns a struct of type Font::FreeType::Outline::ft\_shape\_t that describes
 
   * `conic-to => sub ($x, $y, $cx, $cy) {...}`
 
-    Move the pen to a new position, drawing a conic Bezier arc (also known as a quadratic Beacutezier curve) from the old position, using a single control point.
+    Move the pen to a new position, drawing a conic Bezier arc (also known as a quadratic Bézier curve) from the old position, using a single control point.
 
     If you don't supply a `conic-to` handler, all conic curves will be automatically translated into cubic curves.
 
   * `cubic-to => sub ($x, $y, $cx, $cy, $cx2, $cy2) {...}`
 
-    Move the pen to a new position, drawing a cubic Beacutezier arc from the old position, using two control points.
+    Move the pen to a new position, drawing a cubic Bézier arc from the old position, using two control points.
 
     Cubic arcs are the ones produced in PostScript by the `curveto` operator.
 

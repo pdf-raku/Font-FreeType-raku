@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 63  +  256 * 2  +  268 * 3 + 1;
+plan 65  +  256 * 2  +  268 * 3 + 1;
 use Font::FreeType;
 use Font::FreeType::Raw::Defs;
 
@@ -172,6 +172,8 @@ for $vera.iterate-glyphs {
 };
 is $i, +@glyph-list, "we aren't missing any glyphs";
 
+is $vera.index-from-glyph-name('G'), 42, 'index-from-glyph-name';
+is $vera.glyph-name-from-index(42), 'G', 'glyph-name-from-index';
 
 # Test kerning.
 my %kerning = (

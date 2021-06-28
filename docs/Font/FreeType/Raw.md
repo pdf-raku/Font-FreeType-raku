@@ -50,7 +50,7 @@ A rendered bit-map
 
 ### method FT_Bitmap_Init
 
-```perl6
+```raku
 method FT_Bitmap_Init() returns Mu
 ```
 
@@ -58,7 +58,7 @@ initialize a bitmap structure.
 
 ### method clone
 
-```perl6
+```raku
 method clone(
     Font::FreeType::Raw::FT_Library $library
 ) returns Mu
@@ -83,7 +83,7 @@ A structure used to hold an outline's bounding box, i.e., the coordinates of its
 
 ### method Array
 
-```perl6
+```raku
 method Array() returns Mu
 ```
 
@@ -121,7 +121,7 @@ The root glyph structure contains a given glyph image plus its advance width in 
 
 ### method FT_Glyph_Get_CBox
 
-```perl6
+```raku
 method FT_Glyph_Get_CBox(
     uint32 $bbox-mode,
     Font::FreeType::Raw::FT_BBox $bbox
@@ -132,7 +132,7 @@ Return a glyph's ‘control box’. The control box encloses all the outline's p
 
 ### method FT_Done_Glyph
 
-```perl6
+```raku
 method FT_Done_Glyph() returns uint32
 ```
 
@@ -155,7 +155,7 @@ A handle to a given ‘glyph slot’. A slot is a container that can hold any of
 
 ### method FT_Render_Glyph
 
-```perl6
+```raku
 method FT_Render_Glyph(
     int32 $render-mode
 ) returns uint32
@@ -165,7 +165,7 @@ Convert a given glyph image to a bitmap. It does so by inspecting the glyph imag
 
 ### method FT_Get_Glyph
 
-```perl6
+```raku
 method FT_Get_Glyph(
     NativeCall::Types::Pointer[Font::FreeType::Raw::FT_Glyph] $glyph-p is rw
 ) returns uint32
@@ -185,7 +185,7 @@ A handle to a typographic face object. A face object models a given typeface, in
 
 ### method FT_Has_PS_Glyph_Names
 
-```perl6
+```raku
 method FT_Has_PS_Glyph_Names() returns int32
 ```
 
@@ -193,7 +193,7 @@ Return true if a given face provides reliable PostScript glyph names.
 
 ### method FT_Get_Postscript_Name
 
-```perl6
+```raku
 method FT_Get_Postscript_Name() returns Str
 ```
 
@@ -201,7 +201,7 @@ Retrieve the ASCII PostScript name of a given face, if available. This only work
 
 ### method FT_Get_Sfnt_Name_Count
 
-```perl6
+```raku
 method FT_Get_Sfnt_Name_Count() returns uint32
 ```
 
@@ -209,7 +209,7 @@ Retrieve the number of name strings in the SFNT ‘name’ table.
 
 ### method FT_Get_Sfnt_Name
 
-```perl6
+```raku
 method FT_Get_Sfnt_Name(
     uint32 $index,
     Font::FreeType::Raw::FT_SfntName $sfnt
@@ -220,7 +220,7 @@ Retrieve a string of the SFNT ‘name’ table for a given index.
 
 ### method FT_Get_Glyph_Name
 
-```perl6
+```raku
 method FT_Get_Glyph_Name(
     uint32 $glyph-index,
     Buf[uint8] $buffer,
@@ -232,7 +232,7 @@ Retrieve the ASCII name of a given glyph in a face.
 
 ### method FT_Get_Char_Index
 
-```perl6
+```raku
 method FT_Get_Char_Index(
     NativeCall::Types::ulong $charcode
 ) returns uint32
@@ -242,7 +242,7 @@ Return the glyph index of a given character code. This function uses the current
 
 ### method FT_Get_Name_Index
 
-```perl6
+```raku
 method FT_Get_Name_Index(
     Str $glyph-name
 ) returns uint32
@@ -252,7 +252,7 @@ Return the glyph index of a given glyph name.
 
 ### method FT_Load_Glyph
 
-```perl6
+```raku
 method FT_Load_Glyph(
     uint32 $glyph-index,
     int32 $load-flags
@@ -263,7 +263,7 @@ Load a glyph into the glyph slot of a face object.
 
 ### method FT_Load_Char
 
-```perl6
+```raku
 method FT_Load_Char(
     NativeCall::Types::ulong $char-code,
     int32 $load-flags
@@ -274,7 +274,7 @@ Load a glyph into the glyph slot of a face object, accessed by its character cod
 
 ### method FT_Get_First_Char
 
-```perl6
+```raku
 method FT_Get_First_Char(
     uint32 $agindex is rw
 ) returns NativeCall::Types::ulong
@@ -284,7 +284,7 @@ Return the first character code in the current charmap of a given face, together
 
 ### method FT_Get_Next_Char
 
-```perl6
+```raku
 method FT_Get_Next_Char(
     NativeCall::Types::ulong $char-code,
     uint32 $agindex is rw
@@ -295,7 +295,7 @@ Return the next character code in the current charmap of a given face following 
 
 ### method FT_Set_Char_Size
 
-```perl6
+```raku
 method FT_Set_Char_Size(
     NativeCall::Types::long $char-width,
     NativeCall::Types::long $char-height,
@@ -308,7 +308,7 @@ Call FT_Request_Size to request the nominal size (in points).
 
 ### method FT_Set_Pixel_Sizes
 
-```perl6
+```raku
 method FT_Set_Pixel_Sizes(
     uint32 $char-width,
     uint32 $char-height
@@ -319,7 +319,7 @@ Call FT_Request_Size to request the nominal size (in pixels).
 
 ### method FT_Get_Kerning
 
-```perl6
+```raku
 method FT_Get_Kerning(
     uint32 $left-glyph,
     uint32 $right-glyph,
@@ -332,7 +332,7 @@ Return the kerning vector between two glyphs of the same face.
 
 ### method FT_Get_Font_Format
 
-```perl6
+```raku
 method FT_Get_Font_Format() returns Str
 ```
 
@@ -340,7 +340,7 @@ Return a string describing the format of a given face. Possible values are ‘Tr
 
 ### method FT_Get_Sfnt_Table
 
-```perl6
+```raku
 method FT_Get_Sfnt_Table(
     int32 $tag
 ) returns NativeCall::Types::Pointer
@@ -350,7 +350,7 @@ Return a pointer to a given SFNT table stored within a face.
 
 ### method FT_Reference_Face
 
-```perl6
+```raku
 method FT_Reference_Face() returns uint32
 ```
 
@@ -358,7 +358,7 @@ A counter gets initialized to 1 at the time an FT_Face structure is created. Thi
 
 ### method FT_Done_Face
 
-```perl6
+```raku
 method FT_Done_Face() returns uint32
 ```
 
@@ -371,7 +371,7 @@ A handle to a FreeType library instance. Each ‘library’ is completely indepe
 
 ### method FT_New_Face
 
-```perl6
+```raku
 method FT_New_Face(
     Str $file-path-name,
     NativeCall::Types::long $face-index,
@@ -383,7 +383,7 @@ Call FT_Open_Face to open a font by its pathname.
 
 ### method FT_New_Memory_Face
 
-```perl6
+```raku
 method FT_New_Memory_Face(
     Blob[byte] $buffer,
     NativeCall::Types::long $buffer-size,
@@ -396,7 +396,7 @@ Call FT_Open_Face to open a font that has been loaded into memory.
 
 ### method FT_Bitmap_Convert
 
-```perl6
+```raku
 method FT_Bitmap_Convert(
     Font::FreeType::Raw::FT_Bitmap $source,
     Font::FreeType::Raw::FT_Bitmap $target,
@@ -408,7 +408,7 @@ Convert a bitmap object with depth 1bpp, 2bpp, 4bpp, 8bpp or 32bpp to a bitmap o
 
 ### method FT_Bitmap_Copy
 
-```perl6
+```raku
 method FT_Bitmap_Copy(
     Font::FreeType::Raw::FT_Bitmap $source,
     Font::FreeType::Raw::FT_Bitmap $target
@@ -419,7 +419,7 @@ Copy a bitmap into another one.
 
 ### method FT_Bitmap_Embolden
 
-```perl6
+```raku
 method FT_Bitmap_Embolden(
     Font::FreeType::Raw::FT_Bitmap $bitmap,
     NativeCall::Types::long $x-strength,
@@ -431,7 +431,7 @@ Embolden a bitmap. The new bitmap will be about ‘x-strength’ pixels wider an
 
 ### method FT_Bitmap_Done
 
-```perl6
+```raku
 method FT_Bitmap_Done(
     Font::FreeType::Raw::FT_Bitmap $bitmap
 ) returns uint32
@@ -441,7 +441,7 @@ Destroy a bitmap object initialized with FT_Bitmap_Init.
 
 ### method FT_Outline_New
 
-```perl6
+```raku
 method FT_Outline_New(
     uint32 $num-points,
     int32 $num-contours,
@@ -453,7 +453,7 @@ Create a new outline of a given size.
 
 ### method FT_Outline_Done
 
-```perl6
+```raku
 method FT_Outline_Done(
     Font::FreeType::Raw::FT_Outline $outline
 ) returns uint32
@@ -463,7 +463,7 @@ Destroy an outline created with FT_Outline_New.
 
 ### method FT_Library_Version
 
-```perl6
+```raku
 method FT_Library_Version(
     int32 $major is rw,
     int32 $minor is rw,
@@ -475,7 +475,7 @@ Return the version of the FreeType library being used.
 
 ### method FT_Done_FreeType
 
-```perl6
+```raku
 method FT_Done_FreeType() returns uint32
 ```
 
@@ -483,7 +483,7 @@ Destroy a given FreeType library object and all of its children, including resou
 
 ### sub FT_Glyph_To_Bitmap
 
-```perl6
+```raku
 sub FT_Glyph_To_Bitmap(
     NativeCall::Types::Pointer[Font::FreeType::Raw::FT_Glyph] $the-glyph is rw,
     int32 $mode,
@@ -496,7 +496,7 @@ Convert a given glyph object to a bitmap glyph object.
 
 ### sub FT_Init_FreeType
 
-```perl6
+```raku
 sub FT_Init_FreeType(
     NativeCall::Types::Pointer[Font::FreeType::Raw::FT_Library] $library is rw
 ) returns uint32

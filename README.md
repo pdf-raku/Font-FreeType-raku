@@ -103,8 +103,8 @@ brew install freetype
 To checkout and test this module from the Git repository:
 
     $ git checkout https://github.com/pdf-raku/Font-FreeType-raku.git
-    $ zef build .  # -OR- rakudo Build.pm
-    $ prove -e'rakudo -I .' -v t
+    $ zef build .  # -OR- raku Build.pm
+    $ prove -e'raku -I .' -v t
 
 Authors
 -------

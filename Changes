@@ -1,5 +1,6 @@
 {{$NEXT}}
-    - hide ft-try() subroutine and face() method from backtrace.
+    - Add $face.index-from-glyph-name() method
+    - Hide ft-try() subroutine and face() method from backtrace.
 
 0.3.7
     - Allow Font::FreeType face() and version() methods to be called
