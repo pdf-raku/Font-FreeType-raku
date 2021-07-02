@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.3.8  2021-07-02T13:22:29+12:00
     - Add $face.index-from-glyph-name() method
     - Hide ft-try() subroutine and face() method from backtrace.
 

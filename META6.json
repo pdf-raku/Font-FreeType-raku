@@ -23,9 +23,9 @@
     "Font::FreeType::Glyph": "lib/Font/FreeType/Glyph.rakumod",
     "Font::FreeType::GlyphImage": "lib/Font/FreeType/GlyphImage.rakumod",
     "Font::FreeType::NamedInfo": "lib/Font/FreeType/NamedInfo.rakumod",
-    "Font::FreeType::Outline": "lib/Font/FreeType/Outline.rakumod",
     "Font::FreeType::Native": "lib/Font/FreeType/Native.rakumod",
     "Font::FreeType::Native::Defs": "lib/Font/FreeType/Native/Defs.rakumod",
+    "Font::FreeType::Outline": "lib/Font/FreeType/Outline.rakumod",
     "Font::FreeType::Raw": "lib/Font/FreeType/Raw.rakumod",
     "Font::FreeType::Raw::Defs": "lib/Font/FreeType/Raw/Defs.rakumod",
     "Font::FreeType::Raw::TT_Sfnt": "lib/Font/FreeType/Raw/TT_Sfnt.rakumod"
@@ -40,5 +40,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.3.7"
+  "version": "0.3.8"
 }
