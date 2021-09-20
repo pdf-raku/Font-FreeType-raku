@@ -38,7 +38,7 @@ class Font::FreeType::Face {
     method fixed-sizes {
         my int $n-sizes = self.num-fixed-sizes;
         my $ptr = $!raw.available-sizes;
-        (0 ..^ $n-sizes).map: {
+        (^$n-sizes).map: {
             my FT_Bitmap_Size $raw = $ptr[$_];
             Font::FreeType::BitMap::Size.new: :$raw, :face(self);
         }
@@ -70,7 +70,7 @@ class Font::FreeType::Face {
     method named-infos {
         return Mu unless self.is-scalable;
         my int $n-sizes = $!raw.FT_Get_Sfnt_Name_Count;
-        (0 ..^ $n-sizes).map: -> $i {
+        (^$n-sizes).map: -> $i {
             my FT_SfntName $sfnt .= new;
             ft-try({ $!raw.FT_Get_Sfnt_Name($i, $sfnt); });
             Font::FreeType::NamedInfo.new: :raw($sfnt);
@@ -160,7 +160,7 @@ class Font::FreeType::Face {
     }
 
     method glyph-images(Str $text, Int :$flags = $!load-flags) {
-        my Font::FreeType::GlyphImage @ = self.iterate-chars($text)».glyph-image;
+        my Font::FreeType::GlyphImage @ = self.iterate-chars($text, :$flags)».glyph-image;
     }
 
     method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
@@ -521,6 +521,10 @@ Returns the glyph index in the font, or 0 if the character does not exist. `char
 =head3 glyph-name-from-index(index)
 
 Returns the name for the given character.
+
+=head3 glyph-index-from-glyph-name(index)
+
+Returns the glyph index for the given glyph name.
 
 =head3 set-char-size(_width_, _height_, _x-res_, _y-res_)
 
