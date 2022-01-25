@@ -14,7 +14,7 @@ lib : resources/libraries/%LIB-NAME%
 resources/libraries/%LIB-NAME% : $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% $(SRC)/ft6_bitmap%O%
 	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/libraries/%LIB-NAME% \
         $(SRC)/ft6_outline%O% $(SRC)/ft6_glyph%O% $(SRC)/ft6_glyphslot%O% $(SRC)/ft6_bitmap%O% \
-        %LIB-LDFLAGS% $(CF)
+        %LIBS% $(CF)
 
 $(SRC)/ft6_outline%O% : $(SRC)/ft6_outline.c $(SRC)/ft6_outline.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/ft6_outline%O% $(SRC)/ft6_outline.c %LIB-CFLAGS% $(CF)

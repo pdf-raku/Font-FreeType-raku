@@ -12,7 +12,7 @@ class Build {
     sub make(Str $folder, Str $destfolder, IO() :$libname!) {
         my %vars = LibraryMake::get-vars($destfolder);
         %vars<LIB-NAME> = ~ $*VM.platform-library-name($libname);
-        %vars<LIB-LDFLAGS> = chomp(qx{freetype-config --libs 2>/dev/null} || '-lfreetype');
+        %vars<LIBS> = chomp(qx{freetype-config --libs 2>/dev/null} || '-lfreetype');
         %vars<LIB-CFLAGS> = chomp(qx{freetype-config --cflags 2>/dev/null} || '-I/usr/include/freetype2');
 
         mkdir($destfolder);
