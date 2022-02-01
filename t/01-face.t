@@ -3,6 +3,7 @@ use Test;
 use Font::FreeType;
 use Font::FreeType::Face;
 use Font::FreeType::Error;
+use NativeCall;
 
 my Font::FreeType $freetype .= new;
 my Font::FreeType::Face $face = $freetype.face('t/fonts/DejaVuSerif.ttf');
@@ -25,5 +26,7 @@ my %expected-flags = (
 for %expected-flags.pairs.sort {
     is-deeply $face."{.key}"(), .value, "\$face.{.key}";
 }
+
+lives-ok {my Pointer() $ = $face }, 'coerce to Pointer';
 
 done-testing;

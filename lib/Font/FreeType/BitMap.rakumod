@@ -8,9 +8,9 @@ class Font::FreeType::BitMap {
 
     has $.face;
     has FT_Bitmap $!raw handles <rows width pitch num-grays pixel-mode pallette>;
-    has Int $.left is required;
-    has Int $.top is required;
-    has FT_ULong     $.char-code is required;
+    has Int      $.left is required;
+    has Int      $.top is required;
+    has FT_ULong $.char-code is required;
 
     submethod TWEAK(FT_Bitmap:D :$!raw!) {
         $!top *= 3

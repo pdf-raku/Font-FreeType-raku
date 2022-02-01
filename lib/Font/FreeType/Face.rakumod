@@ -267,6 +267,8 @@ class Font::FreeType::Face {
         AllGlyphsIteration.new: :face(self), :$to-unicode, :$flags;
     }
 
+    method NativeCall::Types::Pointer { nativecast(Pointer, $!raw) }
+
     submethod DESTROY {
         with $!raw {
             ft-try({ .FT_Done_Face });
