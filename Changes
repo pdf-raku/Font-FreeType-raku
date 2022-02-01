@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+0.3.9  2022-02-02T12:05:34+13:00
+    - Add Pointer coercement. For the benefit of FontConfig's query-ft-face()
+      method
+    - Tweaks to Build.pm6 and Makiefile.in
+
 0.3.8  2021-07-02T13:22:29+12:00
     - Add $face.index-from-glyph-name() method
     - Hide ft-try() subroutine and face() method from backtrace.
