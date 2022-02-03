@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.3.10  2022-02-04T07:55:53+13:00
+    - Fix test for pending Rakudo 2022.02 release; niner++
+
 0.3.9  2022-02-02T12:05:34+13:00
     - Add Pointer coercement. For the benefit of FontConfig's query-ft-face()
       method
