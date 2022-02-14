@@ -222,18 +222,20 @@ class Font::FreeType::Face {
 
             method pull-one {
 
-                $!glyph.char-code = $!idx
-                        ?? $!raw.FT_Get_Next_Char( $!glyph.char-code, $!idx)
-                        !! $!raw.FT_Get_First_Char($!idx);
+                given $!idx {
+                    $!glyph.char-code = $_
+                        ?? $!raw.FT_Get_Next_Char( $!glyph.char-code, $_)
+                        !! $!raw.FT_Get_First_Char($_);
 
-                if $!idx {
-                    $!glyph.stat = $!raw.FT_Load_Glyph($!idx, $!flags )
-                        if $!load;
-                    $!glyph.glyph-index = $!idx;
-                    $!glyph;
-                }
-                else {
-                    IterationEnd;
+                    if $_ {
+                        $!glyph.stat = $!raw.FT_Load_Glyph($_, $!flags )
+                            if $!load;
+                        $!glyph.glyph-index = $_;
+                        $!glyph;
+                    }
+                    else {
+                        IterationEnd;
+                    }
                 }
             }
             method iterator { self }
