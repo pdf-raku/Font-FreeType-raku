@@ -212,7 +212,7 @@ Set the size at which glyphs should be rendered. Metrics are also scaled to matc
 
 When generating PostScript outlines a resolution of 72 will scale to PostScript points.
 
-### set-pixel-size(_width_, _height_)
+### set-pixel-sizes(_width_, _height_)
 
 Set the size at which bit-mapped fonts will be loaded. Bitmap fonts are automatically set to the first available standard size, so this usually isn't needed.
 

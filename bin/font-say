@@ -12,7 +12,8 @@ enum Mode «
 
 sub MAIN(Str $font-file,
          Str $text is copy,
-         Int  :$resolution=60,
+         UInt :$resolution=60,
+         UInt :$pixels,
          Bool :$kern = True,
          Bool :$hint,
          UInt :$ascend,
@@ -35,10 +36,16 @@ sub MAIN(Str $font-file,
         !! FT_LOAD_NO_HINTING;
     my $face = Font::FreeType.new.face($font-file, :$load-flags);
 
-    try $face.set-char-size(24, 0, $resolution, $resolution);
-    $char-spacing //= $resolution > 40
-        ?? ($resolution + 20) div 40
-        !! 1;
+    if $pixels {
+        $face.set-pixel-sizes($pixels, $pixels);
+        $char-spacing //= 2 + $pixels div 25; 
+    }
+    else {
+        try $face.set-char-size(24, 0, $resolution, $resolution);
+        $char-spacing //= $resolution > 40
+            ?? ($resolution + 20) div 40
+            !! 1;
+    }
     $word-spacing //= $char-spacing * 4;
     my @bitmaps = $face.glyph-images($text).map: {
         .set-bold($bold) if $bold;

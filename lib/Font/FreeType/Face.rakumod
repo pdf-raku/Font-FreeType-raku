@@ -23,11 +23,11 @@ class Font::FreeType::Face {
     submethod TWEAK(FT_Face:D :$!raw!) { }
     method native is also<unbox struct> is DEPRECATED("please use .raw() method") { $!raw }
     method units-per-EM { self.is-scalable ?? $!raw.units-per-EM !! Mu }
-    method underline-position { self.is-scalable ?? $!raw.underline-position !! Mu }
+    method underline-position  { self.is-scalable ?? $!raw.underline-position  !! Mu }
     method underline-thickness { self.is-scalable ?? $!raw.underline-thickness !! Mu }
     method bounding-box { self.is-scalable ?? $!raw.bbox !! Mu }
 
-    method ascender { self.is-scalable ?? $!raw.ascender !! Mu }
+    method ascender  { self.is-scalable ?? $!raw.ascender  !! Mu }
     method descender { self.is-scalable ?? $!raw.descender !! Mu }
 
     subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT';
@@ -539,7 +539,7 @@ are in points.  The resolution is in dots-per-inch.
 When generating PostScript outlines a resolution of 72 will scale
 to PostScript points.
 
-=head3 set-pixel-size(_width_, _height_)
+=head3 set-pixel-sizes(_width_, _height_)
 
 Set the size at which bit-mapped fonts will be loaded.  Bitmap fonts are
 automatically set to the first available standard size, so this usually
