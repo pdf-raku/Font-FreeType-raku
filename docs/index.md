@@ -88,6 +88,12 @@ Font::FreeType depends on the [freetype](https://www.freetype.org/download.html)
 sudo apt-get install freetype6-dev
 ```
 
+### Alpine Linux
+
+```shell
+doas apk add freetype-dev
+```
+
 ### Max OS X
 
 ```shell

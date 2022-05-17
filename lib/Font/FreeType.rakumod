@@ -26,20 +26,26 @@ class Font::FreeType:ver<0.3.11> {
         }
     }
 
-    multi method face(Font::FreeType:U \class: |c) is hidden-from-backtrace {
+    multi method face(::?CLASS:U \class: |c) is hidden-from-backtrace {
         class.new.face(|c);
     }
 
-    multi method face(Font::FreeType:D: Str:D $file-path-name, Int :$index = 0, |c) is hidden-from-backtrace {
+    multi method face(::?CLASS:D $ft-lib: Str:D $file-path-name, Int :$index = 0, |c) is hidden-from-backtrace {
         my $p = Pointer[FT_Face].new;
         $lock.protect: sub () is hidden-from-backtrace {
+            CATCH {
+                when Font::FreeType::Error {
+                    .details = "loading file '$file-path-name'";
+                    .rethrow;
+                }
+            }
             ft-try({ $!raw.FT_New_Face($file-path-name, $index, $p); });
         }
         my FT_Face:D $raw = $p.deref;
-        Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
+        Font::FreeType::Face.new: :$raw, :$ft-lib, |c;
     }
 
-    multi method face(Font::FreeType:D:
+    multi method face(::?CLASS:D:
                       Blob:D $buf,
                       Int :$size = $buf.bytes,
                       Int :$index = 0,
@@ -53,15 +59,21 @@ class Font::FreeType:ver<0.3.11> {
         Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
     }
 
-    multi method face(Font::FreeType:D: IO::Handle:D $fh, |c) is hidden-from-backtrace {
+    multi method face(::?CLASS:D: IO::Handle:D $fh, |c) is hidden-from-backtrace {
+        CATCH {
+            when Font::FreeType::Error {
+                .details = "loading IO handle '{$fh.path}'";
+                .rethrow;
+            }
+        }
         $fh.seek(0, SeekFromBeginning);
         $.face($fh.slurp(:bin), |c);
     }
 
-    multi method version(Font::FreeType:U:) {
+    multi method version(::?CLASS:U:) {
         self.new.version;
     }
-    multi method version(Font::FreeType:D:) returns Version {
+    multi method version(::?CLASS:D:) returns Version {
         $!raw.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
         Version.new: "{$major}.{$minor}.{$patch}";
     }

@@ -1,4 +1,6 @@
 {{$NEXT}}
+    - Add face lock() attribute. Use it in iterate-chars() and
+      iterate-glyphs() for improved thread-safety
 
 0.3.11  2022-02-15T05:39:32+13:00
     - Fix failing tests in Rakudo 2022.02

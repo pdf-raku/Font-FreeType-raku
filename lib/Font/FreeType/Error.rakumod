@@ -1,5 +1,9 @@
 class Font::FreeType::Error is Exception {
     use Font::FreeType::Raw::Defs;
+
+    has Int $.error is required;
+    has Str $.details is rw;
+
     our @Messages is export(:Messages);
     sub error-def(UInt $num, Str $message) {
         @Messages[$num] = $message;
@@ -130,11 +134,11 @@ class Font::FreeType::Error is Exception {
         Corrupted_Font_Glyphs => error-def(0xBA, "Font glyphs corrupted or missing fields" ),
 
         );
-    has Int $.error is required;
     method message {
         my $message = @Messages[$!error]
             // "unknown error code: {$!error.fmt('0x%02X')}";
-        "FreeType Error: $message";
+        my $detail = do with $!details { ' ' ~ $_ } // '';
+        "FreeType Error{$detail}: $message";
     }
 
     sub ft-try(&sub) is export is hidden-from-backtrace {

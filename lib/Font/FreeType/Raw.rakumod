@@ -8,18 +8,22 @@ module Font::FreeType::Raw - bindings to the freetype library
 
 =head1 SYNOPSIS
 
-    # E.g. build a map of glyphs number to Unicode
+    # E.g. build an array of advance widths by glyph ID
     use Font::FreeType::Face;
     use Font::FreeType::Raw;
     use Font::FreeType::Raw::Defs;
 
     sub face-unicode-map(Font::FreeType::Face $face) {
-        my uint16 @to-unicode[$face.num-glyphs];
+        my uint16 @advance[$face.num-glyphs];
         my FT_Face  $struct = $face.raw;  # get the raw native face object
         my FT_UInt  $glyph-idx;
         my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
         while $glyph-idx {
-            @to-unicode[ $glyph-idx ] = $char-code;
+            # FT_Load_Glyph updates $struct.glyph, so is not thread safe
+            $face.protect: {
+                $struct.FT_Load_Glyph( $gid, FT_LOAD_NO_SCALE );
+                @advance[$glyph-idx] = $struct.glyph.metrics.hori-advance;
+            }
             $char-code = $struct.FT_Get_Next_Char( $char-code, $glyph-idx);
         }
     }

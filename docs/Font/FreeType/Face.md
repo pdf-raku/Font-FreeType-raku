@@ -259,6 +259,11 @@ This method provides access to the underlying raw FT_Face native struct; for exa
 
 The `FT_Reference_Face` and `FT_Done_Face` methods will need to be called if the struct outlives the parent `$face` object.
 
+protect()
+---------
+
+This method should only be needed if the low level native freetype bindings are being use directly. See [Font::FreeType::Raw](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw). 
+
 See Also
 --------
 

@@ -19,6 +19,7 @@ class Font::FreeType::Face {
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
         height max-advance-width max-advance-height size>;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
+    has Lock $!lock handles<protect> .= new;
 
     submethod TWEAK(FT_Face:D :$!raw!) { }
     method native is also<unbox struct> is DEPRECATED("please use .raw() method") { $!raw }
@@ -164,13 +165,17 @@ class Font::FreeType::Face {
     }
 
     method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
-        my FT_F26Dot6 $w = ($width * Px).round;
-        my FT_F26Dot6 $h = ($height * Px).round;
-        ft-try({ $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
+        $!lock.protect: sub () is hidden-from-backtrace {
+            my FT_F26Dot6 $w = ($width * Px).round;
+            my FT_F26Dot6 $h = ($height * Px).round;
+            ft-try({ $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
+        }
     }
 
     method set-pixel-sizes(UInt $width, UInt $height) {
-        ft-try({ $!raw.FT_Set_Pixel_Sizes($width, $height) });
+        $!lock.protect: sub () is hidden-from-backtrace {
+            ft-try({ $!raw.FT_Set_Pixel_Sizes($width, $height) });
+        }
     }
 
     method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_UNFITTED) {
@@ -185,21 +190,24 @@ class Font::FreeType::Face {
         $!raw.num-glyphs;
     }
 
-    multi method iterate-chars(Font::FreeType::Face:D: Str:D $text, :$flags = $!load-flags) {
+    multi method iterate-chars(::?CLASS:D: Str:D $text, :$flags = $!load-flags) {
         class TextIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has Int:D $.flags is required;
             has UInt:D @.ords is required;
+            has Lock:D $.lock is required;
             has FT_Face $!raw = $!face.raw;
             has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph);
             has UInt:D $!idx = 0;
             method pull-one {
                 if $!idx < @!ords {
-                    my $code := @!ords[$!idx++];
-                    $!glyph.stat = $!raw.FT_Load_Char($code, $!flags);
-                    $!glyph.glyph-index = 0;
-                    $!glyph.char-code = $code;
-                    $!glyph;
+                    $!lock.protect: {
+                        my $code := @!ords[$!idx++];
+                        $!glyph.stat = $!raw.FT_Load_Char($code, $!flags);
+                        $!glyph.glyph-index = 0;
+                        $!glyph.char-code = $code;
+                        $!glyph;
+                    }
                 }
                 else {
                     IterationEnd;
@@ -208,14 +216,15 @@ class Font::FreeType::Face {
             method iterator { self }
         }
         my @ords = $text.ords;
-        TextIteration.new: :face(self), :$flags, :@ords;
+        TextIteration.new: :face(self), :$flags, :@ords, :$!lock;
     }
 
-    multi method iterate-chars(Font::FreeType::Face:D: :$flags = $!load-flags, Bool :$load = True) {
+    multi method iterate-chars(::?CLASS:D: :$flags = $!load-flags, Bool :$load = True) {
         class AllCharsIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has Int:D $.flags is required;
             has Bool $.load is required;
+            has Lock:D $.lock is required;
             has FT_Face $!raw = $!face.raw;
             has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph);
             has FT_UInt $!idx = 0;
@@ -223,41 +232,46 @@ class Font::FreeType::Face {
             method pull-one {
 
                 given $!idx {
-                    $!glyph.char-code = $_
-                        ?? $!raw.FT_Get_Next_Char( $!glyph.char-code, $_)
-                        !! $!raw.FT_Get_First_Char($_);
+                    $!lock.protect: {
+                        $!glyph.char-code = $_
+                            ?? $!raw.FT_Get_Next_Char( $!glyph.char-code, $_)
+                            !! $!raw.FT_Get_First_Char($_);
 
-                    if $_ {
-                        $!glyph.stat = $!raw.FT_Load_Glyph($_, $!flags )
-                            if $!load;
-                        $!glyph.glyph-index = $_;
-                        $!glyph;
-                    }
-                    else {
-                        IterationEnd;
+                        if $_ {
+                            $!glyph.stat = $!raw.FT_Load_Glyph($_, $!flags )
+                                if $!load;
+                            $!glyph.glyph-index = $_;
+                            $!glyph;
+                        }
+                        else {
+                            IterationEnd;
+                        }
                     }
                 }
             }
             method iterator { self }
         }
-        AllCharsIteration.new: :face(self), :$flags, :$load;
+        AllCharsIteration.new: :face(self), :$flags, :$load, :$!lock;
     }
 
-    method iterate-glyphs(Font::FreeType::Face:D: :$flags = $!load-flags) {
+    method iterate-glyphs(::?CLASS:D: :$flags = $!load-flags) {
         class AllGlyphsIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has $.to-unicode is required;
             has Int:D $.flags is required;
+            has Lock:D $.lock is required;
             has FT_Face $!raw = $!face.raw;
             has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph);
             has UInt:D $!idx = 0;
 
             method pull-one {
                 if $!idx < $!raw.num-glyphs {
-                    $!glyph.stat = $!raw.FT_Load_Glyph( $!idx, $!flags );
-                    $!glyph.glyph-index = $!idx;
-                    $!glyph.char-code = $!to-unicode[$!idx++];
-                    $!glyph;
+                    $!lock.protect: {
+                        $!glyph.stat = $!raw.FT_Load_Glyph( $!idx, $!flags );
+                        $!glyph.glyph-index = $!idx;
+                        $!glyph.char-code = $!to-unicode[$!idx++];
+                        $!glyph;
+                    }
                 }
                 else {
                     IterationEnd;
@@ -266,7 +280,7 @@ class Font::FreeType::Face {
             method iterator { self }
         }
         my $to-unicode := self!unicode-map;
-        AllGlyphsIteration.new: :face(self), :$to-unicode, :$flags;
+        AllGlyphsIteration.new: :face(self), :$to-unicode, :$flags, :$!lock;
     }
 
     method NativeCall::Types::Pointer { nativecast(Pointer, $!raw) }
@@ -594,6 +608,11 @@ for example, for integration with the L<Cairo> graphics library.
 
 The C<FT_Reference_Face> and C<FT_Done_Face> methods will need to be called
 if the struct outlives the parent C<$face> object.
+
+=head2 protect()
+
+This method should only be needed if the low level native freetype bindings
+are being use directly. See L<Font::FreeType::Raw>.       
 
 =head2 See Also
 
