@@ -1,6 +1,9 @@
 {{$NEXT}}
-    - Add face lock() attribute. Use it in iterate-chars() and
-      iterate-glyphs() for improved thread-safety
+
+0.4.0  2022-05-18T09:17:23+12:00
+    - Add face lock() attribute. Use it to protect iterate-chars() and
+      iterate-glyphs() anf face update methods for improved thread-safety
+    - Change from CPAN to zef repository
 
 0.3.11  2022-02-15T05:39:32+13:00
     - Fix failing tests in Rakudo 2022.02
