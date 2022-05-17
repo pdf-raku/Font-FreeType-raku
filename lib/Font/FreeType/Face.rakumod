@@ -413,7 +413,7 @@ method will return an exception object.
 
 If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
 
-=head3 iterate-glyphs
+=head3 iterate-glyphs()
 
     for $face.iterate-glyphs -> Font::FreeType::Glyph $glyph { ... }
 
@@ -590,7 +590,7 @@ An array of the available L<Font::FreeType::CharMap> objects for the face.
 
 The outline's bounding box for this face.
 
-=head3 raw
+=head3 raw()
 
     use Font::FreeType::Raw;
     use Cairo;
@@ -609,7 +609,7 @@ for example, for integration with the L<Cairo> graphics library.
 The C<FT_Reference_Face> and C<FT_Done_Face> methods will need to be called
 if the struct outlives the parent C<$face> object.
 
-=head2 protect()
+=head3 protect()
 
 This method should only be needed if the low level native freetype bindings
 are being use directly. See L<Font::FreeType::Raw>.       

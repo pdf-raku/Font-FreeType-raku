@@ -101,7 +101,7 @@ If there was an error loading the glyph, then the glyph's, `stat` method will re
 
 If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
 
-### iterate-glyphs
+### iterate-glyphs()
 
     for $face.iterate-glyphs -> Font::FreeType::Glyph $glyph { ... }
 
@@ -242,7 +242,7 @@ An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/F
 
 The outline's bounding box for this face.
 
-### raw
+### raw()
 
     use Font::FreeType::Raw;
     use Cairo;
@@ -259,8 +259,7 @@ This method provides access to the underlying raw FT_Face native struct; for exa
 
 The `FT_Reference_Face` and `FT_Done_Face` methods will need to be called if the struct outlives the parent `$face` object.
 
-protect()
----------
+### protect()
 
 This method should only be needed if the low level native freetype bindings are being use directly. See [Font::FreeType::Raw](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw). 
 
