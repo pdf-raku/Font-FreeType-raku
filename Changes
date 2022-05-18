@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.4.1  2022-05-19T07:04:46+12:00
     - Modify forall-chars() and forall-glyphs() to perform protected calls
     - Deprecate face iterate-chars() and iterate-glyphs() methods in
       favor if forall-chars(), forall-glyphs(). The latter are now more
