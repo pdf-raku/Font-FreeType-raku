@@ -8,6 +8,17 @@ class Font::FreeType::Face
 
 Font typefaces loaded from Font::FreeType
 
+### multi method forall-chars
+
+```raku
+multi method forall-chars(
+    &code,
+    :$flags = Code.new
+) returns Mu
+```
+
+iterate all char-mapped glyphs
+
 Synopsis
 --------
 
@@ -22,7 +33,7 @@ Description
 
 This class represents a font face (or typeface) loaded from a font file. Usually a face represents all the information in the font file (such as a TTF file), although it is possible to have multiple faces in a single file.
 
-Never 'use' this module directly; the class is loaded automatically from Font::FreeType. Use the `Font::FreeType.face()` method to create a new Font::FreeType::Face object from a filename and then use the `iterate-chars()`, or `iterate-glyphs()` methods.
+Never 'use' this module directly; the class is loaded automatically from Font::FreeType. Use the `Font::FreeType.face()` method to create a new Font::FreeType::Face object from a filename and then use the `forall-chars()`, or `forall-glyphs()` methods.
 
 Methods
 -------
@@ -89,23 +100,23 @@ For example, to load particular glyphs (character images):
         say $bitmap.Str;
     }
 
-### iterate-chars($text?)
+### forall-chars($text, &code)
 
-    for $face.iterate-chars -> Font::FreeType::Glyph $glyph { ... }
+    $face.forall-chars: "Raku", -> Font::FreeType::Glyph $glyph { ... }
 
-Iterates through all the characters in the text, and returns the corresponding [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) object for each of them in turn. Glyphs which don't correspond to Unicode characters are ignored.
+Iterates through all the characters in the text, and passes the corresponding [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) object for each of them in turn. Glyphs which don't correspond to Unicode characters are ignored.
 
-Each time your callback code is called, a object is passed for the current glyph.
+Each time your callback code is called, a object is passed for the current glyph. The object is only valid for the duration of the call.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 
 If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
 
-### iterate-glyphs()
+### forall-glyphs()
 
-    for $face.iterate-glyphs -> Font::FreeType::Glyph $glyph { ... }
+    $face.forall-glyphs: -> Font::FreeType::Glyph $glyph { ... }
 
-Iterates through all the glyphs in the font, and returns [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) objects.
+Iterates through all the glyphs in the font, and passes [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) objects.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 

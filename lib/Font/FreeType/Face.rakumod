@@ -128,9 +128,43 @@ class Font::FreeType::Face {
             !! Mu;
     }
 
-    method forall-chars(&code, |c) {
-        for self.iterate-chars(|c) -> $glyph {
-            &code($glyph);
+    multi method forall-chars(Str:D $text, &code, |c) is also<for-glyphs> {
+        self.forall-chars(&code, $text.ords, |c);
+    }
+
+    multi method forall-chars(&code, Str:D $text, |c) {
+        self.forall-chars(&code, $text.ords, |c);
+    }
+
+    multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags) {
+        my FT_GlyphSlot:D $raw = $!raw.glyph;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+
+        @ords.map: -> UInt:D $code {
+            $!lock.protect: {
+                $glyph.stat = $!raw.FT_Load_Char($code, $flags);
+                $glyph.glyph-index = 0;
+                $glyph.char-code = $code;
+                &code($glyph);
+            }
+        }
+    }
+
+    #| iterate all char-mapped glyphs
+    multi method forall-chars(::?CLASS:D $face: &code, :$flags = $!load-flags) {
+        my FT_GlyphSlot:D $raw = $!raw.glyph;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+         my FT_UInt $glyph-idx;
+        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-idx);
+
+        while $glyph-idx {
+            $!lock.protect: {
+                $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
+                $glyph.glyph-index = $glyph-idx;
+                $glyph.char-code = $char-code;
+                &code($glyph);
+            }
+            $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-idx);
         }
     }
 
@@ -148,20 +182,23 @@ class Font::FreeType::Face {
         }
     }
 
-    method for-glyphs($text, &code, |c) {
-        for self.iterate-chars($text, |c) -> $glyph {
-            &code($glyph);
-        }
-    }
+    method forall-glyphs(::?CLASS:D $face: &code, $flags = $!load-flags) {
+        my FT_GlyphSlot:D $raw = $!raw.glyph;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+        my $to-unicode := self!unicode-map;
 
-    method forall-glyphs(&code, |c) {
-        for self.iterate-glyphs(|c) -> $glyph {
-            &code($glyph);
+        (0 ..^ $!raw.num-glyphs).map: -> $idx {
+            $!lock.protect: {
+                $glyph.stat = $!raw.FT_Load_Glyph($idx, $flags);
+                $glyph.glyph-index = $idx;
+                $glyph.char-code = $to-unicode[$idx];
+                &code($glyph);
+            }
         }
     }
 
     method glyph-images(Str $text, Int :$flags = $!load-flags) {
-        my Font::FreeType::GlyphImage @ = self.iterate-chars($text, :$flags)».glyph-image;
+        my Font::FreeType::GlyphImage @ = self.forall-chars($text, :$flags, {.glyph-image});
     }
 
     method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
@@ -190,7 +227,7 @@ class Font::FreeType::Face {
         $!raw.num-glyphs;
     }
 
-    multi method iterate-chars(::?CLASS:D: Str:D $text, :$flags = $!load-flags) {
+    multi method iterate-chars(::?CLASS:D: Str:D $text, :$flags = $!load-flags) is DEPRECATED<forall-chars> {
         class TextIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has Int:D $.flags is required;
@@ -219,7 +256,8 @@ class Font::FreeType::Face {
         TextIteration.new: :face(self), :$flags, :@ords, :$!lock;
     }
 
-    multi method iterate-chars(::?CLASS:D: :$flags = $!load-flags, Bool :$load = True) {
+    # not thread-safe: deprecated
+    multi method iterate-chars(::?CLASS:D: :$flags = $!load-flags, Bool :$load = True) is DEPRECATED<forall-chars> {
         class AllCharsIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has Int:D $.flags is required;
@@ -254,7 +292,8 @@ class Font::FreeType::Face {
         AllCharsIteration.new: :face(self), :$flags, :$load, :$!lock;
     }
 
-    method iterate-glyphs(::?CLASS:D: :$flags = $!load-flags) {
+    # not thread-safe: deprecated
+    method iterate-glyphs(::?CLASS:D: :$flags = $!load-flags) is DEPRECATED<forall-glyphs> {
         class AllGlyphsIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has $.to-unicode is required;
@@ -311,7 +350,7 @@ a TTF file), although it is possible to have multiple faces in a single
 file.
 
 Never 'use' this module directly; the class is loaded automatically from Font::FreeType.  Use the `Font::FreeType.face()`
-method to create a new Font::FreeType::Face object from a filename and then use the `iterate-chars()`, or `iterate-glyphs()` methods.
+method to create a new Font::FreeType::Face object from a filename and then use the `forall-chars()`, or `forall-glyphs()` methods.
 
 =head2 Methods
 
@@ -399,25 +438,25 @@ For example, to load particular glyphs (character images):
     }
 
 
-=head3 iterate-chars($text?)
+=head3 forall-chars($text, &code)
 
-    for $face.iterate-chars -> Font::FreeType::Glyph $glyph { ... }
+    $face.forall-chars: "Raku", -> Font::FreeType::Glyph $glyph { ... }
 
-Iterates through all the characters in the text, and returns the corresponding
+Iterates through all the characters in the text, and passes the corresponding
 L<Font::FreeType::Glyph> object for each of them in turn.  Glyphs which don't correspond to Unicode characters are ignored.
 
-Each time your callback code is called, a  object is passed for the current glyph.
+Each time your callback code is called, a  object is passed for the current glyph. The object is only valid for the duration of the call.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error`
 method will return an exception object.
 
 If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
 
-=head3 iterate-glyphs()
+=head3 forall-glyphs()
 
-    for $face.iterate-glyphs -> Font::FreeType::Glyph $glyph { ... }
+    $face.forall-glyphs: -> Font::FreeType::Glyph $glyph { ... }
 
-Iterates through all the glyphs in the font, and returns L<Font::FreeType::Glyph> objects.
+Iterates through all the glyphs in the font, and passes L<Font::FreeType::Glyph> objects.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error`
 method will return an exception object.

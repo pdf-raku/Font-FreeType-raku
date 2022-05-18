@@ -68,7 +68,7 @@ is $bdf.bounding-box, Mu, "no bounding box for fixed size font";
 my $glyph-list-filename = 't/fonts/bdf_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;
 my $i = 0;
-for $bdf.iterate-chars {
+$bdf.forall-chars: {
     my $line = @glyph-list[$i++];
     die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;

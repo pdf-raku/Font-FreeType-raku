@@ -1,4 +1,8 @@
 {{$NEXT}}
+    - Modify forall-chars() and forall-glyphs() to perform protected calls
+    - Deprecate face iterate-chars() and iterate-glyphs() methods in
+      favor if forall-chars(), forall-glyphs(). The latter are now more
+      inherently thread-safe.
 
 0.4.0  2022-05-18T09:17:23+12:00
     - Add face lock() attribute. Use it to protect iterate-chars() and
