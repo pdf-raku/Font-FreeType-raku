@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.4.2  2022-06-21T09:25:39+12:00
     - The Font::FreeType::Outline bbox method now returns a
       Font::FreeType::BBox object rather than a raw FT_BBox.
     - The following Font::FreeType::Face methods now return

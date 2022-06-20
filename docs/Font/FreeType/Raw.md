@@ -65,7 +65,7 @@ initialize a bitmap structure.
 ```raku
 method clone(
     Font::FreeType::Raw::FT_Library $library
-) returns Mu
+) returns Font::FreeType::Raw::FT_Bitmap
 ```
 
 make a copy of the bitmap
