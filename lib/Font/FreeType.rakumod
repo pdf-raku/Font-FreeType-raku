@@ -13,7 +13,7 @@ class Font::FreeType:ver<0.4.1> {
 
     submethod BUILD {
         my $p = Pointer[FT_Library].new;
-        ft-try({ FT_Init_FreeType( $p ); });
+        ft-try { FT_Init_FreeType( $p ); };
         $!raw = $p.deref;
     }
     method native is also<struct unbox> is DEPRECATED("Please use the 'raw' method") { $!raw }
@@ -21,16 +21,20 @@ class Font::FreeType:ver<0.4.1> {
     submethod DESTROY {
         $lock.protect: {
             with $!raw {
-                ft-try({ .FT_Done_FreeType });
+                ft-try { .FT_Done_FreeType };
             }
         }
     }
 
-    multi method face(::?CLASS:U \class: |c) is hidden-from-backtrace {
+    multi method face(::?CLASS:U \class: |c --> Font::FreeType::Face:D) is hidden-from-backtrace {
         class.new.face(|c);
     }
 
-    multi method face(::?CLASS:D $ft-lib: Str:D $file-path-name, Int :$index = 0, |c) is hidden-from-backtrace {
+    multi method face(::?CLASS:D $ft-lib:
+                      Str:D $file-path-name,
+                      Int :$index = 0,
+                      |c --> Font::FreeType::Face:D
+                     ) is hidden-from-backtrace {
         my $p = Pointer[FT_Face].new;
         $lock.protect: sub () is hidden-from-backtrace {
             CATCH {
@@ -39,27 +43,30 @@ class Font::FreeType:ver<0.4.1> {
                     .rethrow;
                 }
             }
-            ft-try({ $!raw.FT_New_Face($file-path-name, $index, $p); });
+            ft-try { $!raw.FT_New_Face($file-path-name, $index, $p); };
         }
         my FT_Face:D $raw = $p.deref;
         Font::FreeType::Face.new: :$raw, :$ft-lib, |c;
     }
 
-    multi method face(::?CLASS:D:
+    multi method face(::?CLASS:D $ft-lib:
                       Blob:D $buf,
                       Int :$size = $buf.bytes,
                       Int :$index = 0,
-                      |c
-        ) is hidden-from-backtrace {
+                      |c --> Font::FreeType::Face:D
+                     ) is hidden-from-backtrace {
         my $p = Pointer[FT_Face].new;
         ft-try(sub () is hidden-from-backtrace {
                       $!raw.FT_New_Memory_Face($buf, $size, $index, $p);
                   });
         my FT_Face:D $raw = $p.deref;
-        Font::FreeType::Face.new: :$raw, :ft-lib(self), |c;
+        Font::FreeType::Face.new: :$raw, :$ft-lib, |c;
     }
 
-    multi method face(::?CLASS:D: IO::Handle:D $fh, |c) is hidden-from-backtrace {
+    multi method face(::?CLASS:D:
+                      IO::Handle:D $fh,
+                      |c --> Font::FreeType::Face:D
+                     ) is hidden-from-backtrace {
         CATCH {
             when Font::FreeType::Error {
                 .details = "loading IO handle '{$fh.path}'";
@@ -73,7 +80,7 @@ class Font::FreeType:ver<0.4.1> {
     multi method version(::?CLASS:U:) {
         self.new.version;
     }
-    multi method version(::?CLASS:D:) returns Version {
+    multi method version(::?CLASS:D:) returns Version:D {
         $!raw.FT_Library_Version(my FT_Int $major, my FT_Int $minor, my FT_Int $patch);
         Version.new: "{$major}.{$minor}.{$patch}";
     }

@@ -19,31 +19,31 @@ class Font::FreeType::Glyph is rw {
     has FT_Error     $.stat;
     submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
     method error  { Font::FreeType::Error.new: :error($!stat) }
-    method name { $!face.glyph-name-from-index: $.index }
-    method index {
+    method name returns Str:D { $!face.glyph-name-from-index: $.index }
+    method index returns UInt:D {
         $!glyph-index ||= $!face.raw.FT_Get_Char_Index: $!char-code;
     }
-    method left-bearing { $.metrics.hori-bearing-x / Px; }
-    method right-bearing {
+    method left-bearing returns Rat:D { $.metrics.hori-bearing-x / Px; }
+    method right-bearing returns Rat:D {
         (.hori-advance - .hori-bearing-x - .width) / Px
             with $.metrics
     }
-    method horizontal-advance {
+    method horizontal-advance returns Rat:D {
         $.metrics.hori-advance / Px;
     }
-    method vertical-advance {
+    method vertical-advance returns Rat:D {
         $.metrics.vert-advance / Px;
     }
-    method width { $.metrics.width / Px }
-    method height { $.metrics.height / Px }
+    method width returns Rat:D { $.metrics.width / Px }
+    method height returns Rat:D { $.metrics.height / Px }
     method Str   { $!char-code.chr }
-    method format { FT_GLYPH_FORMAT($!raw.format) }
+    method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
 
     method is-outline {
         $.format == FT_GLYPH_FORMAT_OUTLINE;
     }
 
-    method glyph-image handles<bitmap outline decompose> {
+    method glyph-image handles<bitmap outline decompose> returns Font::FreeType::GlyphImage:D {
         my $top = $!raw.bitmap-top;
         my $left = $!raw.bitmap-left;
         Font::FreeType::GlyphImage.new: :$!face, :glyph($!raw), :$left, :$top, :$!char-code, :$.index;

@@ -3,6 +3,7 @@ use v6;
 use Test;
 plan 59 + 4 * 1 + 1836 * 1;
 use Font::FreeType;
+use Font::FreeType::Raw;
 use Font::FreeType::Raw::Defs;
 
 my Font::FreeType $ft .= new;
@@ -39,11 +40,11 @@ for %expected-flags.pairs.sort {
 
 # Some other general properties.
 is $bdf.num-glyphs, 1837, '$face.num-glyphs';
-is $bdf.units-per-EM, Mu, 'units-per-em() meaningless';
-is $bdf.underline-position, Mu, 'underline position meaningless';
-is $bdf.underline-thickness, Mu, 'underline thickness meaningless';
-is $bdf.ascender, Mu, 'ascender meaningless';
-is $bdf.descender, Mu, 'descender meaningless';
+is-deeply $bdf.units-per-EM, Int, 'units-per-em() undef';
+is-deeply $bdf.underline-position, Int, 'underline position undef';
+is-deeply $bdf.underline-thickness,Int, 'underline thickness undef';
+is-deeply $bdf.ascender, Int, 'ascender undef';
+is-deeply $bdf.descender, Int, 'descender undef';
 
 # Test getting the set of fixed sizes available.
 is $bdf.num-fixed-sizes, 1, 'BDF files have a single fixed size';
@@ -63,7 +64,7 @@ ok(abs($fixed-size.size * $fixed-size.y-res(:dpi) / 72
        - $fixed-size.y-res(:ppem)) < 0.1, 'fixed size y resolution in ppem');
 
 is $bdf.named-infos, Mu, "no named infos for fixed size font";
-is $bdf.bounding-box, Mu, "no bounding box for fixed size font";
+is-deeply $bdf.bounding-box, FT_BBox, "no bounding box for fixed size font";
 
 my $glyph-list-filename = 't/fonts/bdf_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;

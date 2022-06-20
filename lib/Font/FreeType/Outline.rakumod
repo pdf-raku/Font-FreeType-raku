@@ -4,6 +4,7 @@ class Font::FreeType::Outline {
     has $.face is required;
     use NativeCall;
     use Font::FreeType::Error;
+    use Font::FreeType::BBox;
     use Font::FreeType::Raw;
     use Font::FreeType::Raw::Defs;
 
@@ -19,18 +20,14 @@ class Font::FreeType::Outline {
         :FT_OUTLINE_OP_CONIC_TO
         »;
 
-    class ft_shape_t is repr('CStruct') {
+    class ft6_shape_t is repr('CStruct') {
         has int32 $.n-points;
         has int32 $.n-ops;
         has int32 $!max-points;
-        has CArray $!ops;
-        has CArray $!points;
+        has CArray[uint8] $.ops;
+        has CArray[num64] $.points;
 
-        submethod TWEAK(:$!max-points!) {
-        }
-
-        method ops { nativecast(CArray[uint8], $!ops) }
-        method points { nativecast(CArray[num64], $!points) }
+        submethod TWEAK(:$!max-points!) { }
 
         method gather_outlines(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
             returns FT_Error is native($FT-WRAPPER-LIB) is symbol('ft6_outline_gather') {*}
@@ -47,7 +44,7 @@ class Font::FreeType::Outline {
 
     submethod TWEAK(:$!raw!) { }
 
-     method !render-shape(ft_shape_t:D $shape, %cb) {
+    method !render-shape(ft6_shape_t:D $shape, %cb) {
 
         my $ops = $shape.ops;
         my $pts = $shape.points;
@@ -83,30 +80,36 @@ class Font::FreeType::Outline {
         }
     }
 
-    method decompose( Bool :$conic = False, Int :$shift = 0, Int :$delta = 0, :%callbacks) {
+    method decompose(
+        Bool :$conic = False,
+        Int :$shift = 0,
+        Int :$delta = 0,
+        :%callbacks
+        --> ft6_shape_t:D
+    ) {
         my int32 $max-points = $!raw.n-points * 6;
-        my ft_shape_t $shape .= new: :$max-points;
-        ft-try({ $shape.gather_outlines($!raw, $shift, $delta, $conic ?? 1 !! 0); });
+        my ft6_shape_t $shape .= new: :$max-points;
+        ft-try { $shape.gather_outlines($!raw, $shift, $delta, $conic ?? 1 !! 0); };
         self!render-shape($shape, %callbacks)
             if %callbacks;
         $shape;
     }
 
-    method bbox {
+    method bbox returns Font::FreeType::BBox:D {
         my FT_BBox $bbox .= new;
-        ft-try({ $!raw.FT_Outline_Get_BBox($bbox); });
-        $bbox;
+        ft-try { $!raw.FT_Outline_Get_BBox($bbox); };
+        Font::FreeType::BBox.new: :$bbox;
     }
 
     method Array {
-        my $bbox = self.bbox;
-        [floor($bbox.x-min / 64.0), floor($bbox.y-min / 64.0),
-         ceiling($bbox.x-max / 64.0), ceiling($bbox.y-max / 64.0)]
+        my FT_BBox $bbox = self.bbox;
+        [floor($bbox.x-min), floor($bbox.y-min),
+         ceiling($bbox.x-max), ceiling($bbox.y-max)]
     }
 
-    method postscript {
+    method postscript returns Str:D {
         my Str @lines;
-        my ft_shape_t $shape = self.decompose;
+        my ft6_shape_t $shape = self.decompose;
         my $ops = $shape.ops;
         my $pts = $shape.points;
         my int $j = 0;
@@ -121,9 +124,9 @@ class Font::FreeType::Outline {
         @lines.join: "\n";
     }
 
-    method svg {
+    method svg returns Str:D {
         my Str @path;
-        my ft_shape_t $shape = self.decompose(:conic);
+        my ft6_shape_t $shape = self.decompose(:conic);
         my $ops = $shape.ops;
         my $pts = $shape.points;
         my int $j = 0;
@@ -138,17 +141,16 @@ class Font::FreeType::Outline {
     }
 
     method bold(Int $strength) {
-        $!raw.FT_Outline_Embolden($strength);
+        ft-try { $!raw.FT_Outline_Embolden($strength); }
     }
 
-    method clone {
+    method clone returns ::?CLASS:D {
         my $outline = $!raw.clone(self!library);
         self.new: :raw($outline), :$!face;
     }
 
     method DESTROY {
-        ft-try({ self!library.FT_Outline_Done($!raw) });
-        $!raw = Nil;
+        ft-try { self!library.FT_Outline_Done($!raw); };
     }
 }
 

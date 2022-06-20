@@ -24,32 +24,32 @@ class Font::FreeType::BitMap {
     constant Dpi = 72.0;
     constant Px = 64.0;
 
-    method size { $!raw.size / Px }
-    multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Px }
-    multi method x-res(:$dpi!  where .so) { Dpi/Px * $!raw.x-ppem / self.size }
-    multi method y-res(:$ppem! where .so) { $!raw.y-ppem / Px }
-    multi method y-res(:$dpi!  where .so) { Dpi/Px * $!raw.y-ppem / self.size }
+    method size returns Rat:D { $!raw.size / Px }
+    multi method x-res(:$ppem! where .so) returns Rat:D { $!raw.x-ppem / Px }
+    multi method x-res(:$dpi!  where .so) returns Rat:D { Dpi/Px * $!raw.x-ppem / self.size }
+    multi method y-res(:$ppem! where .so) returns Rat:D { $!raw.y-ppem / Px }
+    multi method y-res(:$dpi!  where .so) returns Rat:D { Dpi/Px * $!raw.y-ppem / self.size }
 
-    method convert(UInt :$alignment = 1) {
+    method convert(UInt :$alignment = 1 --> ::?CLASS:D) {
         my FT_Bitmap $target .= new;
-        ft-try({ self!library.FT_Bitmap_Convert($!raw, $target, $alignment); });
+        ft-try { self!library.FT_Bitmap_Convert($!raw, $target, $alignment); };
         self.new: :$!face, :raw($target), :$!left, :$!top;
     }
 
-    method depth {
+    method depth returns UInt:D {
         constant @BitsPerPixel = [Mu, 1, 8, 2, 4, 8, 8, 24];
         with $!raw.pixel-mode {
             @BitsPerPixel[$_];
         }
     }
 
-    method !get-pixel-buf(Bool :$color = False) {
+    method !get-pixel-buf(Bool :$color = False --> buf8) {
         my buf8 $pixels .= allocate($.depth * $.rows * $.width);
-        ft-try({ $!raw.get-pixels($pixels); });
+        ft-try { $!raw.get-pixels($pixels); };
         $pixels;
     }
 
-    method pixels {
+    method pixels returns array[uint8] {
         my uint8 @pixels[$.rows;$.width] Z= self!get-pixel-buf;
         @pixels;
     }
@@ -80,14 +80,14 @@ class Font::FreeType::BitMap {
         $buf;
     }
 
-    method clone {
+    method clone returns ::?CLASS:D {
         return self unless self.defined;
         my $bitmap = $!raw.clone(self!library);
         self.new: :$!face, :raw($bitmap), :$!top, :$!left; 
     }
 
     method DESTROY {
-        ft-try({ self!library.FT_Bitmap_Done($!raw) });
+        ft-try { self!library.FT_Bitmap_Done($!raw) };
         $!raw = Nil;
     }
 

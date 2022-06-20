@@ -86,9 +86,9 @@ class FT_Bitmap is repr('CStruct') is export {
     {*}
 
     #| make a copy of the bitmap
-    method clone(FT_Library $library) {
+    method clone(FT_Library $library --> ::?CLASS:D) {
         my FT_Bitmap $bitmap .= new;
-        ft-try({ $library.FT_Bitmap_Copy(self, $bitmap); });
+        ft-try { $library.FT_Bitmap_Copy(self, $bitmap); };
         $bitmap;
     }
 }
@@ -123,6 +123,13 @@ class FT_BBox is repr('CStruct') is export {
     has FT_Pos  ($.x-max, $.y-max);
     #| returns [x-min, y-min, x-max, y-max]
     method Array { [$!x-min, $!y-min, $!x-max, $!y-max] }
+    method clone(::?CLASS:D:) {
+        my $bbox = self.new;
+        my Pointer:D $src = nativecast(Pointer, self);
+        my Pointer:D $dest = nativecast(Pointer, $bbox);
+        memcpy($dest, $src, nativesizeof($bbox));
+        $bbox;
+    }
  }
 
 #| A structure to model the metrics of a single glyph. The values are expressed in 26.6 fractional pixel format; if the flag FT_LOAD_NO_SCALE has been used while loading the glyph, values are expressed in font units instead.
@@ -164,10 +171,10 @@ class FT_Outline is repr('CStruct') is export {
     method FT_Outline_Embolden(FT_Pos $strength)
         returns FT_Error is native($FT-LIB) {*};
 
-    method clone(FT_Library $library) {
+    method clone(FT_Library $library --> ::?CLASS:D) {
         my FT_Outline $outline .= new;
-        ft-try({ $library.FT_Outline_New( self.n-points, self.n-contours, $outline) });
-        ft-try({ self.FT_Outline_Copy($outline) });
+        ft-try { $library.FT_Outline_New( self.n-points, self.n-contours, $outline) };
+        ft-try { self.FT_Outline_Copy($outline) };
         $outline;
     }
 }

@@ -1,14 +1,20 @@
 {{$NEXT}}
+    - The Font::FreeType::Outline bbox method now returns a
+      Font::FreeType::BBox object rather than a raw FT_BBox.
+    - The following Font::FreeType::Face methods now return
+      Int:U rather than Mu for unscaleable fonts: units-per-em,
+      underline-position, underline-thickness, ascender, descender
+    - Also added return types for various other methods.
 
 0.4.1  2022-05-19T07:04:46+12:00
     - Modify forall-chars() and forall-glyphs() to perform protected calls
     - Deprecate face iterate-chars() and iterate-glyphs() methods in
-      favor if forall-chars(), forall-glyphs(). The latter are now more
-      inherently thread-safe.
+      favor if forall-chars(), forall-glyphs(). The latter are now
+      locked for thread-safety.
 
 0.4.0  2022-05-18T09:17:23+12:00
     - Add face lock() attribute. Use it to protect iterate-chars() and
-      iterate-glyphs() anf face update methods for improved thread-safety
+      iterate-glyphs() and face update methods for improved thread-safety
     - Change from CPAN to zef repository
 
 0.3.11  2022-02-15T05:39:32+13:00

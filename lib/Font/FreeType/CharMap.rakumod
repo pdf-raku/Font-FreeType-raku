@@ -3,10 +3,10 @@ class Font::FreeType::CharMap {
     use Font::FreeType::Raw;
     use Font::FreeType::Raw::Defs;
 
-    has $.face;
+    has $.face is required; # to prevent GC
     has FT_CharMap $!raw handles <platform-id encoding-id>;
     submethod TWEAK(:$!raw!) { }
-    method encoding { FT_ENCODING($!raw.encoding) }
+    method encoding returns UInt:D { FT_ENCODING($!raw.encoding) }
 }
 
 =begin pod

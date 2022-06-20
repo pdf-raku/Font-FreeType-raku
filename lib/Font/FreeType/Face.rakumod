@@ -23,20 +23,24 @@ class Font::FreeType::Face {
 
     submethod TWEAK(FT_Face:D :$!raw!) { }
     method native is also<unbox struct> is DEPRECATED("please use .raw() method") { $!raw }
-    method units-per-EM { self.is-scalable ?? $!raw.units-per-EM !! Mu }
-    method underline-position  { self.is-scalable ?? $!raw.underline-position  !! Mu }
-    method underline-thickness { self.is-scalable ?? $!raw.underline-thickness !! Mu }
-    method bounding-box { self.is-scalable ?? $!raw.bbox !! Mu }
+    method units-per-EM returns UInt { self.is-scalable ?? $!raw.units-per-EM !! Int }
+    method underline-position returns Int { self.is-scalable ?? $!raw.underline-position  !! Int }
+    method underline-thickness returns Int { self.is-scalable ?? $!raw.underline-thickness !! Int }
+    method bounding-box returns FT_BBox {
+        my FT_BBox $bbox = $!raw.bbox.clone
+            if self.is-scalable;
+        $bbox;
+    }
 
-    method ascender  { self.is-scalable ?? $!raw.ascender  !! Mu }
-    method descender { self.is-scalable ?? $!raw.descender !! Mu }
+    method ascender returns Int { self.is-scalable ?? $!raw.ascender  !! Int }
+    method descender returns Int { self.is-scalable ?? $!raw.descender !! Int }
 
     subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT';
     method font-format returns FontFormat {
         $!raw.FT_Get_Font_Format;
     }
 
-    method fixed-sizes {
+    method fixed-sizes returns Seq {
         my int $n-sizes = self.num-fixed-sizes;
         my $ptr = $!raw.available-sizes;
         (^$n-sizes).map: {
@@ -45,13 +49,13 @@ class Font::FreeType::Face {
         }
     }
 
-    method charmap {
+    method charmap returns Font::FreeType::CharMap {
         my Font::FreeType::CharMap $charmap .= new: :face(self), :raw($_)
             with $!raw.charmap;
         $charmap;
     }
 
-    method charmaps {
+    method charmaps returns Seq {
         my int $n-sizes = self.num-charmaps;
         my $ptr = $!raw.charmaps;
         (0 ..^ $n-sizes).map: {
@@ -73,12 +77,12 @@ class Font::FreeType::Face {
         my int $n-sizes = $!raw.FT_Get_Sfnt_Name_Count;
         (^$n-sizes).map: -> $i {
             my FT_SfntName $sfnt .= new;
-            ft-try({ $!raw.FT_Get_Sfnt_Name($i, $sfnt); });
+            ft-try { $!raw.FT_Get_Sfnt_Name($i, $sfnt); };
             Font::FreeType::NamedInfo.new: :raw($sfnt);
         }
     }
 
-    method postscript-name { $!raw.FT_Get_Postscript_Name }
+    method postscript-name returns Str { $!raw.FT_Get_Postscript_Name }
 
     method !flag-set(FT_FACE_FLAG $f) { ?($!raw.face-flags +& $f) }
     method is-scalable { self!flag-set: FT_FACE_FLAG_SCALABLE }
@@ -95,11 +99,11 @@ class Font::FreeType::Face {
 
     method !get-glyph-name(UInt $glyph-index) {
         my buf8 $buf .= allocate(256);
-        ft-try({ $!raw.FT_Get_Glyph_Name($glyph-index, $buf, $buf.bytes); });
+        ft-try { $!raw.FT_Get_Glyph_Name($glyph-index, $buf, $buf.bytes); };
         nativecast(Str, $buf);
     }
 
-    proto glyph-name($ --> Int) {*}
+    proto glyph-name($ --> Str) {*}
     multi method glyph-name(Str:D $char) {
         my FT_UInt $index = $!raw.FT_Get_Char_Index( $char.ord );
         $.glyph-name-from-index($index);
@@ -116,27 +120,27 @@ class Font::FreeType::Face {
         $!raw.FT_Get_Char_Index($char-code);
     }
 
-    multi method glyph-name-from-index(UInt $glyph-index) {
+    method glyph-name-from-index(UInt:D $glyph-index --> Str) {
         self.has-glyph-names
             ?? self!get-glyph-name($glyph-index)
-            !! Mu;
+            !! Str;
     }
 
-    method index-from-glyph-name(Str:D $glyph-name) {
+    method index-from-glyph-name(Str:D $glyph-name --> Int) {
          self.has-glyph-names
             ?? $!raw.FT_Get_Name_Index($glyph-name)
-            !! Mu;
+            !! Int;
     }
 
     multi method forall-chars(Str:D $text, &code, |c) is also<for-glyphs> {
         self.forall-chars(&code, $text.ords, |c);
     }
 
-    multi method forall-chars(&code, Str:D $text, |c) {
+    multi method forall-chars(&code, Str:D $text, |c --> Seq) {
         self.forall-chars(&code, $text.ords, |c);
     }
 
-    multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags) {
+    multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags --> Seq) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
 
@@ -205,13 +209,13 @@ class Font::FreeType::Face {
         $!lock.protect: sub () is hidden-from-backtrace {
             my FT_F26Dot6 $w = ($width * Px).round;
             my FT_F26Dot6 $h = ($height * Px).round;
-            ft-try({ $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) });
+            ft-try { $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) };
         }
     }
 
     method set-pixel-sizes(UInt $width, UInt $height) {
         $!lock.protect: sub () is hidden-from-backtrace {
-            ft-try({ $!raw.FT_Set_Pixel_Sizes($width, $height) });
+            ft-try { $!raw.FT_Set_Pixel_Sizes($width, $height) };
         }
     }
 
@@ -219,7 +223,7 @@ class Font::FreeType::Face {
         my FT_UInt $left-idx = $!raw.FT_Get_Char_Index( $left.ord );
         my FT_UInt $right-idx = $!raw.FT_Get_Char_Index( $right.ord );
         my FT_Vector $vec .= new;
-        ft-try({ $!raw.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); });
+        ft-try { $!raw.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); };
         Vector.new: :raw($vec);
     }
 
@@ -326,7 +330,7 @@ class Font::FreeType::Face {
 
     submethod DESTROY {
         with $!raw {
-            ft-try({ .FT_Done_Face });
+            ft-try { .FT_Done_Face };
             $_ = Nil;
         }
     }

@@ -66,8 +66,8 @@ for $vera.glyph-images('B') {
     my $outline = .outline;
 
     my $bbox = $outline.bbox;
-    is $bbox.x-max, 11813, 'bbox x-max';
-    is $bbox.y-max, 13997, 'bbox y-max';
+    is-approx $bbox.x-max, 184.578125, 'bbox x-max';
+    is-approx $bbox.y-max, 218.703125, 'bbox y-max';
 
     my $ps = $outline.postscript;
     my $bmp = .bitmap;
