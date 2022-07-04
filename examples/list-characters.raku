@@ -7,7 +7,7 @@ sub MAIN(Str $filename, Bool :$mapped) {
     my $face = Font::FreeType.new.face($filename);
     my @charmap;
 
-    for $face.iterate-chars(:!load, :flags(FT_LOAD_NO_RECURSE)) -> Font::FreeType::Glyph:D $_ {
+    $face.forall-chars: :!load, :flags(FT_LOAD_NO_RECURSE), -> Font::FreeType::Glyph:D $_ {
         my $char = .char-code.chr;
         @charmap[.index] = $char;
         if $mapped // True {
@@ -20,7 +20,7 @@ sub MAIN(Str $filename, Bool :$mapped) {
 
     unless $mapped {
         # output unmappd glyphs
-        for $face.iterate-glyphs(:load, :flags(FT_LOAD_NO_RECURSE)) -> Font::FreeType::Glyph:D $_ {
+        $face.forall-chars: :load, :flags(FT_LOAD_NO_RECURSE), -> Font::FreeType::Glyph:D $_ {
             if .index && !@charmap[.index] {
                 say join("\t", '[' ~ .index ~ ']', '/' ~ (.name//''), );
             }

@@ -23,7 +23,7 @@ sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$b
     $face.set-char-size($size, 0, $dpi, $dpi);
 
     # Find the glyphs of the string.
-    my @metrics = $face.iterate-chars($text).map: {
+    my @metrics = $face.forall-chars: $text, {
         my $lb = .left-bearing;
         my $rb = .right-bearing;
         my $h-adv = .horizontal-advance;
@@ -46,8 +46,8 @@ sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$b
     $img.create($width, $*height, 'white');
     $img.&set-stroke-color('#0000AA');
 
-    my $origin_y = -$face.descender + $border;
-    my ($*text-x, $*text-y) = (-@metrics.head<lb> + $border, $origin_y);
+    my $origin_y = $border - $face.descender;
+    my ($*text-x, $*text-y) = ($border - @metrics.head<lb>, $origin_y);
 
     my $adj_base_y = adjust_position(0, 0)[y];
     my $adj_top_y = adjust_position(0, $face.ascender)[y];
@@ -61,7 +61,7 @@ sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$b
        .draw-line(0, $adj_btm_y, $width, $adj_btm_y);
    }
 
-   for $face.iterate-chars($text) {
+   $face.forall-chars: $text, {
        my ($adj_x, $adj_y) = adjust_position(0, 0);
 
        my Font::FreeType::BitMap $bm = .bitmap;

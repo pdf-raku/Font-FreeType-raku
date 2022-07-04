@@ -25,19 +25,14 @@ jobs:
       - uses: Raku/setup-raku@v1
         with:
           raku-version: ${{ matrix.raku-version }}
+      - name Install Libraries (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: apt-get install -y libfreetype6-dev
+      - name Install Libraries (MacOS)
+        if: matrix.os == 'macOS-latest'
+        run: brew install freetype
       - name: Install Dependencies
         run: |
-          # install and test if need be (includes [test-depends])
-          if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install -y libfreetype6-dev
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-              brew update
-              brew install freetype
-          else
-              echo "$RUNNER_OS not supported"
-              exit 1;
-          fi
-          
           zef install --/test App::Prove6
           zef install --deps-only .
           zef build .
