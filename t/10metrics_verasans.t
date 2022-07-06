@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 65  +  256 * 2  +  268 * 3 + 1;
+plan 68  +  256 * 2  +  268 * 3 + 1;
 use Font::FreeType;
 use Font::FreeType::Raw::Defs;
 
@@ -171,6 +171,15 @@ $vera.forall-glyphs: {
     is .name, $name, "glyph $index name in foreach-glyph";
 };
 is $i, +@glyph-list, "we aren't missing any glyphs";
+
+$vera.forall-glyphs: [42], {
+    my $line = @glyph-list[42];
+    my ($index, $unicode, $name) = split /\s+/, $line;
+    is .index, $index, "glyph $index index in iterate-glyphs";
+    is .char-code, $unicode,
+       "glyph $unicode char code in foreach-char()";
+    is .name, $name, "glyph $index name in foreach-glyph";
+}
 
 is $vera.index-from-glyph-name('G'), 42, 'index-from-glyph-name';
 is $vera.glyph-name-from-index(42), 'G', 'glyph-name-from-index';

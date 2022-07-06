@@ -186,12 +186,27 @@ class Font::FreeType::Face {
         }
     }
 
-    method forall-glyphs(::?CLASS:D $face: &code, $flags = $!load-flags) {
+    multi method forall-glyphs(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
         my $to-unicode := self!unicode-map;
 
         (0 ..^ $!raw.num-glyphs).map: -> $idx {
+            $!lock.protect: {
+                $glyph.stat = $!raw.FT_Load_Glyph($idx, $flags);
+                $glyph.glyph-index = $idx;
+                $glyph.char-code = $to-unicode[$idx];
+                &code($glyph);
+            }
+        }
+    }
+
+    multi method forall-glyphs(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
+        my FT_GlyphSlot:D $raw = $!raw.glyph;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+        my $to-unicode := self!unicode-map;
+
+        @gids.map: -> UInt $idx {
             $!lock.protect: {
                 $glyph.stat = $!raw.FT_Load_Glyph($idx, $flags);
                 $glyph.glyph-index = $idx;
