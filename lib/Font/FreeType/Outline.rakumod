@@ -64,7 +64,7 @@ class Font::FreeType::Outline {
             }
         }
 
-        for 0 ..^ $shape.n-ops -> int $i {
+        for ^$shape.n-ops -> int $i {
             my $op = $ops[$i];
             my $key = <move-to line-to cubic-to conic-to>[$op - 1];
             my $n-args = $op == 1|2 ?? 2 !! 6;
@@ -113,7 +113,7 @@ class Font::FreeType::Outline {
         my $ops = $shape.ops;
         my $pts = $shape.points;
         my int $j = 0;
-        for 0 ..^ $shape.n-ops -> int $i {
+        for ^$shape.n-ops -> int $i {
             my $op = $ops[$i];
             my $ps-op = <moveto lineto curveto conicto>[$op - 1];
             my $n-args = $op == 1|2 ?? 2 !! 6;
@@ -130,7 +130,7 @@ class Font::FreeType::Outline {
         my $ops = $shape.ops;
         my $pts = $shape.points;
         my int $j = 0;
-        for 0 ..^ $shape.n-ops -> int $i {
+        for ^$shape.n-ops -> int $i {
             my $op = $ops[$i];
             my $svg-op = <M L C Q>[$op - 1];
             my $n-args = [2, 2, 6, 4][$op - 1];

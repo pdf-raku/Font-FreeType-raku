@@ -58,7 +58,7 @@ class Font::FreeType::Face {
     method charmaps returns Seq {
         my int $n-sizes = self.num-charmaps;
         my $ptr = $!raw.charmaps;
-        (0 ..^ $n-sizes).map: {
+        (^$n-sizes).map: {
             my FT_CharMap $raw = $ptr[$_];
             Font::FreeType::CharMap.new: :face(self), :$raw;
         }
@@ -598,7 +598,7 @@ Returns the glyph index in the font, or 0 if the character does not exist. `char
 
 Returns the name for the given character.
 
-=head3 glyph-index-from-glyph-name(index)
+=head3 index-from-glyph-name(name)
 
 Returns the glyph index for the given glyph name.
 

@@ -213,7 +213,7 @@ Returns the glyph index in the font, or 0 if the character does not exist. `char
 
 Returns the name for the given character.
 
-### glyph-index-from-glyph-name(index)
+### index-from-glyph-name(name)
 
 Returns the glyph index for the given glyph name.
 
