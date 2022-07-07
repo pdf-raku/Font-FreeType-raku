@@ -152,11 +152,18 @@ magic.raku - Demonstrate MagickWand rendering using Font::FreeType
 
 =head2 Synopsis
 
-magic.raku --text="Text" --shape font-file output
+magick.raku --text="Text" --shape font-file output-image
+
+=head2 Example
+
+    =for code :lang<raku>
+    magic.raku --text="Raku" t/fonts/DejaVuSans.ttf out.png
 
 =head2 Description
 
 This Raku example script demonstrates `MagickWand` rendering of fonts using `Font::FreeType`.
+
+`MagickWand` supports a wide range of image formats; which is determined from the extension of the output file.
 
 The `--shape` option further demonstrates the use of `HarfBuzz` and `HarfBuzz::Font::FreeType` for glyph selection
 and layout. These modules need to be installed prior to
