@@ -19,7 +19,7 @@ class Font::FreeType::Glyph is rw {
     has FT_Error     $.stat;
     submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
     method error  { Font::FreeType::Error.new: :error($!stat) }
-    method name returns Str:D { $!face.glyph-name-from-index: $.index }
+    method name returns Str { $!face.glyph-name-from-index: $.index }
     method index returns UInt:D {
         $!glyph-index ||= $!face.raw.FT_Get_Char_Index: $!char-code;
     }
