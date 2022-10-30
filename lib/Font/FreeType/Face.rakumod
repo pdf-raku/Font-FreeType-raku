@@ -242,6 +242,12 @@ class Font::FreeType::Face {
         Vector.new: :raw($vec);
     }
 
+    method is-internally-keyed-cid returns Bool {
+        my FT_Bool $is-cid;
+        ft-try { $!raw.FT_Get_CID_Is_Internally_CID_Keyed($is-cid) }
+        so $is-cid;
+    }
+
     method Numeric is also<elems> {
         $!raw.num-glyphs;
     }

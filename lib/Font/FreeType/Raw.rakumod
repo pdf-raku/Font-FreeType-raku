@@ -450,6 +450,10 @@ class FT_Face is export {
         int32     $tag)
     returns Pointer is native($FT-LIB) {*}
 
+    method FT_Get_CID_Is_Internally_CID_Keyed(
+        FT_Bool $is_cid is rw
+    ) returns FT_Error is native($FT-LIB) {*};
+
     #| A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
     method FT_Reference_Face
         returns FT_Error is native($FT-LIB) {*};
