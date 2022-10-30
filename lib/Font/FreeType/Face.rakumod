@@ -244,8 +244,13 @@ class Font::FreeType::Face {
 
     method is-internally-keyed-cid returns Bool {
         my FT_Bool $is-cid;
-        ft-try { $!raw.FT_Get_CID_Is_Internally_CID_Keyed($is-cid) }
-        so $is-cid;
+        $!raw.FT_Get_CID_Is_Internally_CID_Keyed($is-cid);
+        with $is-cid {
+            .so
+        }
+        else {
+            Bool
+        }
     }
 
     method Numeric is also<elems> {

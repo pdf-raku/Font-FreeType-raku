@@ -21,6 +21,7 @@ my %expected-flags = (
     :is-italic(False),
     :is-scalable(True),
     :is-sfnt(True),
+    :is-internally-keyed-cid(False),
 );
 
 for %expected-flags.pairs.sort {
@@ -28,5 +29,8 @@ for %expected-flags.pairs.sort {
 }
 
 lives-ok {my Pointer() $ = $face }, 'coerce to Pointer';
+
+$face = $freetype.face('t/fonts/NotoSansHK-Regular-subset.otf');
+is-deeply $face.is-internally-keyed-cid, True;
 
 done-testing;

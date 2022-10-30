@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+0.4.3  2022-10-31T09:42:26+13:00
+    - Add face is-internally-keyed-cid() method (for use by
+      PDF::Font::Loader)
+
 0.4.2  2022-06-21T09:25:39+12:00
     - The Font::FreeType::Outline bbox method now returns a
       Font::FreeType::BBox object rather than a raw FT_BBox.
