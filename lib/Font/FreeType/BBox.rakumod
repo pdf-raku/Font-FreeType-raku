@@ -5,7 +5,6 @@ class Font::FreeType::BBox {
     has Numeric  ($.x-min, $.y-min);
     has Numeric  ($.x-max, $.y-max);
 
-    constant Dpi = 72.0;
     constant Px = 64.0;
 
     submethod TWEAK(FT_BBox :$bbox!) {
