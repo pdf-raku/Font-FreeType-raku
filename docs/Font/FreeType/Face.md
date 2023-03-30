@@ -120,6 +120,26 @@ Iterates through all the glyphs in the font, and passes [Font::FreeType::Glyph](
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error` method will return an exception object.
 
+### forall-char-images($text, &code)
+
+    $face.forall-char-imagess: "Raku", -> Font::FreeType::GlyphImage $glyph-image { ... }
+
+Iterates through all the characters in the text, and passes the corresponding [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage) object for each of them in turn. Glyphs which don't correspond to Unicode characters are ignored.
+
+Each time your callback code is called, a object is passed for the current glyph.
+
+If there was an error loading the glyph image, then the glyph-image's, `stat` method will return non-zero and the `error` method will return an exception object.
+
+If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
+
+### forall-glyph-images()
+
+    $face.forall-glyph-images: -> Font::FreeType::GlyphImage $glyph-image { ... }
+
+Similar to `forall-glyphs`, except that detachable [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage) are returned
+
+If there was an error loading the glyph, then the glyph-images's, `stat` method will return non-zero and the `error` method will return an exception object.
+
 ### has-glyph-names()
 
 True if individual glyphs have names. If so, the names can be retrieved with the `name()` method on [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) objects.

@@ -1,4 +1,7 @@
 {{$NEXT}}
+    - Add face methods forall-glyph-images() and forall-char-images().
+      These are similar to forall-glyphs() and forall-chars() except they
+      return Font::FreeType::GlyphImage rather than Font::FreeType::Glyph.
 
 0.4.3  2022-10-31T09:42:26+13:00
     - Add face is-internally-keyed-cid() method (for use by

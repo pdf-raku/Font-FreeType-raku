@@ -20,20 +20,20 @@ lives-ok {
             }
         }
     }
-}, 'iterate-glyphs';
+}, 'iterate glyphs';
 
 lives-ok {
     my @ = (1..10).race(:batch(1)).map: {
         my $w = 0;
         my $h = 0;
         for @faces -> $face {
-            $face.forall-glyphs: :$flags, {
+            $face.forall-glyph-images: :$flags, {
                 $w += .width;
                 $h += .height;
             }
         }
     }
-}, 'iterate-chars';
+}, 'iterate glyph-images';
 
 lives-ok {
     my @ = (1..10).race(:batch(1)).map: {

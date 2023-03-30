@@ -13,12 +13,14 @@ class Font::FreeType::GlyphImage {
     has FT_Glyph $!raw handles <top left>;
     has FT_ULong  $.char-code;
     has FT_UInt   $.index;
+    has FT_Error  $.stat;
 
+    method error  { Font::FreeType::Error.new: :error($!stat) }
     method !library(--> FT_Library:D) {
         $!face.ft-lib.raw;
     }
 
-    submethod TWEAK(FT_GlyphSlot :$glyph!, :$top, :$left,) {
+    submethod TWEAK(FT_GlyphSlot :$glyph!, :$top = $glyph.bitmap-top, :$left = $glyph.bitmap-left,) {
         my $glyph-p = Pointer[FT_Glyph].new;
         ft-try { $glyph.FT_Get_Glyph($glyph-p) };
         my FT_Glyph $glyph-image = $glyph-p.deref;

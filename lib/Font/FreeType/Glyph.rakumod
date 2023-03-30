@@ -46,7 +46,7 @@ class Font::FreeType::Glyph is rw {
     method glyph-image handles<bitmap outline decompose> returns Font::FreeType::GlyphImage:D {
         my $top = $!raw.bitmap-top;
         my $left = $!raw.bitmap-left;
-        Font::FreeType::GlyphImage.new: :$!face, :glyph($!raw), :$left, :$top, :$!char-code, :$.index;
+        Font::FreeType::GlyphImage.new: :$!face, :glyph($!raw), :$left, :$top, :$!char-code, :$.index, :$!stat;
     }
 
 }

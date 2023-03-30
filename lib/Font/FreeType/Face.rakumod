@@ -140,17 +140,44 @@ class Font::FreeType::Face {
         self.forall-chars(&code, $text.ords, |c);
     }
 
+    multi method forall-char-images(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags --> Seq) {
+        my FT_GlyphSlot:D $glyph = $!raw.glyph;
+
+        @ords.map: -> UInt:D $char-code {
+            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
+                my $stat = $!raw.FT_Load_Char($char-code, $flags);
+                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$stat;
+            }
+            &code($glyph-image);
+        }
+    }
+
     multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags --> Seq) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
 
-        @ords.map: -> UInt:D $code {
+        @ords.map: -> UInt:D $char-code {
             $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Char($code, $flags);
+                $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
                 $glyph.glyph-index = 0;
-                $glyph.char-code = $code;
+                $glyph.char-code = $char-code;
                 &code($glyph);
             }
+        }
+    }
+
+    multi method forall-char-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
+        my FT_GlyphSlot:D $glyph = $!raw.glyph;
+        my FT_UInt $index;
+        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $index);
+
+        while $index {
+            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
+                my $stat = $!raw.FT_Load_Char($char-code, $flags);
+                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$index, :$stat;
+            }
+            &code($glyph-image);
+            $char-code = $!raw.FT_Get_Next_Char( $char-code, $index);
         }
     }
 
@@ -158,17 +185,17 @@ class Font::FreeType::Face {
     multi method forall-chars(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
-         my FT_UInt $glyph-idx;
-        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-idx);
+        my FT_UInt $index;
+        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $index);
 
-        while $glyph-idx {
+        while $index {
             $!lock.protect: {
                 $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
-                $glyph.glyph-index = $glyph-idx;
+                $glyph.glyph-index = $index;
                 $glyph.char-code = $char-code;
                 &code($glyph);
             }
-            $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-idx);
+            $char-code = $!raw.FT_Get_Next_Char( $char-code, $index);
         }
     }
 
@@ -176,13 +203,27 @@ class Font::FreeType::Face {
     method !unicode-map {
         $!unicode-map //= do {
             my uint16 @to-unicode[$.num-glyphs];
-            my FT_UInt  $glyph-idx;
-            my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-idx);
-            while $glyph-idx {
-                @to-unicode[ $glyph-idx ] = $char-code;
-                $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-idx);
+            my FT_UInt  $index;
+            my FT_ULong $char-code = $!raw.FT_Get_First_Char( $index);
+            while $index {
+                @to-unicode[ $index ] = $char-code;
+                $char-code = $!raw.FT_Get_Next_Char( $char-code, $index);
             }
             @to-unicode;
+        }
+    }
+
+    multi method forall-glyph-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
+        my FT_GlyphSlot:D $glyph = $!raw.glyph;
+        my $to-unicode := self!unicode-map;
+
+        (^$!raw.num-glyphs).map: -> $index {
+            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
+                my $stat = $!raw.FT_Load_Glyph($index, $flags);
+                my $char-code = $to-unicode[$index];
+                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$index, :$stat;
+            }
+            &code($glyph-image);
         }
     }
 
@@ -191,13 +232,27 @@ class Font::FreeType::Face {
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
         my $to-unicode := self!unicode-map;
 
-        (^$!raw.num-glyphs).map: -> $idx {
+        (^$!raw.num-glyphs).map: -> $index {
             $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Glyph($idx, $flags);
-                $glyph.glyph-index = $idx;
-                $glyph.char-code = $to-unicode[$idx];
+                $glyph.stat = $!raw.FT_Load_Glyph($index, $flags);
+                $glyph.glyph-index = $index;
+                $glyph.char-code = $to-unicode[$index];
                 &code($glyph);
             }
+        }
+    }
+
+    multi method forall-glyphs-images(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
+        my FT_GlyphSlot:D $glyph = $!raw.glyph;
+        my $to-unicode := self!unicode-map;
+
+        @gids.map: -> UInt $index {
+            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
+                my $stat = $!raw.FT_Load_Glyph($index, $flags);
+                my $char-code = $to-unicode[$index];
+                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$index, :$stat;
+            }
+            &code($glyph-image);
         }
     }
 
@@ -206,18 +261,18 @@ class Font::FreeType::Face {
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
         my $to-unicode := self!unicode-map;
 
-        @gids.map: -> UInt $idx {
+        @gids.map: -> UInt $index {
             $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Glyph($idx, $flags);
-                $glyph.glyph-index = $idx;
-                $glyph.char-code = $to-unicode[$idx];
+                $glyph.stat = $!raw.FT_Load_Glyph($index, $flags);
+                $glyph.glyph-index = $index;
+                $glyph.char-code = $to-unicode[$index];
                 &code($glyph);
             }
         }
     }
 
     method glyph-images(Str $text, Int :$flags = $!load-flags) {
-        my Font::FreeType::GlyphImage @ = self.forall-chars($text, :$flags, {.glyph-image});
+        my Font::FreeType::GlyphImage @ = self.forall-char-images({$_}, $text.ords, :$flags);
     }
 
     method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
@@ -269,10 +324,10 @@ class Font::FreeType::Face {
             method pull-one {
                 if $!idx < @!ords {
                     $!lock.protect: {
-                        my $code := @!ords[$!idx++];
-                        $!glyph.stat = $!raw.FT_Load_Char($code, $!flags);
+                        my $char-code := @!ords[$!idx++];
+                        $!glyph.stat = $!raw.FT_Load_Char($char-code, $!flags);
                         $!glyph.glyph-index = 0;
-                        $!glyph.char-code = $code;
+                        $!glyph.char-code = $char-code;
                         $!glyph;
                     }
                 }
@@ -489,6 +544,29 @@ If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
 Iterates through all the glyphs in the font, and passes L<Font::FreeType::Glyph> objects.
 
 If there was an error loading the glyph, then the glyph's, `stat` method will return non-zero and the `error`
+method will return an exception object.
+
+=head3 forall-char-images($text, &code)
+
+    $face.forall-char-imagess: "Raku", -> Font::FreeType::GlyphImage $glyph-image { ... }
+
+Iterates through all the characters in the text, and passes the corresponding
+L<Font::FreeType::GlyphImage> object for each of them in turn.  Glyphs which don't correspond to Unicode characters are ignored.
+
+Each time your callback code is called, a  object is passed for the current glyph.
+
+If there was an error loading the glyph image, then the glyph-image's, `stat` method will return non-zero and the `error`
+method will return an exception object.
+
+If `$text` is ommitted, all Unicode mapped characters in the font are iterated.
+
+=head3 forall-glyph-images()
+
+    $face.forall-glyph-images: -> Font::FreeType::GlyphImage $glyph-image { ... }
+
+Similar to `forall-glyphs`, except that detachable L<Font::FreeType::GlyphImage> are returned
+
+If there was an error loading the glyph, then the glyph-images's, `stat` method will return non-zero and the `error`
 method will return an exception object.
 
 =head3 has-glyph-names()

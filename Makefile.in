@@ -2,6 +2,7 @@ SRC=src
 DocProj=pdf-raku.github.io
 DocRepo=https://github.com/pdf-raku/$(DocProj)
 DocLinker=../$(DocProj)/etc/resolve-links.raku
+TEST_JOBS ?= 6
 
 all : lib
 
@@ -68,7 +69,7 @@ docs/Font/FreeType/Raw/Defs.md : lib/Font/FreeType/Raw/Defs.rakumod
 docs/Font/FreeType/Raw/TT_Sfnt.md : lib/Font/FreeType/Raw/TT_Sfnt.rakumod
 
 test : all
-	@prove -e"raku -I ." t
+	@prove -e"raku -I ." -j $(TEST_JOBS) t
 
 loudtest : all
 	@prove -e"raku -I ." -v t
