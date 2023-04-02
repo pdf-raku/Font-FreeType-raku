@@ -15,6 +15,7 @@
   "perl": "6",
   "provides": {
     "Font::FreeType": "lib/Font/FreeType.rakumod",
+    "Font::FreeType::_Glyphic": "lib/Font/FreeType/_Glyphic.rakumod",
     "Font::FreeType::BBox": "lib/Font/FreeType/BBox.rakumod",
     "Font::FreeType::BitMap": "lib/Font/FreeType/BitMap.rakumod",
     "Font::FreeType::CharMap": "lib/Font/FreeType/CharMap.rakumod",

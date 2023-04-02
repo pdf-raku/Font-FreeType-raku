@@ -1,6 +1,9 @@
 #| iterator for font typeface glyphs
 class Font::FreeType::Glyph is rw {
 
+    use Font::FreeType::_Glyphic;
+    also does Font::FreeType::_Glyphic;
+
     use NativeCall;
     use Font::FreeType::GlyphImage;
     use Font::FreeType::Raw;
@@ -12,17 +15,8 @@ class Font::FreeType::Glyph is rw {
 
     constant Px = 64.0;
 
-    has $.face is required; # parent object
     has FT_GlyphSlot $!raw handles <metrics>;
-    has FT_ULong     $.char-code;
-    has FT_UInt      $.glyph-index;
-    has FT_Error     $.stat;
     submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
-    method error  { Font::FreeType::Error.new: :error($!stat) }
-    method name returns Str { $!face.glyph-name-from-index: $.index }
-    method index returns UInt:D {
-        $!glyph-index ||= $!face.raw.FT_Get_Char_Index: $!char-code;
-    }
     method left-bearing returns Rat:D { $.metrics.hori-bearing-x / Px; }
     method right-bearing returns Rat:D {
         (.hori-advance - .hori-bearing-x - .width) / Px
@@ -36,7 +30,6 @@ class Font::FreeType::Glyph is rw {
     }
     method width returns Rat:D { $.metrics.width / Px }
     method height returns Rat:D { $.metrics.height / Px }
-    method Str   { $!char-code.chr }
     method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
 
     method is-outline {

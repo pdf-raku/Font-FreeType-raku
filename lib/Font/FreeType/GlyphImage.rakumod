@@ -1,6 +1,8 @@
 #| Glyph images from font typefaces
 class Font::FreeType::GlyphImage {
 
+    use Font::FreeType::_Glyphic;
+    also does Font::FreeType::_Glyphic;
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Raw;
@@ -9,15 +11,10 @@ class Font::FreeType::GlyphImage {
     use Font::FreeType::BitMap;
     use Font::FreeType::Outline;
 
-    has $.face is required; # parent font
     has FT_Glyph $!raw handles <top left>;
-    has FT_ULong  $.char-code;
-    has FT_UInt   $.index;
-    has FT_Error  $.stat;
 
-    method error  { Font::FreeType::Error.new: :error($!stat) }
     method !library(--> FT_Library:D) {
-        $!face.ft-lib.raw;
+        $.face.ft-lib.raw;
     }
 
     submethod TWEAK(FT_GlyphSlot :$glyph!, :$top = $glyph.bitmap-top, :$left = $glyph.bitmap-left,) {
