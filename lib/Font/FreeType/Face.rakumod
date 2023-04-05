@@ -168,16 +168,16 @@ class Font::FreeType::Face {
 
     multi method forall-char-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $glyph = $!raw.glyph;
-        my FT_UInt $index;
-        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $index);
+        my FT_UInt $glyph-index;
+        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
 
-        while $index {
+        while $glyph-index {
             my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
                 my $stat = $!raw.FT_Load_Char($char-code, $flags);
-                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$index, :$stat;
+                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
             }
             &code($glyph-image);
-            $char-code = $!raw.FT_Get_Next_Char( $char-code, $index);
+            $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
         }
     }
 
@@ -185,17 +185,17 @@ class Font::FreeType::Face {
     multi method forall-chars(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
-        my FT_UInt $index;
-        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $index);
+        my FT_UInt $glyph-index;
+        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
 
-        while $index {
+        while $glyph-index {
             $!lock.protect: {
                 $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
-                $glyph.glyph-index = $index;
+                $glyph.glyph-index = $glyph-index;
                 $glyph.char-code = $char-code;
                 &code($glyph);
             }
-            $char-code = $!raw.FT_Get_Next_Char( $char-code, $index);
+            $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
         }
     }
 
@@ -216,12 +216,11 @@ class Font::FreeType::Face {
     multi method forall-glyph-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $glyph = $!raw.glyph;
         my $to-unicode := self!unicode-map;
-
-        (^$!raw.num-glyphs).map: -> $index {
+        (^$!raw.num-glyphs).map: -> $glyph-index {
             my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
-                my $stat = $!raw.FT_Load_Glyph($index, $flags);
-                my $char-code = $to-unicode[$index];
-                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$index, :$stat;
+                my $stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+                my $char-code = $to-unicode[$glyph-index];
+                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
             }
             &code($glyph-image);
         }
@@ -232,25 +231,25 @@ class Font::FreeType::Face {
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
         my $to-unicode := self!unicode-map;
 
-        (^$!raw.num-glyphs).map: -> $index {
+        (^$!raw.num-glyphs).map: -> $glyph-index {
             $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Glyph($index, $flags);
-                $glyph.glyph-index = $index;
-                $glyph.char-code = $to-unicode[$index];
+                $glyph.stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+                $glyph.glyph-index = $glyph-index;
+                $glyph.char-code = $to-unicode[$glyph-index];
                 &code($glyph);
             }
         }
     }
 
-    multi method forall-glyphs-images(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
+    multi method forall-glyph-images(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $glyph = $!raw.glyph;
         my $to-unicode := self!unicode-map;
 
-        @gids.map: -> UInt $index {
+        @gids.map: -> UInt $glyph-index {
             my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
-                my $stat = $!raw.FT_Load_Glyph($index, $flags);
-                my $char-code = $to-unicode[$index];
-                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$index, :$stat;
+                my $stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+                my $char-code = $to-unicode[$glyph-index];
+                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
             }
             &code($glyph-image);
         }
@@ -261,11 +260,11 @@ class Font::FreeType::Face {
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
         my $to-unicode := self!unicode-map;
 
-        @gids.map: -> UInt $index {
+        @gids.map: -> UInt $glyph-index {
             $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Glyph($index, $flags);
-                $glyph.glyph-index = $index;
-                $glyph.char-code = $to-unicode[$index];
+                $glyph.stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+                $glyph.glyph-index = $glyph-index;
+                $glyph.char-code = $to-unicode[$glyph-index];
                 &code($glyph);
             }
         }
@@ -759,7 +758,7 @@ if the struct outlives the parent C<$face> object.
 =head3 protect()
 
 This method should only be needed if the low level native freetype bindings
-are being use directly. See L<Font::FreeType::Raw>.       
+are being use directly. See L<Font::FreeType::Raw>.
 
 =head2 See Also
 

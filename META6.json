@@ -15,7 +15,6 @@
   "perl": "6",
   "provides": {
     "Font::FreeType": "lib/Font/FreeType.rakumod",
-    "Font::FreeType::_Glyphic": "lib/Font/FreeType/_Glyphic.rakumod",
     "Font::FreeType::BBox": "lib/Font/FreeType/BBox.rakumod",
     "Font::FreeType::BitMap": "lib/Font/FreeType/BitMap.rakumod",
     "Font::FreeType::CharMap": "lib/Font/FreeType/CharMap.rakumod",
@@ -29,7 +28,8 @@
     "Font::FreeType::Outline": "lib/Font/FreeType/Outline.rakumod",
     "Font::FreeType::Raw": "lib/Font/FreeType/Raw.rakumod",
     "Font::FreeType::Raw::Defs": "lib/Font/FreeType/Raw/Defs.rakumod",
-    "Font::FreeType::Raw::TT_Sfnt": "lib/Font/FreeType/Raw/TT_Sfnt.rakumod"
+      "Font::FreeType::Raw::TT_Sfnt": "lib/Font/FreeType/Raw/TT_Sfnt.rakumod",
+    "Font::FreeType::_Glyph": "lib/Font/FreeType/_Glyph.rakumod"
   },
   "resources": [
     "libraries/ft6"

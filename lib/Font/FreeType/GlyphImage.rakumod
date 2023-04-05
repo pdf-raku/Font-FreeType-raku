@@ -1,8 +1,8 @@
 #| Glyph images from font typefaces
 class Font::FreeType::GlyphImage {
 
-    use Font::FreeType::_Glyphic;
-    also does Font::FreeType::_Glyphic;
+    use Font::FreeType::_Glyph;
+    also is Font::FreeType::_Glyph;
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Raw;
@@ -48,7 +48,7 @@ class Font::FreeType::GlyphImage {
             unless self.is-outline;
         my FT_Outline:D $outline = $!raw.outline;
         my FT_Outline $raw = $outline.clone(self!library);
-        Font::FreeType::Outline.new: :$raw, :$!face;
+        Font::FreeType::Outline.new: :$raw, :$.face;
     }
     method bold(Int $s) is DEPRECATED<set-bold> { self.set-bold($s) }
     method set-bold(Int $strength) {
@@ -85,7 +85,7 @@ class Font::FreeType::GlyphImage {
         my FT_Bitmap:D $bitmap = $!raw.bitmap;
         my FT_Bitmap $raw = $bitmap.clone(self!library);
         my $top = $.top;
-        Font::FreeType::BitMap.new: :$!face, :$raw, :$.left, :$top, :$!char-code;
+        Font::FreeType::BitMap.new: :$.face, :$raw, :$.left, :$top, :$.char-code;
     }
 
     method DESTROY {

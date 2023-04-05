@@ -1,8 +1,8 @@
 #| iterator for font typeface glyphs
-class Font::FreeType::Glyph is rw {
+class Font::FreeType::Glyph {
 
-    use Font::FreeType::_Glyphic;
-    also does Font::FreeType::_Glyphic;
+    use Font::FreeType::_Glyph;
+    also is Font::FreeType::_Glyph;
 
     use NativeCall;
     use Font::FreeType::GlyphImage;
@@ -39,7 +39,7 @@ class Font::FreeType::Glyph is rw {
     method glyph-image handles<bitmap outline decompose> returns Font::FreeType::GlyphImage:D {
         my $top = $!raw.bitmap-top;
         my $left = $!raw.bitmap-left;
-        Font::FreeType::GlyphImage.new: :$!face, :glyph($!raw), :$left, :$top, :$!char-code, :$.index, :$!stat;
+        Font::FreeType::GlyphImage.new: :$.face, :glyph($!raw), :$left, :$top, :$.char-code, :$.index, :$.stat;
     }
 
 }

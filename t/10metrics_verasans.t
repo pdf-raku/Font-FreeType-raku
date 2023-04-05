@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 68  +  256 * 2  +  268 * 3 + 1;
+plan 2706;
 use Font::FreeType;
 use Font::FreeType::Raw::Defs;
 
@@ -113,7 +113,7 @@ $vera.set-char-size(2048, 2048, 72, 72);
 my $character-list-filename = 't/fonts/vera_characters.txt';
 my @character-list = $character-list-filename.IO.lines;
 my $i = 0;
-$vera.forall-chars: {
+sub check-glyph-char($_) {
     my $line = @character-list[$i++];
     die "not enough characters in listing file '$character-list-filename'"
         unless defined $line;
@@ -123,6 +123,11 @@ $vera.forall-chars: {
        "glyph $unicode char code in foreach-char()";
     is .name, $name, "glyph $unicode name in foreach-char";
 };
+$vera.forall-chars: &check-glyph-char;
+is $i, +@character-list, "we aren't missing any glyphs";
+
+$i = 0;
+$vera.forall-char-images: &check-glyph-char;
 is $i, +@character-list, "we aren't missing any glyphs";
 
 # Test metrics on some particlar glyphs.
@@ -160,26 +165,29 @@ $vera.for-glyphs: $chars, -> $glyph {
 my $glyph-list-filename = 't/fonts/vera_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;
 $i = 0;
-$vera.forall-glyphs: {
+sub check-glyph-index($_) {
     my $line = @glyph-list[$i++];
     die "not enough characters in listing file '$glyph-list-filename'"
         unless defined $line;
     my ($index, $unicode, $name) = split /\s+/, $line;
     is .index, $index, "glyph $index index in iterate-glyphs";
+die unless .index == $index;
     is .char-code, $unicode,
        "glyph $unicode char code in foreach-char()";
     is .name, $name, "glyph $index name in foreach-glyph";
 };
+$vera.forall-glyphs: &check-glyph-index;
 is $i, +@glyph-list, "we aren't missing any glyphs";
 
-$vera.forall-glyphs: [42], {
-    my $line = @glyph-list[42];
-    my ($index, $unicode, $name) = split /\s+/, $line;
-    is .index, $index, "glyph $index index in iterate-glyphs";
-    is .char-code, $unicode,
-       "glyph $unicode char code in foreach-char()";
-    is .name, $name, "glyph $index name in foreach-glyph";
-}
+$i = 0;
+$vera.forall-glyph-images: &check-glyph-index;
+is $i, +@glyph-list, "we aren't missing any glyphs";
+
+$i = 42;
+$vera.forall-glyphs: [42], &check-glyph-index;
+
+$i = 42;
+$vera.forall-glyph-images: [42], &check-glyph-index;
 
 is $vera.index-from-glyph-name('G'), 42, 'index-from-glyph-name';
 is $vera.glyph-name-from-index(42), 'G', 'glyph-name-from-index';

@@ -10,7 +10,7 @@ my @faces = @files.map: { Font::FreeType.new.face: $_; }
 my $flags = FT_LOAD_NO_SCALE;
 
 lives-ok {
-    my @ = (1..10).race(:batch(1)).map: {
+    my @ = (1..20).race(:batch(1)).map: {
         my $w = 0;
         my $h = 0;
         for @faces -> $face {
@@ -23,7 +23,7 @@ lives-ok {
 }, 'iterate glyphs';
 
 lives-ok {
-    my @ = (1..10).race(:batch(1)).map: {
+    my @ = (1..20).race(:batch(1)).map: {
         my $w = 0;
         my $h = 0;
         for @faces -> $face {
@@ -36,7 +36,7 @@ lives-ok {
 }, 'iterate glyph-images';
 
 lives-ok {
-    my @ = (1..10).race(:batch(1)).map: {
+    my @ = (1..20).race(:batch(1)).map: {
         my $w = 0;
         my $h = 0;
         for @faces -> $face {

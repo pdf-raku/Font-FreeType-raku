@@ -1,4 +1,4 @@
-unit role Font::FreeType::_Glyphic;
+unit class Font::FreeType::_Glyph is rw;
 
 use Font::FreeType::Error;
 use Font::FreeType::Raw;
