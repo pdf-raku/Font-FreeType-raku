@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.4.4  2023-04-06T06:06:08+12:00
     - Add face methods forall-glyph-images() and forall-char-images().
       These are similar to forall-glyphs() and forall-chars() except they
       return Font::FreeType::GlyphImage rather than Font::FreeType::Glyph.
