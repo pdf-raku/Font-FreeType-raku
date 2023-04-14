@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+0.4.5  2023-04-14T15:31:58+12:00
+    - Add Windows support. Use pre-built DLLs courtesy of
+      https://github.com/ubawurinna/freetype-windows-binaries
+
 0.4.4  2023-04-06T06:06:08+12:00
     - Add face methods forall-glyph-images() and forall-char-images().
       These are similar to forall-glyphs() and forall-chars() except they

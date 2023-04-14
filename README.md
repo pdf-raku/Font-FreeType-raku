@@ -101,6 +101,13 @@ brew update
 brew install freetype
 ```
 
+### Windows
+
+This module uses prebuilt DLLs on Windows. No additional configuration is needed.
+
+Testing
+------
+
 To checkout and test this module from the Git repository:
 
     $ git checkout https://github.com/pdf-raku/Font-FreeType-raku.git
