@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+0.4.6  2023-04-15T06:06:29+12:00
+    - Add empty libfreetype.so and .dylib resources to fix installation
+      on Linux and Windows.
+
 0.4.5  2023-04-14T15:31:58+12:00
     - Add Windows support. Use pre-built DLLs courtesy of
       https://github.com/ubawurinna/freetype-windows-binaries
