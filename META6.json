@@ -32,7 +32,8 @@
     "Font::FreeType::_Glyph": "lib/Font/FreeType/_Glyph.rakumod"
   },
   "resources": [
-    "libraries/ft6"
+    "libraries/ft6",
+    "libraries/freetype"
   ],
   "source-url": "git://github.com/pdf-raku/Font-FreeType-raku.git",
   "tags": [

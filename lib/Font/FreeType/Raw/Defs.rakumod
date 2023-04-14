@@ -25,11 +25,11 @@ This module contains datatype and enumerations for the FreeType library.
 use NativeCall;
 use NativeCall::Types;
 
-our $FT-LIB is export = Rakudo::Internals.IS-WIN ?? 'libfreetype' !! ('freetype', v6);
+our $FT-LIB is export = Rakudo::Internals.IS-WIN ?? find-library('freetype') !! ('freetype', v6);
 # library bindings
 
 # additional C bindings
-our $FT-WRAPPER-LIB is export = %?RESOURCES<libraries/ft6>;
+our $FT-WRAPPER-LIB is export =  Rakudo::Internals.IS-WIN ?? find-library('ft6') !! %?RESOURCES<libraries/ft6>;
 our $CLIB = Rakudo::Internals.IS-WIN ?? 'msvcrt' !! Str;
 
 constant FT_Bool   is export = uint8;
@@ -47,6 +47,25 @@ constant FT_UShort is export = uint16;
 constant FT_String is export = Str;
 constant FT_F26Dot6 is export = long;
 constant FT_Fixed   is export = long;
+
+sub find-library($base) {
+    # unmangle library names, so ft6.dll can load freetype.dll 
+    if my $file = %?RESOURCES{'libraries/' ~ $base} {
+        my $tmpdir = $*SPEC.tmpdir ~ '/' ~ 'raku-font-freetype-' ~ $?DISTRIBUTION.meta<ver>;
+        my $lib = $*VM.platform-library-name($base.IO);
+        my $inst = ($tmpdir ~ '/' ~ $lib).IO;
+        unless $inst.e && $inst.s == $file.IO.s {
+            # install it
+            note "installing: " ~ $inst.Str;
+            mkdir $tmpdir;
+            $file.copy($inst);
+        }
+        $inst;
+    }
+    else {
+        $base
+    }
+}
 
 sub ft-tag-encode(Str $s --> UInt) {
     my uint32 $enc = 0;

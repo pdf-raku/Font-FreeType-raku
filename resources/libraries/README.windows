@@ -1,0 +1,28 @@
+Windows Support
+---------------
+
+This is built maaually from now, using binaries and includes from the repo https://github.com/ubawurinna/freetype-windows-binaries
+
+
+Building on Windows
+-------------------
+This is a minimal build of libxml2 and xml6 (binding) DLLs,
+without iconv for Unicode support.
+
+From a Rakudo Powershell (running as administrator):
+
+0. Install chocolatey - see https://chocolatey.org/install
+
+1. Ensure that git, the mingw make system and compilers are installed:
+
+    choco install make mingw git
+
+2. Here's how I built it:
+
+    git clone https://github.com/ubawurinna/freetype-windows-binaries
+    git clone https://github.com/pdf-raku/Font-FreeType-raku
+    cp freetype-windows-binaries\release dll\win64\freetype.dll resources\libraries\
+    cd FontFreeType-raku
+    raku Build.pm6 -I ..\freetype-windows-binaries\include
+    git add -f resources\libraries\ft6.dll resources\libraries\freetype.dll
+    

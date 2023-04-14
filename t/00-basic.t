@@ -11,9 +11,6 @@ use NativeCall;
 lives-ok({ cglobal($FT-LIB, "FT_Library_Version", Pointer) }, 'FreeType lib access')
     or die "unable to access FreeType library; is the FreeType library installed?";
 
-lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper lib access')
-    or die "unable to access FreeType wrapper library; has it been built? (e.g. 'zef build .)";
-
 my Font::FreeType $freetype;
 lives-ok { $freetype .= new }, 'font freetype creation';
 my Version $version;
@@ -21,6 +18,10 @@ lives-ok { $version = $freetype.version }, 'got version';
 note "FreeType2 version is $version";
 die "FreeType2 version $version is too old"
     unless $version >= v2.1.1;
+
+lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper lib access')
+    or die "unable to access FreeType wrapper library; has it been built? (e.g. 'zef build .)";
+
 my Font::FreeType::Face $face;
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from file';
 is $face.font-format, 'TrueType', 'font format';
