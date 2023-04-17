@@ -2,7 +2,7 @@
 / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku/)
 [![Build Status](https://travis-ci.org/pdf-raku/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/pdf-raku/Font-FreeType-raku)
 
-B<Font-FreeType-raku> - Raku binding to the B<FreeType> font library (version 2)
+Font-FreeType-raku - Raku binding to the FreeType font library (version 2)
 =============================================================
 
 Classes in this Distribution
