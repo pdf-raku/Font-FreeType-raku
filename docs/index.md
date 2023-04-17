@@ -2,7 +2,7 @@
 / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku/)
 [![Build Status](https://travis-ci.org/pdf-raku/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/pdf-raku/Font-FreeType-raku)
 
-module Font-FreeType-raku - Raku FreeType2 (font library) bindings
+B<Font-FreeType-raku> - Raku binding to the B<FreeType> font library (version 2)
 =============================================================
 
 Classes in this Distribution
@@ -100,6 +100,13 @@ doas apk add freetype-dev
 brew update
 brew install freetype
 ```
+
+### Windows
+
+This module uses prebuilt DLLs on Windows. No additional configuration is needed.
+
+Testing
+------
 
 To checkout and test this module from the Git repository:
 
