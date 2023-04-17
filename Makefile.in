@@ -78,6 +78,6 @@ clean :
 	@rm -f $(SRC)/ft6_*%O% resources/libraries/*%LIB-NAME%
 
 realclean : clean
-	@rm -f Makefile docs/index.md docs/Font/FreeType/*.md docs/Font/FreeType/*/*.md
+	@rm -f Makefile docs/index.md docs/Font/FreeType.md docs/Font/FreeType/*.md docs/Font/FreeType/*/*.md
 
 
