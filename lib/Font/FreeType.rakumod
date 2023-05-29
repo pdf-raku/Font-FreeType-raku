@@ -227,15 +227,36 @@ module and so will be available once you do `use Font::FreeType`.
     =begin item
     I<FT_LOAD_NO_SCALE>
 
-    Don't scale the font's outline or metrics to the right size.  This
-    will currently generate bad numbers.  To be fixed in a later version.
+    Don't scale the loaded outline glyph but keep it in font units.
+
+    This flag implies FT_LOAD_NO_HINTING and FT_LOAD_NO_BITMAP, and unsets FT_LOAD_RENDER.
+
+    This flag can be handy if you want to load a font once, then compute metrics at different
+    scales. For example:
+
+    ```raku
+    use Font::FreeType;
+    use Font::FreeType::Face;
+    use Font::FreeType::Raw::Defs;
+
+    sub stringwidth($face, $string, $point-size = 12) {
+        my $units-per-EM = $face.units-per-EM;
+        my $unscaled = sum $face.for-glyphs($string, { .metrics.hori-advance });
+        return $unscaled * $point-size / $units-per-EM;
+    }
+
+    my $load-flags := FT_LOAD_NO_SCALE;
+    my Font::FreeType::Face $face = Font::FreeType.face: 't/fonts/TimesNewRomPS.pfb', :$load-flags;
+
+    say $face.&stringwidth("abc123");
+    ```
+
     =end item
 
     =begin item
     I<FT_LOAD_PEDANTIC>
 
-    Raise errors when a font file is broken, rather than trying to work
-    around it.
+    Raise errors when a font file is broken, rather than trying to work around it.
     =end item
 
     =begin item
