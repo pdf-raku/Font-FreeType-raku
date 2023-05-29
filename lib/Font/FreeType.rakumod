@@ -234,7 +234,7 @@ module and so will be available once you do `use Font::FreeType`.
     This flag can be handy if you want to load a font once, then compute metrics at different
     scales. For example:
 
-    ```raku
+    =begin code :lang<raku>
     use Font::FreeType;
     use Font::FreeType::Face;
     use Font::FreeType::Raw::Defs;
@@ -249,7 +249,7 @@ module and so will be available once you do `use Font::FreeType`.
     my Font::FreeType::Face $face = Font::FreeType.face: 't/fonts/TimesNewRomPS.pfb', :$load-flags;
 
     say $face.&stringwidth("abc123");
-    ```
+    =end code
 
     =end item
 

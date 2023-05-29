@@ -105,13 +105,22 @@ The following load flags are available. They can be combined with the bit-wise O
 
     This flag can be handy if you want to load a font once, then compute metrics at different scales. For example:
 
-    ```raku use Font::FreeType; use Font::FreeType::Face; use Font::FreeType::Raw::Defs;
+    ```raku
+    use Font::FreeType;
+    use Font::FreeType::Face;
+    use Font::FreeType::Raw::Defs;
 
-    sub stringwidth($face, $string, $point-size = 12) { my $units-per-EM = $face.units-per-EM; my $unscaled = sum $face.for-glyphs($string, { .metrics.hori-advance }); return $unscaled * $point-size / $units-per-EM; }
+    sub stringwidth($face, $string, $point-size = 12) {
+        my $units-per-EM = $face.units-per-EM;
+        my $unscaled = sum $face.for-glyphs($string, { .metrics.hori-advance });
+        return $unscaled * $point-size / $units-per-EM;
+    }
 
-    my Font::FreeType::Face $face = Font::FreeType.face: 't/fonts/TimesNewRomPS.pfb', :load-flags(FT_LOAD_NO_SCALE);
+    my $load-flags := FT_LOAD_NO_SCALE;
+    my Font::FreeType::Face $face = Font::FreeType.face: 't/fonts/TimesNewRomPS.pfb', :$load-flags;
 
-    say stringwidth($face, "abc123"); ```
+    say $face.&stringwidth("abc123");
+    ```
 
   * *FT_LOAD_PEDANTIC*
 
