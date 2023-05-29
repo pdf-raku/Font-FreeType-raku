@@ -1,10 +1,13 @@
 use Font::FreeType;
-use Font::FreeType::Native::Types;
+use Font::FreeType::Face;
+use Font::FreeType::Raw::Defs;
 
 sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
 
-    my $face = Font::FreeType.new.face($filename,
-                                       :load-flags(FT_LOAD_NO_HINTING));
+    my Font::FreeType::Face $face = Font::FreeType.new.face(
+        $filename,
+        :load-flags(FT_LOAD_NO_HINTING),
+    );
     $face.set-char-size(24, 0, 600, 600);
 
     # Accept character codes in hex or decimal, otherwise assume it's the
