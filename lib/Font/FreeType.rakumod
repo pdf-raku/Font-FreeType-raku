@@ -232,7 +232,7 @@ module and so will be available once you do `use Font::FreeType`.
     This flag implies FT_LOAD_NO_HINTING and FT_LOAD_NO_BITMAP, and unsets FT_LOAD_RENDER.
 
     This flag can be handy if you want to load a font once, then compute metrics at different
-    scales. For example:
+    scales. For example, the following is equivalent to L<Font::AFM>'s C<stringwidth> method.
 
     =begin code :lang<raku>
     use Font::FreeType;

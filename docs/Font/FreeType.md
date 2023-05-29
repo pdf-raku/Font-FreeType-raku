@@ -103,7 +103,7 @@ The following load flags are available. They can be combined with the bit-wise O
 
     This flag implies FT_LOAD_NO_HINTING and FT_LOAD_NO_BITMAP, and unsets FT_LOAD_RENDER.
 
-    This flag can be handy if you want to load a font once, then compute metrics at different scales. For example:
+    This flag can be handy if you want to load a font once, then compute metrics at different scales. For example, the following is equivalent to [Font::AFM](https://pdf-raku.github.io/Font-AFM-raku)'s `stringwidth` method.
 
     ```raku
     use Font::FreeType;
