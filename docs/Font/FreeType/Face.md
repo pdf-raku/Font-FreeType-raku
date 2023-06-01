@@ -271,7 +271,11 @@ An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/F
 
 ### bounding-box()
 
-The outline's bounding box for this face.
+The outline's bounding box for this face, returned as an `FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max` accessors.
+
+### FontBBox()
+
+The outline's bounding box returned as a 4 element array: `($x-min, $y-min, $x-max, $y-max)`. Similar to to the same method in [Font::AFM](https://pdf-raku.github.io/Font-AFM-raku).
 
 ### raw()
 

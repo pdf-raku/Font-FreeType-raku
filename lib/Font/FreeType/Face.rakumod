@@ -31,6 +31,7 @@ class Font::FreeType::Face {
             if self.is-scalable;
         $bbox;
     }
+    method FontBBox is also<Array> { $.bounding-box.Array }
 
     method ascender returns Int { self.is-scalable ?? $!raw.ascender  !! Int }
     method descender returns Int { self.is-scalable ?? $!raw.descender !! Int }
@@ -734,7 +735,16 @@ An array of the available L<Font::FreeType::CharMap> objects for the face.
 
 =head3 bounding-box()
 
-The outline's bounding box for this face.
+The outline's bounding box for this face, returned as an
+`FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max`
+accessors.
+
+=head3 FontBBox()
+
+The outline's bounding box returned as a 4 element array:
+`($x-min, $y-min, $x-max, $y-max)`. Similar to to the
+same method in L<Font::AFM>.
+
 
 =head3 raw()
 
