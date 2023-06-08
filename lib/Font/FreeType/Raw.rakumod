@@ -184,7 +184,7 @@ class FT_Slot_Internal is repr('CPointer') { }
 class FT_Size_Internal is repr('CPointer') { }
 
 #| The size metrics structure gives the metrics of a size object.
-class FT_Size_Metrics is repr('CStruct') {
+class FT_Size_Metrics is repr('CStruct') is export {
     has FT_UShort  $.x-ppem;      # horizontal pixels per EM
     has FT_UShort  $.y-ppem;      # vertical pixels per EM
 
@@ -198,9 +198,9 @@ class FT_Size_Metrics is repr('CStruct') {
   }
 
 #| FreeType root size class structure. A size object models a face object at a given size.
-class FT_Size is repr('CStruct') {
+class FT_Size is repr('CStruct') is export {
     has FT_Face           $.face;      # parent face object
-    has FT_Generic        $.generic;   # generic pointer for client uses
+    HAS FT_Generic        $.generic;   # generic pointer for client uses
     HAS FT_Size_Metrics   $.metrics;   # size metrics
     has FT_Size_Internal  $.internal;
 }
@@ -454,6 +454,8 @@ class FT_Face is export {
         FT_Bool $is_cid is rw
     ) returns FT_Error is native($FT-LIB) {*};
 
+    method dump() is symbol('ft6_face_dump') is native($FT-WRAPPER-LIB) {*};
+
     #| A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
     method FT_Reference_Face
         returns FT_Error is native($FT-LIB) {*};
@@ -542,6 +544,14 @@ class FT_Library is export {
     method FT_Done_FreeType
         returns FT_Error is native($FT-LIB) {*};
 }
+
+#| Fixed precision multiplication
+sub FT_MulFix(
+    FT_Long  $a,
+    FT_Long  $b,
+    ) returns FT_Long
+    is export
+    is native($FT-LIB) {*};
 
 #| Convert a given glyph object to a bitmap glyph object.
 sub FT_Glyph_To_Bitmap(

@@ -12,6 +12,7 @@ class Font::FreeType::Face {
     use Font::FreeType::Glyph;
     use Font::FreeType::NamedInfo;
     use Font::FreeType::CharMap;
+    use Font::FreeType::SizeMetrics;
     use Method::Also;
 
     has $.ft-lib is required; # keep a reference to library root object. Just to avoid destroying it
@@ -50,11 +51,17 @@ class Font::FreeType::Face {
         }
     }
 
+    method size-metrics returns Font::FreeType::SizeMetrics {
+        my Font::FreeType::SizeMetrics $size-metrics .= new: :face(self), :size($_)
+            with $!raw.size;
+        $size-metrics;
+    }    
+
     method charmap returns Font::FreeType::CharMap {
         my Font::FreeType::CharMap $charmap .= new: :face(self), :raw($_)
             with $!raw.charmap;
         $charmap;
-    }
+    }    
 
     method charmaps returns Seq {
         my int $n-sizes = self.num-charmaps;

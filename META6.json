@@ -29,6 +29,7 @@
     "Font::FreeType::Raw": "lib/Font/FreeType/Raw.rakumod",
     "Font::FreeType::Raw::Defs": "lib/Font/FreeType/Raw/Defs.rakumod",
     "Font::FreeType::Raw::TT_Sfnt": "lib/Font/FreeType/Raw/TT_Sfnt.rakumod",
+    "Font::FreeType::SizeMetrics": "lib/Font/FreeType/SizeMetrics.rakumod",
     "Font::FreeType::_Glyph": "lib/Font/FreeType/_Glyph.rakumod"
   },
   "resources": [

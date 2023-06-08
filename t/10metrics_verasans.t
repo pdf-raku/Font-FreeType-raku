@@ -7,13 +7,14 @@
 
 use v6;
 use Test;
-plan 2706;
+plan 2707;
 use Font::FreeType;
+use Font::FreeType::SizeMetrics;
 use Font::FreeType::Raw::Defs;
 
 # Load the Vera Sans face.
 my Font::FreeType $ft .= new;
-# Load the BDF file.
+# Load the TTF file.
 my $vera = $ft.face: 't/fonts/Vera.ttf';
 ok $vera.defined, 'FreeType.face returns an object';
 isa-ok $vera, 'Font::FreeType::Face',
@@ -61,6 +62,27 @@ is $vera.height, 2384, 'height';
 # Test getting the set of fixed sizes available.
 my @fixed-sizes = $vera.fixed-sizes;
 is +@fixed-sizes, 0, 'Vera has no fixed sizes';
+
+subtest 'size-metrics', {
+    my Font::FreeType::SizeMetrics $size-metrics = $vera.size-metrics;
+    $vera.set-char-size(12,12,72,72);
+    $size-metrics = $vera.size-metrics;
+    ok $size-metrics.defined, 'defined after .set-char-size()';
+    is $size-metrics.x-ppem, 12, '.x-ppem';
+    is $size-metrics.y-ppem, 12, '.y-ppem';
+    is-approx $size-metrics.ascender, 11.140625, '.ascender';
+    is-approx $size-metrics.descender, -2.828125, '.descender';
+    is-approx $size-metrics.height, 5.25, '.height';
+    is-approx $size-metrics.max-advance, 6.0, '.max-advance';
+    is-approx $size-metrics.underline-position, -1.671875, '.underline-position';
+    is-approx $size-metrics.underline-thickness, 0.84375, '.underline-thickness';
+    my @bbox = $size-metrics.bbox;
+    enum <x-min y-min x-max y-max>;
+    is-approx @bbox[x-min], -2.203125, '@bbox[x-min]';
+    is-approx @bbox[y-min], -2.828125, '@bbox[y-min]';
+    is-approx @bbox[x-max], 15.453125, '@bbox[x-max]';
+    is-approx @bbox[y-max], 11.140625, '@bbox[y-max]';
+}
 
 subtest "charmaps" => {
     plan 2;
