@@ -201,7 +201,7 @@ class FT_Size_Metrics is repr('CStruct') {
 class FT_Size is repr('CStruct') {
     has FT_Face           $.face;      # parent face object
     has FT_Generic        $.generic;   # generic pointer for client uses
-    has FT_Size_Metrics   $.metrics;   # size metrics
+    HAS FT_Size_Metrics   $.metrics;   # size metrics
     has FT_Size_Internal  $.internal;
 }
 
