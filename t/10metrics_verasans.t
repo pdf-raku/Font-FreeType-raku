@@ -76,7 +76,6 @@ subtest 'size-metrics', {
     is-approx $scaled-metrics.max-advance, 6.0, '.max-advance';
     is-approx $scaled-metrics.underline-position, -1.671875, '.underline-position';
     is-approx $scaled-metrics.underline-thickness, 0.84375, '.underline-thickness';
-    die  $scaled-metrics.underline-thickness.WHAT.raku;
     my @bbox = $scaled-metrics.bbox;
     enum <x-min y-min x-max y-max>;
     is-approx @bbox[x-min], -2.203125, '@bbox[x-min]';

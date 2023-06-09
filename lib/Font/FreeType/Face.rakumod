@@ -606,7 +606,7 @@ See also `has-glyph-names()` above.
 
 =head3 height()
 
-The line-height of the text, i.e. distance between baselines of two
+The line-height of the text in unscaled font units, i.e. distance between baselines of two
 lines of text.
 
 =head3 is-bold()
@@ -726,8 +726,7 @@ A string describing the style of the font, such as 'Roman' or
 =head3 underline-position()
 =head3 underline-thickness()
 
-The suggested position and thickness of underlining for the font,
-or `Int:U` if the information isn't provided. In font units.
+The suggested position and thickness of underlining for the font, in unscaled font units.  `Int:U` is returned if the information isn't available.
 
 =head3 units-per-EM()
 
@@ -746,14 +745,15 @@ An array of the available L<Font::FreeType::CharMap> objects for the face.
 
 =head3 bounding-box()
 
-The outline's bounding box for this face, returned as an
+The outline's bounding box for this face is returned as an
 `FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max`
-accessors.
+accessors. Values are in unscaled font units
 
 =head3 bbox()
 
 The outline's bounding box returned as a 4 element array:
-`($x-min, $y-min, $x-max, $y-max)`.
+`($x-min, $y-min, $x-max, $y-max)`. Values are in unscaled font
+units.
 
 =head3 raw()
 

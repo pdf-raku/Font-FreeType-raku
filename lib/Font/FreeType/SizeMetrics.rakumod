@@ -2,6 +2,7 @@
 unit class Font::FreeType::SizeMetrics;
 
 use Font::FreeType::Raw;
+use Method::Also;
 
 has FT_Face $!face;
 has FT_Size_Metrics $.raw handles <x-ppem y-ppem>;
@@ -48,7 +49,7 @@ method max-advance {
     FT_MulFix( $!raw.max-advance, $!raw.y-scale ) / Dot6;
 }
 
-method bbox {
+method bbox is also<Array FontBBox> {
     given $!face.bbox {
         [
             FT_MulFix( .x-min, $!raw.x-scale ) / Dot6,
