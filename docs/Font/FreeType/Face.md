@@ -22,11 +22,13 @@ iterate all char-mapped glyphs
 Synopsis
 --------
 
-    use Font::FreeType;
-    use Font::FreeType::Face;
+```raku
+use Font::FreeType;
+use Font::FreeType::Face;
 
-    my Font::FreeType $freetype .= new;
-    my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
+my Font::FreeType $freetype .= new;
+my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
+```
 
 Description
 -----------
@@ -42,7 +44,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 ### ascender()
 
-The height above the baseline of the 'top' of the font's glyphs, scaled to the current size of the face.
+The height above the baseline of the 'top' of the font's glyphs.
 
 ### attach-file(_filename_) *** NYI ***
 
@@ -58,7 +60,7 @@ The index number of the current font face. Usually this will be zero, which is t
 
 ### descender()
 
-The depth below the baseline of the 'bottom' of the font's glyphs, scaled to the current size of the face. Actually represents the distance moving up from the baseline, so usually negative.
+The depth below the baseline of the 'bottom' of the font's glyphs. Actually represents the distance moving up from the baseline, so usually negative.
 
 ### family-name()
 
@@ -164,7 +166,7 @@ See also `has-glyph-names()` above.
 
 ### height()
 
-The line height of the text, i.e. distance between baselines of two lines of text.
+The line-height of the text, i.e. distance between baselines of two lines of text.
 
 ### is-bold()
 
@@ -219,7 +221,7 @@ The number of glyphs in the font face.
 
 ### postscript-name()
 
-A string containing the PostScript name of the font, or _undef_ if it doesn't have one.
+A string containing the PostScript name of the font, or `Str:U` if it doesn't have one.
 
 ### glyph-name(char)
 
@@ -247,6 +249,10 @@ When generating PostScript outlines a resolution of 72 will scale to PostScript 
 
 Set the size at which bit-mapped fonts will be loaded. Bitmap fonts are automatically set to the first available standard size, so this usually isn't needed.
 
+### scaled-metrics
+
+This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get scaled font metrics.
+
 ### style-name()
 
 A string describing the style of the font, such as 'Roman' or 'Demi Bold'. Most TrueType fonts are just 'Regular'.
@@ -255,7 +261,7 @@ A string describing the style of the font, such as 'Roman' or 'Demi Bold'. Most 
 
 ### underline-thickness()
 
-The suggested position and thickness of underlining for the font, or _undef_ if the information isn't provided. Currently in font units, but this is likely to be changed in a future version.
+The suggested position and thickness of underlining for the font, or `Int:U` if the information isn't provided. In font units.
 
 ### units-per-EM()
 
@@ -273,9 +279,9 @@ An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/F
 
 The outline's bounding box for this face, returned as an `FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max` accessors.
 
-### FontBBox()
+### bbox()
 
-The outline's bounding box returned as a 4 element array: `($x-min, $y-min, $x-max, $y-max)`. Similar to to the same method in [Font::AFM](https://pdf-raku.github.io/Font-AFM-raku).
+The outline's bounding box returned as a 4 element array: `($x-min, $y-min, $x-max, $y-max)`.
 
 ### raw()
 

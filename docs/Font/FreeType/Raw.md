@@ -485,6 +485,17 @@ method FT_Done_FreeType() returns uint32
 
 Destroy a given FreeType library object and all of its children, including resources, drivers, faces, sizes, etc.
 
+### sub FT_MulFix
+
+```raku
+sub FT_MulFix(
+    NativeCall::Types::long $a,
+    NativeCall::Types::long $b
+) returns NativeCall::Types::long
+```
+
+Fixed precision multiplication
+
 ### sub FT_Glyph_To_Bitmap
 
 ```raku

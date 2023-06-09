@@ -22,6 +22,8 @@ Classes in this Distribution
 
   * [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap) - Font Encodings
 
+  * [Font::FreeType::SizeMetrics](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/SizeMetrics) - Scaled font metrics
+
   * [Font::FreeType::Raw](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw) - Bindings to the FreeType library
 
   * [Font::FreeType::Raw::Defs](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Raw/Defs) - Data types and enumerations

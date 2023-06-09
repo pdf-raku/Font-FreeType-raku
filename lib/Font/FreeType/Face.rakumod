@@ -1,7 +1,7 @@
 #| Font typefaces loaded from Font::FreeType
 class Font::FreeType::Face {
 
-    constant Px = 64.0;
+    constant Dot6 = 0x40; # 6 Bit precision
 
     use NativeCall;
     use Font::FreeType::Error;
@@ -32,7 +32,7 @@ class Font::FreeType::Face {
             if self.is-scalable;
         $bbox;
     }
-    method FontBBox is also<Array> { $.bounding-box.Array }
+    method bbox is also<Array FontBBox> { $.bounding-box.Array }
 
     method ascender returns Int { self.is-scalable ?? $!raw.ascender  !! Int }
     method descender returns Int { self.is-scalable ?? $!raw.descender !! Int }
@@ -51,17 +51,17 @@ class Font::FreeType::Face {
         }
     }
 
-    method size-metrics returns Font::FreeType::SizeMetrics {
-        my Font::FreeType::SizeMetrics $size-metrics .= new: :face(self), :size($_)
+    method scaled-metrics returns Font::FreeType::SizeMetrics {
+        my Font::FreeType::SizeMetrics $scaled-metrics .= new: :face(self), :size($_)
             with $!raw.size;
-        $size-metrics;
-    }    
+        $scaled-metrics;
+    }
 
     method charmap returns Font::FreeType::CharMap {
         my Font::FreeType::CharMap $charmap .= new: :face(self), :raw($_)
             with $!raw.charmap;
         $charmap;
-    }    
+    }
 
     method charmaps returns Seq {
         my int $n-sizes = self.num-charmaps;
@@ -75,8 +75,8 @@ class Font::FreeType::Face {
     my class Vector {
         has FT_Vector $!raw;
         submethod TWEAK(FT_Vector:D :$!raw!) { }
-        method x { $!raw.x / Px }
-        method y { $!raw.y / Px }
+        method x { $!raw.x / Dot6 }
+        method y { $!raw.y / Dot6 }
         method gist { $.x ~ ' ' ~ $.y };
     }
 
@@ -284,8 +284,8 @@ class Font::FreeType::Face {
 
     method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
         $!lock.protect: sub () is hidden-from-backtrace {
-            my FT_F26Dot6 $w = ($width * Px).round;
-            my FT_F26Dot6 $h = ($height * Px).round;
+            my FT_F26Dot6 $w = ($width * Dot6).round;
+            my FT_F26Dot6 $h = ($height * Dot6).round;
             ft-try { $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) };
         }
     }
@@ -428,11 +428,13 @@ class Font::FreeType::Face {
 
 =head2 Synopsis
 
+    =begin code :lang<raku>
     use Font::FreeType;
     use Font::FreeType::Face;
 
     my Font::FreeType $freetype .= new;
     my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
+    =end code
 
 =head2 Description
 
@@ -450,8 +452,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 =head3 ascender()
 
-The height above the baseline of the 'top' of the font's glyphs, scaled to
-the current size of the face.
+The height above the baseline of the 'top' of the font's glyphs.
 
 =head3 attach-file(_filename_)   *** NYI ***
 
@@ -472,8 +473,7 @@ to load other faces from the same file.
 
 =head3 descender()
 
-The depth below the baseline of the 'bottom' of the font's glyphs, scaled to
-the current size of the face.  Actually represents the distance moving up
+The depth below the baseline of the 'bottom' of the font's glyphs.  Actually represents the distance moving up
 from the baseline, so usually negative.
 
 =head3 family-name()
@@ -606,7 +606,7 @@ See also `has-glyph-names()` above.
 
 =head3 height()
 
-The line height of the text, i.e. distance between baselines of two
+The line-height of the text, i.e. distance between baselines of two
 lines of text.
 
 =head3 is-bold()
@@ -679,7 +679,7 @@ The number of glyphs in the font face.
 
 =head3 postscript-name()
 
-A string containing the PostScript name of the font, or _undef_
+A string containing the PostScript name of the font, or `Str:U`
 if it doesn't have one.
 
 =head3 glyph-name(char)
@@ -713,6 +713,11 @@ Set the size at which bit-mapped fonts will be loaded.  Bitmap fonts are
 automatically set to the first available standard size, so this usually
 isn't needed.
 
+
+=head3 scaled-metrics
+
+This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get scaled font metrics.
+
 =head3 style-name()
 
 A string describing the style of the font, such as 'Roman' or
@@ -722,8 +727,7 @@ A string describing the style of the font, such as 'Roman' or
 =head3 underline-thickness()
 
 The suggested position and thickness of underlining for the font,
-or _undef_ if the information isn't provided.  Currently in font units,
-but this is likely to be changed in a future version.
+or `Int:U` if the information isn't provided. In font units.
 
 =head3 units-per-EM()
 
@@ -746,12 +750,10 @@ The outline's bounding box for this face, returned as an
 `FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max`
 accessors.
 
-=head3 FontBBox()
+=head3 bbox()
 
 The outline's bounding box returned as a 4 element array:
-`($x-min, $y-min, $x-max, $y-max)`. Similar to to the
-same method in L<Font::AFM>.
-
+`($x-min, $y-min, $x-max, $y-max)`.
 
 =head3 raw()
 
