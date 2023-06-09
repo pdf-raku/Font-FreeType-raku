@@ -716,7 +716,7 @@ isn't needed.
 
 =head3 scaled-metrics
 
-This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get scaled font metrics.
+This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get a L<Font::FreeType::SizeMetrics> object for computing scaled font metrics.
 
 =head3 style-name()
 

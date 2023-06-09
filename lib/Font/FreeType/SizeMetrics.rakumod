@@ -100,6 +100,10 @@ or `Numeric:U` if the information isn't provided.  In font units.
 The scaled line-height of the font, i.e. distance between baselines of two
 lines of text.
 
+=head3 max-advance
+
+The scaled maximum advance width.
+
 =head3 bbox()
 
 The outline's bounding box returned as a 4 element array:

@@ -48,6 +48,10 @@ The suggested position and thickness of underlining for the font, or `Numeric:U`
 
 The scaled line-height of the font, i.e. distance between baselines of two lines of text.
 
+### max-advance
+
+The scaled maximum advance width.
+
 ### bbox()
 
 The outline's bounding box returned as a 4 element array: `($x-min, $y-min, $x-max, $y-max)`.

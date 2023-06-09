@@ -251,7 +251,7 @@ Set the size at which bit-mapped fonts will be loaded. Bitmap fonts are automati
 
 ### scaled-metrics
 
-This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get scaled font metrics.
+This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get a [Font::FreeType::SizeMetrics](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/SizeMetrics) object for computing scaled font metrics.
 
 ### style-name()
 
