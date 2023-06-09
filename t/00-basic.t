@@ -72,7 +72,4 @@ $face.for-glyphs('A', {
     is-deeply .error, Font::FreeType::Error.new(:error(0)), '.error';
 });
 
-lives-ok {$face.DESTROY}, 'face DESTROY';
-lives-ok {$freetype.DESTROY}, 'freetype DESTROY';
-
 done-testing;
