@@ -714,7 +714,7 @@ automatically set to the first available standard size, so this usually
 isn't needed.
 
 
-=head3 scaled-metrics
+=head3 scaled-metrics()
 
 This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get a L<Font::FreeType::SizeMetrics> object for computing scaled font metrics.
 

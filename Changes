@@ -1,4 +1,8 @@
 {{$NEXT}}
+    - Add Font::FreeType::SizeMetrics class
+    - Add scaled-font accessor to Font::FreeType::Face. This should
+      be used after calling `set-font-size()` or `set-pixel-sizes()`
+      on the font
 
 0.4.6  2023-04-15T06:06:29+12:00
     - Add empty libfreetype.so and .dylib resources to fix installation

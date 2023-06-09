@@ -249,7 +249,7 @@ When generating PostScript outlines a resolution of 72 will scale to PostScript 
 
 Set the size at which bit-mapped fonts will be loaded. Bitmap fonts are automatically set to the first available standard size, so this usually isn't needed.
 
-### scaled-metrics
+### scaled-metrics()
 
 This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get a [Font::FreeType::SizeMetrics](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/SizeMetrics) object for computing scaled font metrics.
 
