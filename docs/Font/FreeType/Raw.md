@@ -496,6 +496,17 @@ sub FT_MulFix(
 
 Fixed precision multiplication
 
+### sub FT_DivFix
+
+```raku
+sub FT_DivFix(
+    NativeCall::Types::long $a,
+    NativeCall::Types::long $b
+) returns NativeCall::Types::long
+```
+
+Fixed precision division
+
 ### sub FT_Glyph_To_Bitmap
 
 ```raku

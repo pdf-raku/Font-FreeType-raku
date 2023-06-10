@@ -1,8 +1,6 @@
 #| Font typefaces loaded from Font::FreeType
 class Font::FreeType::Face {
 
-    constant Dot6 = 0x40; # 6 Bit precision
-
     use NativeCall;
     use Font::FreeType::Error;
     use Font::FreeType::Raw;
@@ -14,6 +12,8 @@ class Font::FreeType::Face {
     use Font::FreeType::CharMap;
     use Font::FreeType::SizeMetrics;
     use Method::Also;
+
+    constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
     has $.ft-lib is required; # keep a reference to library root object. Just to avoid destroying it
     has FT_Face $.raw handles <num-faces face-index face-flags style-flags
@@ -51,8 +51,8 @@ class Font::FreeType::Face {
         }
     }
 
-    method scaled-metrics returns Font::FreeType::SizeMetrics {
-        my Font::FreeType::SizeMetrics $scaled-metrics .= new: :face(self), :size($_)
+    method scaled-metrics(::?CLASS:D $face:) {
+        my Font::FreeType::SizeMetrics $scaled-metrics .= new: :$face, :size($_)
             with $!raw.size;
         $scaled-metrics;
     }

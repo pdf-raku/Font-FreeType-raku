@@ -551,6 +551,14 @@ sub FT_MulFix(
     is export
     is native($FT-LIB) {*};
 
+#| Fixed precision division
+sub FT_DivFix(
+    FT_Long  $a,
+    FT_Long  $b,
+    ) returns FT_Long
+    is export
+    is native($FT-LIB) {*};
+
 #| Convert a given glyph object to a bitmap glyph object.
 sub FT_Glyph_To_Bitmap(
     Pointer[FT_Glyph] $the-glyph is rw,

@@ -2,19 +2,25 @@
 unit class Font::FreeType::SizeMetrics;
 
 use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
 use Method::Also;
+
+constant Dot6  = Font::FreeType::Raw::Defs::Dot6;
+constant Dot16 = Font::FreeType::Raw::Defs::Dot16;
 
 has FT_Face $!face;
 has FT_Size_Metrics $.raw handles <x-ppem y-ppem>;
 
-constant Dot6  = 0x40;    # 6 binary digit precision
-constant Dot16 = 0x10000; # 16 binary digit precision
+multi submethod TWEAK(FT_Size_Metrics:D :$raw!, :$face) {
+    $!face = $face.raw;
+    $!face.FT_Reference_Face;
+}
 
 multi submethod TWEAK(FT_Size:D :$size!) {
     $!raw = $size.metrics;
     with $size.face {
         $!face = $_;
-        .FT_Reference_Face
+        .FT_Reference_Face;
     };
 }
 
@@ -22,8 +28,8 @@ submethod DESTROY {
     .FT_Done_Face with $!face
 }
 
-method x-scale { $!raw.x-scale / Dot16 }
-method y-scale { $!raw.y-scale / Dot16 }
+method x-scale { $!raw.x-scale / (Dot16 * Dot6) }
+method y-scale { $!raw.y-scale / (Dot16 * Dot6) }
 
 method ascender {
     FT_MulFix( $!face.ascender, $!raw.y-scale ) / Dot6;

@@ -48,6 +48,9 @@ constant FT_String is export = Str;
 constant FT_F26Dot6 is export = long;
 constant FT_Fixed   is export = long;
 
+our constant Dot6  = 0x40;    # 6 binary digit precision
+our constant Dot16 = 0x10000; # 16 binary digit precision
+
 sub find-library($base) {
     # unmangle library names, so ft6.dll can load freetype.dll 
     if my $file = %?RESOURCES{'libraries/' ~ $base} {
