@@ -83,7 +83,7 @@ method bbox is also<Array FontBBox> {
 
 =head2 Description
 
-       This function is called, after calling `set-char-size()` on the face to get scaled font metrics.
+This function is called, after calling `set-char-size()` on the face to get scaled font metrics.
 
 =head2 Methods
 
@@ -106,7 +106,7 @@ or `Numeric:U` if the information isn't provided.  In font units.
 The scaled line-height of the font, i.e. distance between baselines of two
 lines of text.
 
-=head3 max-advance
+=head3 max-advance()
 
 The scaled maximum advance width.
 

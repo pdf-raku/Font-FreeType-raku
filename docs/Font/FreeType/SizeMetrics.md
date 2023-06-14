@@ -25,7 +25,7 @@ my Font::FreeType::SizeMetrics $size-metrics = $vera.size-metrics;
 Description
 -----------
 
-    This function is called, after calling `set-char-size()` on the face to get scaled font metrics.
+This function is called, after calling `set-char-size()` on the face to get scaled font metrics.
 
 Methods
 -------
@@ -48,7 +48,7 @@ The suggested position and thickness of underlining for the font, or `Numeric:U`
 
 The scaled line-height of the font, i.e. distance between baselines of two lines of text.
 
-### max-advance
+### max-advance()
 
 The scaled maximum advance width.
 
