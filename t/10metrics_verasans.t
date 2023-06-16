@@ -70,7 +70,6 @@ subtest 'scaled-metrics', {
     $scaled-metrics = $vera.scaled-metrics;
 
     ok $scaled-metrics.defined, 'defined after .set-char-size()';
-die $scaled-metrics.x-scale;
     is-approx $scaled-metrics.x-scale * $vera.units-per-EM, 12, '.x-scale';
     is-approx $scaled-metrics.y-scale * $vera.units-per-EM, 12, '.y-scale';
     is $scaled-metrics.x-ppem, 12, '.x-ppem';
