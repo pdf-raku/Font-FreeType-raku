@@ -19,7 +19,7 @@ use Font::FreeType::SizeMetrics;
 my Font::FreeType $freetype .= new;
 my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
 $vera.set-char-size(12,12, 72,72);
-my Font::FreeType::SizeMetrics $size-metrics = $vera.size-metrics;
+my Font::FreeType::SizeMetrics $size-metrics = $vera.scaled-metrics;
 ```
 
 Description
