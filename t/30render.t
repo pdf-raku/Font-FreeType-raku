@@ -39,13 +39,8 @@ for @test {
     for $vera.glyph-images(.<char>) -> $gi {
         my $bm = $gi.bitmap: :$render-mode;
 
-        if $*PERL.compiler.version < v2018.11 {
-            skip "tests unreliable on this Rakudo version", 2;
-        }
-        else {
-            is-deeply $gi.face, $vera, 'glyph-image link to parent face';
-            is-deeply $bm.face, $vera, 'bitmap link to parent face';
-        }
+        is-deeply $gi.face, $vera, 'glyph-image link to parent face';
+        is-deeply $bm.face, $vera, 'bitmap link to parent face';
         ok $bm.pixels.defined, 'pixels';
         isa-ok $bm.left, Int, 'left';
         isa-ok $bm.top, Int, 'top';

@@ -30,6 +30,14 @@ This function is called, after calling `set-char-size()` on the face to get scal
 Methods
 -------
 
+### x-ppem(), y-ppem()
+
+The width and height of the scaled EM square in pixels, hence the term 1ppem` (pixels per EM).
+
+### x-scale(), y-scale()
+
+The scaling from the EM square to `x-ppem()`, and `y-ppem`.
+
 ### ascender()
 
 The scaled height above the baseline of the 'top' of the font's glyphs.

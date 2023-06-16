@@ -63,13 +63,14 @@ is $vera.height, 2384, 'height';
 my @fixed-sizes = $vera.fixed-sizes;
 is +@fixed-sizes, 0, 'Vera has no fixed sizes';
 
-subtest 'size-metrics', {
+subtest 'scaled-metrics', {
     my Font::FreeType::SizeMetrics $scaled-metrics = $vera.scaled-metrics;
     is $scaled-metrics.x-ppem, 0, '.xppem before .set-char-size()';
     $vera.set-char-size(12,12,72,72);
     $scaled-metrics = $vera.scaled-metrics;
 
     ok $scaled-metrics.defined, 'defined after .set-char-size()';
+die $scaled-metrics.x-scale;
     is-approx $scaled-metrics.x-scale * $vera.units-per-EM, 12, '.x-scale';
     is-approx $scaled-metrics.y-scale * $vera.units-per-EM, 12, '.y-scale';
     is $scaled-metrics.x-ppem, 12, '.x-ppem';
