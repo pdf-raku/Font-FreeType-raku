@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.4.8  2023-06-23T06:59:48+12:00
+    - Fix calculations in Font::FreeType::SizeMetrics class #16
+
 0.4.7  2023-06-15T05:53:07+12:00
     - Add Font::FreeType::SizeMetrics class
     - Add scaled-font accessor to Font::FreeType::Face. This should

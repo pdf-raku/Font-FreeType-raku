@@ -75,17 +75,17 @@ subtest 'scaled-metrics', {
     is $scaled-metrics.x-ppem, 12, '.x-ppem';
     is $scaled-metrics.y-ppem, 12, '.y-ppem';
     is-approx $scaled-metrics.ascender, 11.138672, '.ascender';
-    is $scaled-metrics.descender, -2.830078, '.descender';
+    is-approx $scaled-metrics.descender, -2.830078, '.descender';
     is $scaled-metrics.height, 5.25, '.height';
     is $scaled-metrics.max-advance, 6.0, '.max-advance';
-    is $scaled-metrics.underline-position, -1.664063, '.underline-position';
-    is $scaled-metrics.underline-thickness, 0.837891, '.underline-thickness';
+    is-approx $scaled-metrics.underline-position, -1.664063, '.underline-position';
+    is-approx $scaled-metrics.underline-thickness, 0.837891, '.underline-thickness';
     my @bbox = $scaled-metrics.bbox;
     enum <x-min y-min x-max y-max>;
-    is @bbox[x-min], -2.197266, '@bbox[x-min]';
-    is @bbox[y-min], -2.830078, '@bbox[y-min]';
-    is @bbox[x-max], 15.445313, '@bbox[x-max]';
-    is @bbox[y-max], 11.138672, '@bbox[y-max]';
+    is-approx @bbox[x-min], -2.197266, '@bbox[x-min]';
+    is-approx @bbox[y-min], -2.830078, '@bbox[y-min]';
+    is-approx @bbox[x-max], 15.445313, '@bbox[x-max]';
+    is-approx @bbox[y-max], 11.138672, '@bbox[y-max]';
 }
 
 subtest "charmaps" => {
