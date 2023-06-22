@@ -7,6 +7,7 @@ use Method::Also;
 
 constant Dot6  = Font::FreeType::Raw::Defs::Dot6;
 constant Dot16 = Font::FreeType::Raw::Defs::Dot16;
+constant Dot22 = Dot16 * Dot6;
 
 has FT_Face $!face;
 has FT_Size_Metrics $.raw handles <x-ppem y-ppem>;
@@ -28,40 +29,40 @@ submethod DESTROY {
     .FT_Done_Face with $!face
 }
 
-method x-scale { $!raw.x-scale / (Dot16 * Dot6) }
-method y-scale { $!raw.y-scale / (Dot16 * Dot6) }
+method x-scale { $!raw.x-scale / Dot22 }
+method y-scale { $!raw.y-scale / Dot22 }
 
 method ascender {
-    FT_MulFix( $!face.ascender, $!raw.y-scale ) / Dot6;
+    $!face.ascender * $.y-scale;
 }
 
 method descender {
-    FT_MulFix( $!face.descender, $!raw.y-scale ) / Dot6;
+    $!face.descender * $.y-scale;
 }
 
 method height {
-    FT_MulFix( $!raw.height, $!raw.y-scale ) / Dot6;
+    $!raw.height * $.y-scale;
 }
 
 method underline-position {
-    FT_MulFix( $!face.underline-position, $!raw.y-scale ) / Dot6;
+   $!face.underline-position * $.y-scale;
 }
 
 method underline-thickness {
-    FT_MulFix( $!face.underline-thickness, $!raw.y-scale ) / Dot6;
+    $!face.underline-thickness * $.y-scale;
 }
 
 method max-advance {
-    FT_MulFix( $!raw.max-advance, $!raw.y-scale ) / Dot6;
+    $!raw.max-advance * $.x-scale;
 }
 
 method bbox is also<Array FontBBox> {
     given $!face.bbox {
         [
-            FT_MulFix( .x-min, $!raw.x-scale ) / Dot6,
-            FT_MulFix( .y-min, $!raw.y-scale ) / Dot6,
-            FT_MulFix( .x-max, $!raw.x-scale ) / Dot6,
-            FT_MulFix( .y-max, $!raw.y-scale ) / Dot6,
+            .x-min * $.x-scale,
+            .y-min * $.y-scale,
+            .x-max * $.x-scale,
+            .y-max * $.y-scale,
         ]
     }
 }
