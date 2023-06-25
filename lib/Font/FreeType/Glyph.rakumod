@@ -13,23 +13,23 @@ class Font::FreeType::Glyph {
     use Font::FreeType::BitMap;
     use Font::FreeType::Outline;
 
-    constant Px = 64.0;
+    constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
     has FT_GlyphSlot $!raw handles <metrics>;
     submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
-    method left-bearing returns Rat:D { $.metrics.hori-bearing-x / Px; }
+    method left-bearing returns Rat:D { $.metrics.hori-bearing-x / Dot6; }
     method right-bearing returns Rat:D {
-        (.hori-advance - .hori-bearing-x - .width) / Px
+        (.hori-advance - .hori-bearing-x - .width) / Dot6
             with $.metrics
     }
     method horizontal-advance returns Rat:D {
-        $.metrics.hori-advance / Px;
+        $.metrics.hori-advance / Dot6;
     }
     method vertical-advance returns Rat:D {
-        $.metrics.vert-advance / Px;
+        $.metrics.vert-advance / Dot6;
     }
-    method width returns Rat:D { $.metrics.width / Px }
-    method height returns Rat:D { $.metrics.height / Px }
+    method width returns Rat:D { $.metrics.width / Dot6 }
+    method height returns Rat:D { $.metrics.height / Dot6 }
     method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
 
     method is-outline {

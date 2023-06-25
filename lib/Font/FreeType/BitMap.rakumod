@@ -6,6 +6,9 @@ class Font::FreeType::BitMap {
     use Font::FreeType::Raw;
     use Font::FreeType::Raw::Defs;
 
+    constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
+    constant Dpi = 72.0;
+
     has $.face;
     has FT_Bitmap $!raw handles <rows width pitch num-grays pixel-mode pallette>;
     has Int      $.left is required;
@@ -21,14 +24,11 @@ class Font::FreeType::BitMap {
         $!face.ft-lib.raw;
     }
 
-    constant Dpi = 72.0;
-    constant Px = 64.0;
-
-    method size returns Rat:D { $!raw.size / Px }
-    multi method x-res(:$ppem! where .so) returns Rat:D { $!raw.x-ppem / Px }
-    multi method x-res(:$dpi!  where .so) returns Rat:D { Dpi/Px * $!raw.x-ppem / self.size }
-    multi method y-res(:$ppem! where .so) returns Rat:D { $!raw.y-ppem / Px }
-    multi method y-res(:$dpi!  where .so) returns Rat:D { Dpi/Px * $!raw.y-ppem / self.size }
+    method size returns Rat:D { $!raw.size / Dot6 }
+    multi method x-res(:$ppem! where .so) returns Rat:D { $!raw.x-ppem / Dot6 }
+    multi method x-res(:$dpi!  where .so) returns Rat:D { Dpi/Dot6 * $!raw.x-ppem / self.size }
+    multi method y-res(:$ppem! where .so) returns Rat:D { $!raw.y-ppem / Dot6 }
+    multi method y-res(:$dpi!  where .so) returns Rat:D { Dpi/Dot6 * $!raw.y-ppem / self.size }
 
     method convert(UInt :$alignment = 1 --> ::?CLASS:D) {
         my FT_Bitmap $target .= new;
@@ -94,11 +94,11 @@ class Font::FreeType::BitMap {
     class Size {
         submethod BUILD(:$!raw) {}
         has FT_Bitmap_Size $!raw is required handles <width height x-ppem y-ppem>;
-        method size { $!raw.size / Px }
-        multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Px }
-        multi method x-res(:$dpi!  where .so) { Dpi/Px * $!raw.x-ppem / self.size }
-        multi method y-res(:$ppem! where .so) { $!raw.y-ppem / Px }
-        multi method y-res(:$dpi!  where .so) { Dpi/Px * $!raw.y-ppem / self.size }
+        method size { $!raw.size / Dot6 }
+        multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Dot6 }
+        multi method x-res(:$dpi!  where .so) { $!raw.x-ppem * Dpi / (self.size * Dot6) }
+        multi method y-res(:$ppem! where .so) { $!raw.y-ppem / Dot6 }
+        multi method y-res(:$dpi!  where .so) { $!raw.y-ppem* Dpi / (self.size * Dot6) }
     }
 
 }

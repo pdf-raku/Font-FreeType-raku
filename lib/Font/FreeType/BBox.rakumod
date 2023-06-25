@@ -1,18 +1,19 @@
 class Font::FreeType::BBox {
 
     use Font::FreeType::Raw;
+    use Font::FreeType::Raw::Defs;
+
+    constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
     has Numeric  ($.x-min, $.y-min);
     has Numeric  ($.x-max, $.y-max);
 
-    constant Px = 64.0;
-
     submethod TWEAK(FT_BBox :$bbox!) {
         with $bbox {
-            $!x-min = .x-min / Px;
-            $!x-max = .x-max / Px;
-            $!y-min = .y-min / Px;
-            $!y-max = .y-max / Px;
+            $!x-min = .x-min / Dot6;
+            $!x-max = .x-max / Dot6;
+            $!y-min = .y-min / Dot6;
+            $!y-max = .y-max / Dot6;
         }
     }
 
