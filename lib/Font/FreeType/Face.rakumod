@@ -74,9 +74,10 @@ class Font::FreeType::Face {
 
     my class Vector {
         has FT_Vector $!raw;
+        has UInt:D $.scale = Dot6;
         submethod TWEAK(FT_Vector:D :$!raw!) { }
-        method x { $!raw.x / Dot6 }
-        method y { $!raw.y / Dot6 }
+        method x { $!raw.x / $!scale }
+        method y { $!raw.y / $!scale }
         method gist { $.x ~ ' ' ~ $.y };
     }
 
@@ -301,7 +302,8 @@ class Font::FreeType::Face {
         my FT_UInt $right-idx = $!raw.FT_Get_Char_Index( $right.ord );
         my FT_Vector $vec .= new;
         ft-try { $!raw.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); };
-        Vector.new: :raw($vec);
+        my $scale := ($mode == FT_KERNING_UNSCALED) ?? 1 !! Dot6;
+        Vector.new: :raw($vec), :$scale;
     }
 
     method is-internally-keyed-cid returns Bool {
@@ -633,7 +635,7 @@ True if the font file is in the 'sfnt' format, meaning it is
 either TrueType or OpenType.  This isn't much use yet, but future versions
 of this library might provide access to extra information about sfnt fonts.
 
-=head3 kerning(_left-char_, _right-char_, :mode)
+=head3 kerning(_left-char_, _right-char_, :$mode)
 
 Returns a vector for the the suggested kerning adjustment between two glyphs.
 
@@ -704,8 +706,35 @@ Set the size at which glyphs should be rendered.  Metrics are also
 scaled to match.  The width and height will usually be the same, and
 are in points.  The resolution is in dots-per-inch.
 
-When generating PostScript outlines a resolution of 72 will scale
+When generating PostScript or PDF outlines a resolution of 72 will scale
 to PostScript points.
+
+After calling `set-char-size`:
+
+=item L<gluph object|Font::FreeType::Glyph> metrics will be scaled
+=item the `kerning()` method will, by default, return scaled values
+=item other face metrics remain unscaled, however `scaled-metrics` may be called to return L<scaled values|Font::FreeType::SizeMetrics>.
+
+```raku
+use Font::FreeType;
+use Font::FreeType::Raw::Defs;
+my Font::FreeType $ft .= new;
+my $vera = $ft.face: 't/fonts/Vera.ttf';
+my $vera-scaled = $vera.scaled-metrics;
+
+say $vera.height;               # 2384
+say $vera-scaled.height;        # 0
+say $vera.kerning('T', '.').x;  # 0
+my $mode = FT_KERNING_UNSCALED;
+say $vera.kerning('T', '.', :$mode).x;  # -243
+
+$vera.set-char-size(12,12,72);
+
+say $vera.height;               # 2384
+say $vera-scaled.height;        # 5.25
+say $vera.kerning('T', '.').x;  # -1.421875
+say $vera.kerning('T', '.', :$mode).x;  # -243
+```
 
 =head3 set-pixel-sizes(_width_, _height_)
 

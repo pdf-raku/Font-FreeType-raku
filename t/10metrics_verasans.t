@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 2707;
+plan 2711;
 use Font::FreeType;
 use Font::FreeType::SizeMetrics;
 use Font::FreeType::Raw::Defs;
@@ -226,10 +226,13 @@ my %kerning = (
     'T.' => -243,
 );
 
+my $mode = FT_KERNING_UNSCALED;
 for %kerning.keys.sort {
     my ($left, $right) = .comb;
     my $kern = $vera.kerning( $left, $right);
+    my $kern-u = $vera.kerning( $left, $right, :$mode);
     is $kern.x, %kerning{$_}, "horizontal kerning of '$_'";
+    is $kern-u.x, %kerning{$_}, "horizontal kerning of '$_' (unscaled)";
     is $kern.y, 0, "vertical kerning of '$_'";
 }
 

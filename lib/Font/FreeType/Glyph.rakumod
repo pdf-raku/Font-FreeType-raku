@@ -12,24 +12,31 @@ class Font::FreeType::Glyph {
 
     use Font::FreeType::BitMap;
     use Font::FreeType::Outline;
-
+    use AttrX::Mooish;
     constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
     has FT_GlyphSlot $!raw handles <metrics>;
+
+    has $!x-scale is mooish(:lazy);
+    method !build-x-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || $!raw.face.size.metrics.x-scale ?? Dot6 !! 1;}
+
+    has $!y-scale is mooish(:lazy);
+    method !build-y-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || $!raw.face.size.metrics.y-scale ?? Dot6 !! 1;}
+
     submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
-    method left-bearing returns Rat:D { $.metrics.hori-bearing-x / Dot6; }
+    method left-bearing returns Rat:D { $.metrics.hori-bearing-x / $!x-scale }
     method right-bearing returns Rat:D {
-        (.hori-advance - .hori-bearing-x - .width) / Dot6
+        (.hori-advance - .hori-bearing-x - .width) / $!x-scale
             with $.metrics
     }
     method horizontal-advance returns Rat:D {
-        $.metrics.hori-advance / Dot6;
+        $.metrics.hori-advance / $!x-scale;
     }
     method vertical-advance returns Rat:D {
-        $.metrics.vert-advance / Dot6;
+        $.metrics.vert-advance / $!y-scale;
     }
-    method width returns Rat:D { $.metrics.width / Dot6 }
-    method height returns Rat:D { $.metrics.height / Dot6 }
+    method width returns Rat:D { $.metrics.width / $!x-scale }
+    method height returns Rat:D { $.metrics.height / $!y-scale }
     method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
 
     method is-outline {
@@ -76,8 +83,9 @@ see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sou
 
 =head2 Methods
 
-Unless otherwise stated, all methods will die if there is an error,
-and the metrics are scaled to the size of the font face.
+Unless otherwise stated, all methods will die if there is an error.
+
+Metrics are scaled to the size of the font face.
 
 =head3 char-code()
 
