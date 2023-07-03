@@ -715,7 +715,7 @@ After calling `set-char-size`:
 =item the `kerning()` method will, by default, return scaled values
 =item other face metrics remain unscaled, however `scaled-metrics` may be called to return L<scaled values|Font::FreeType::SizeMetrics>.
 
-```raku
+=begin code :lang<raku>
 use Font::FreeType;
 use Font::FreeType::Raw::Defs;
 my Font::FreeType $ft .= new;
@@ -734,7 +734,7 @@ say $vera.height;               # 2384
 say $vera-scaled.height;        # 5.25
 say $vera.kerning('T', '.').x;  # -1.421875
 say $vera.kerning('T', '.', :$mode).x;  # -243
-```
+=end code
 
 =head3 set-pixel-sizes(_width_, _height_)
 

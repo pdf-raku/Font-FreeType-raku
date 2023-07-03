@@ -253,13 +253,26 @@ After calling `set-char-size`:
 
   * other face metrics remain unscaled, however `scaled-metrics` may be called to return [scaled values](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/SizeMetrics).
 
-```raku use Font::FreeType; use Font::FreeType::Raw::Defs; my Font::FreeType $ft .= new; my $vera = $ft.face: 't/fonts/Vera.ttf'; my $vera-scaled = $vera.scaled-metrics;
+```raku
+use Font::FreeType;
+use Font::FreeType::Raw::Defs;
+my Font::FreeType $ft .= new;
+my $vera = $ft.face: 't/fonts/Vera.ttf';
+my $vera-scaled = $vera.scaled-metrics;
 
-say $vera.height; # 2384 say $vera-scaled.height; # 0 say $vera.kerning('T', '.').x; # 0 my $mode = FT_KERNING_UNSCALED; say $vera.kerning('T', '.', :$mode).x; # -243
+say $vera.height;               # 2384
+say $vera-scaled.height;        # 0
+say $vera.kerning('T', '.').x;  # 0
+my $mode = FT_KERNING_UNSCALED;
+say $vera.kerning('T', '.', :$mode).x;  # -243
 
 $vera.set-char-size(12,12,72);
 
-say $vera.height; # 2384 say $vera-scaled.height; # 5.25 say $vera.kerning('T', '.').x; # -1.421875 say $vera.kerning('T', '.', :$mode).x; # -243 ```
+say $vera.height;               # 2384
+say $vera-scaled.height;        # 5.25
+say $vera.kerning('T', '.').x;  # -1.421875
+say $vera.kerning('T', '.', :$mode).x;  # -243
+```
 
 ### set-pixel-sizes(_width_, _height_)
 

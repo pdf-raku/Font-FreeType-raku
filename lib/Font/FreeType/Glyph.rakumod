@@ -88,7 +88,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 Metrics are scaled to the size of the font face if the font has been scaled and the `FT_LOAD_NO_SCALE` has not been passed.  For example:
 
-```raku
+=begin code :lang<raku>
 use Font::FreeType;
 my Font::FreeType $ft .= new;
 my $vera = $ft.face: 't/fonts/Vera.ttf';
@@ -101,7 +101,7 @@ $vera.for-glyphs: "T", { say .width } # 9
 
 my $flags = FT_LOAD_NO_SCALE;
 $vera.for-glyphs: "T", :$flags, { say .width } # 1263
-```
+=end code
 
 =head3 char-code()
 
