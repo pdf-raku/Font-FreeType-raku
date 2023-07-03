@@ -702,14 +702,17 @@ Returns the glyph index for the given glyph name.
 
 =head3 set-char-size(_width_, _height_, _x-res_, _y-res_)
 
-Set the size at which glyphs should be rendered.  Metrics are also
-scaled to match.  The width and height will usually be the same, and
+Set the size at which glyphs should be rendered. The width and height will usually be the same, and
 are in points.  The resolution is in dots-per-inch.
 
 When generating PostScript or PDF outlines a resolution of 72 will scale
 to PostScript points.
 
-After calling `set-char-size`:
+The metrics for individual glyphs are also scaled to match.
+
+However, this method does not affect face metrics,  with the exception
+of the `kerning` method which returns scaled font metrics, unless
+mode `FT_KERNING_UNSCALED` is specified.
 
 =item L<gluph object|Font::FreeType::Glyph> metrics will be scaled
 =item the `kerning()` method will, by default, return scaled values
@@ -722,18 +725,16 @@ my Font::FreeType $ft .= new;
 my $vera = $ft.face: 't/fonts/Vera.ttf';
 my $vera-scaled = $vera.scaled-metrics;
 
-say $vera.height;               # 2384
-say $vera-scaled.height;        # 0
-say $vera.kerning('T', '.').x;  # 0
-my $mode = FT_KERNING_UNSCALED;
-say $vera.kerning('T', '.', :$mode).x;  # -243
+say $vera.height;               # 2384 (unscaled)
+$vera.for-glyphs: "T", { say .width; } # 1263 (unscaled)
 
 $vera.set-char-size(12,12,72);
-
-say $vera.height;               # 2384
-say $vera-scaled.height;        # 5.25
-say $vera.kerning('T', '.').x;  # -1.421875
-say $vera.kerning('T', '.', :$mode).x;  # -243
+$vera.for-glyphs: "T", { say .width } # 9 (scaled)
+say $vera.height;               # 2384 (unscaled)
+say $vera-scaled.height;        # 5.25 (scaled)
+say $vera.kerning('T', '.').x;  # -1.421875 (scaled)
+my $mode = FT_KERNING_UNSCALED;
+say $vera.kerning('T', '.', :$mode).x;  # -243 (unscaled)
 =end code
 
 =head3 set-pixel-sizes(_width_, _height_)
