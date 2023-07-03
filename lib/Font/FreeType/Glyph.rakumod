@@ -12,19 +12,19 @@ class Font::FreeType::Glyph {
 
     use Font::FreeType::BitMap;
     use Font::FreeType::Outline;
-    use AttrX::Mooish;
     constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
     has FT_GlyphSlot $!raw handles <metrics>;
     has UInt:D $.flags = FT_LOAD_DEFAULT;
+    has Numeric $!x-scale;
+    has Numeric $!y-scale;
 
-    has $!x-scale is mooish(:lazy);
-    method !build-x-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($!raw.face.size.metrics.x-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;}
-
-    has $!y-scale is mooish(:lazy);
-    method !build-y-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($!raw.face.size.metrics.y-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;}
-
-    submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
+    submethod TWEAK(FT_GlyphSlot:D :$!raw!) {
+        my FT_Face:D $face := $!raw.face;
+        my FT_Size_Metrics:D $metrics := $face.size.metrics;
+        $!x-scale = $face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($metrics.x-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;
+        $!y-scale = $face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($metrics.y-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;
+    }
     method left-bearing returns Rat:D { $.metrics.hori-bearing-x / $!x-scale }
     method right-bearing returns Rat:D {
         (.hori-advance - .hori-bearing-x - .width) / $!x-scale
