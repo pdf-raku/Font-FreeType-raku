@@ -38,7 +38,17 @@ For a detailed description of the meaning of glyph metrics, and the structure of
 Methods
 -------
 
-Unless otherwise stated, all methods will die if there is an error, and the metrics are scaled to the size of the font face.
+Unless otherwise stated, all methods will die if there is an error.
+
+Metrics are expressed in absolute font units, or scaled to the size of the font face if the font has been scaled. For example:
+
+```raku use Font::FreeType; my Font::FreeType $ft .= new; my $vera = $ft.face: 't/fonts/Vera.ttf';
+
+$vera.for-glyphs: "T", { say .width; } # 1263
+
+$vera.set-char-size(12,12,72);
+
+$vera.for-glyphs: "T", { say .width } # 9 ```
 
 ### char-code()
 

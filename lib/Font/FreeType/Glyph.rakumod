@@ -85,7 +85,19 @@ see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sou
 
 Unless otherwise stated, all methods will die if there is an error.
 
-Metrics are scaled to the size of the font face.
+Metrics are expressed in absolute font units, or scaled to the size of the font face if the font has been scaled.  For example:
+
+```raku
+use Font::FreeType;
+my Font::FreeType $ft .= new;
+my $vera = $ft.face: 't/fonts/Vera.ttf';
+
+$vera.for-glyphs: "T", { say .width; } # 1263
+
+$vera.set-char-size(12,12,72);
+
+$vera.for-glyphs: "T", { say .width } # 9
+```
 
 =head3 char-code()
 
