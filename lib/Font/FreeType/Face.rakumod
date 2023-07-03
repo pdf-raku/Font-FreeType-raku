@@ -163,7 +163,7 @@ class Font::FreeType::Face {
 
     multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags --> Seq) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
 
         @ords.map: -> UInt:D $char-code {
             $!lock.protect: {
@@ -193,7 +193,7 @@ class Font::FreeType::Face {
     #| iterate all char-mapped glyphs
     multi method forall-chars(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
         my FT_UInt $glyph-index;
         my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
 
@@ -237,7 +237,7 @@ class Font::FreeType::Face {
 
     multi method forall-glyphs(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
         my $to-unicode := self!unicode-map;
 
         (^$!raw.num-glyphs).map: -> $glyph-index {
@@ -266,7 +266,7 @@ class Font::FreeType::Face {
 
     multi method forall-glyphs(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw;
+        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
         my $to-unicode := self!unicode-map;
 
         @gids.map: -> UInt $glyph-index {
@@ -328,7 +328,7 @@ class Font::FreeType::Face {
             has UInt:D @.ords is required;
             has Lock:D $.lock is required;
             has FT_Face $!raw = $!face.raw;
-            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph);
+            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
             has UInt:D $!idx = 0;
             method pull-one {
                 if $!idx < @!ords {
@@ -358,7 +358,7 @@ class Font::FreeType::Face {
             has Bool $.load is required;
             has Lock:D $.lock is required;
             has FT_Face $!raw = $!face.raw;
-            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph);
+            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
             has FT_UInt $!idx = 0;
 
             method pull-one {
@@ -394,7 +394,7 @@ class Font::FreeType::Face {
             has Int:D $.flags is required;
             has Lock:D $.lock is required;
             has FT_Face $!raw = $!face.raw;
-            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph);
+            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
             has UInt:D $!idx = 0;
 
             method pull-one {

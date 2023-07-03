@@ -40,7 +40,7 @@ Methods
 
 Unless otherwise stated, all methods will die if there is an error.
 
-Metrics are expressed in absolute font units, or scaled to the size of the font face if the font has been scaled. For example:
+Metrics are scaled to the size of the font face if the font has been scaled and the `FT_LOAD_NO_SCALE` has not been passed. For example:
 
 ```raku use Font::FreeType; my Font::FreeType $ft .= new; my $vera = $ft.face: 't/fonts/Vera.ttf';
 
@@ -48,7 +48,9 @@ $vera.for-glyphs: "T", { say .width; } # 1263
 
 $vera.set-char-size(12,12,72);
 
-$vera.for-glyphs: "T", { say .width } # 9 ```
+$vera.for-glyphs: "T", { say .width } # 9
+
+my $flags = FT_LOAD_NO_SCALE; $vera.for-glyphs: "T", :$flags, { say .width } # 1263 ```
 
 ### char-code()
 

@@ -16,12 +16,13 @@ class Font::FreeType::Glyph {
     constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
     has FT_GlyphSlot $!raw handles <metrics>;
+    has UInt:D $.flags = FT_LOAD_DEFAULT;
 
     has $!x-scale is mooish(:lazy);
-    method !build-x-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || $!raw.face.size.metrics.x-scale ?? Dot6 !! 1;}
+    method !build-x-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($!raw.face.size.metrics.x-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;}
 
     has $!y-scale is mooish(:lazy);
-    method !build-y-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || $!raw.face.size.metrics.y-scale ?? Dot6 !! 1;}
+    method !build-y-scale {$!raw.face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($!raw.face.size.metrics.y-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;}
 
     submethod TWEAK(FT_GlyphSlot:D :$!raw!) { }
     method left-bearing returns Rat:D { $.metrics.hori-bearing-x / $!x-scale }
@@ -85,7 +86,7 @@ see [http://freetype.sourceforge.net/freetype2/docs/glyphs/](http://freetype.sou
 
 Unless otherwise stated, all methods will die if there is an error.
 
-Metrics are expressed in absolute font units, or scaled to the size of the font face if the font has been scaled.  For example:
+Metrics are scaled to the size of the font face if the font has been scaled and the `FT_LOAD_NO_SCALE` has not been passed.  For example:
 
 ```raku
 use Font::FreeType;
@@ -97,6 +98,9 @@ $vera.for-glyphs: "T", { say .width; } # 1263
 $vera.set-char-size(12,12,72);
 
 $vera.for-glyphs: "T", { say .width } # 9
+
+my $flags = FT_LOAD_NO_SCALE;
+$vera.for-glyphs: "T", :$flags, { say .width } # 1263
 ```
 
 =head3 char-code()
