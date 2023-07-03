@@ -714,7 +714,7 @@ However, this method does not affect face metrics,  with the exception
 of the `kerning` method which returns scaled font metrics, unless
 mode `FT_KERNING_UNSCALED` is specified.
 
-=item L<gluph object|Font::FreeType::Glyph> metrics will be scaled
+=item L<glyph object|Font::FreeType::Glyph> metrics will be scaled
 =item the `kerning()` method will, by default, return scaled values
 =item other face metrics remain unscaled, however `scaled-metrics` may be called to return L<scaled values|Font::FreeType::SizeMetrics>.
 

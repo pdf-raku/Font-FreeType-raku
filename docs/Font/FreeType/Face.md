@@ -249,7 +249,7 @@ The metrics for individual glyphs are also scaled to match.
 
 However, this method does not affect face metrics, with the exception of the `kerning` method which returns scaled font metrics, unless mode `FT_KERNING_UNSCALED` is specified.
 
-  * [gluph object](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) metrics will be scaled
+  * [glyph object](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) metrics will be scaled
 
   * the `kerning()` method will, by default, return scaled values
 
