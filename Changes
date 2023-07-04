@@ -1,4 +1,5 @@
 {{$NEXT}}
+    - Change kerning default mode to FT_KERNING_UNSCALED
 
 0.4.9  2023-07-04T07:46:39+12:00
     - Fix handling of unscaled font units in Face kerning and Glyph

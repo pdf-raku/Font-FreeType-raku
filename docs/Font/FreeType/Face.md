@@ -199,6 +199,10 @@ For example:
 
 The `mode` option controls how the kerning is calculated, with the following options available:
 
+  * *FT_KERNING_UNSCALED* (default)
+
+    Leave the measurements in font units, without scaling, and without hinting.
+
   * *FT_KERNING_DEFAULT*
 
     Grid-fitting (hinting) and scaling are done. Use this when rendering glyphs to bitmaps to make the kerning take the resolution of the output in to account.
@@ -206,10 +210,6 @@ The `mode` option controls how the kerning is calculated, with the following opt
   * *FT_KERNING_UNFITTED*
 
     Scaling is done, but not hinting. Use this when extracting the outlines of glyphs. If you used the `FT_LOAD_NO_HINTING` option when creating the face then use this when calculating the kerning.
-
-  * *FT_KERNING_UNSCALED*
-
-    Leave the measurements in font units, without scaling, and without hinting.
 
 ### num-faces()
 
@@ -247,13 +247,11 @@ When generating PostScript or PDF outlines a resolution of 72 will scale to Post
 
 The metrics for individual glyphs are also scaled to match.
 
-However, this method does not affect face metrics, with the exception of the `kerning` method which returns scaled font metrics, unless mode `FT_KERNING_UNSCALED` is specified.
+However, this method does not affect face metrics.
 
   * [glyph object](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) metrics will be scaled
 
-  * the `kerning()` method will, by default, return scaled values
-
-  * other face metrics remain unscaled, however `scaled-metrics` may be called to return [scaled values](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/SizeMetrics).
+  * face metrics remain unscaled, however `scaled-metrics` may be called to return [scaled values](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/SizeMetrics).
 
 ```raku
 use Font::FreeType;
@@ -269,9 +267,9 @@ $vera.set-char-size(12,12,72);
 $vera.for-glyphs: "T", { say .width } # 9 (scaled)
 say $vera.height;               # 2384 (unscaled)
 say $vera-scaled.height;        # 5.25 (scaled)
-say $vera.kerning('T', '.').x;  # -1.421875 (scaled)
-my $mode = FT_KERNING_UNSCALED;
-say $vera.kerning('T', '.', :$mode).x;  # -243 (unscaled)
+say $vera.kerning('T', '.').x;  # -243 (unscaled)
+my $mode = FT_KERNING_UNFITTED;
+say $vera.kerning('T', '.', :$mode).x;  # -1.421875 (scaled)
 ```
 
 ### set-pixel-sizes(_width_, _height_)
