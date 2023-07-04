@@ -81,8 +81,8 @@ subtest "named-info" => {
     is $copy-info.encoding-id, 0;
 };
 
-subtest "bounding-box" => {
-    my $bb = $font.bounding-box;
+subtest "bbox" => {
+    my $bb = $font.bbox;
     ok $bb;
     is $bb.x-min, -868, "x-min is correct";
     is $bb.y-min, -294, "y-min is correct";

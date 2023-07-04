@@ -302,11 +302,11 @@ The current active [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-Fre
 
 An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap) objects for the face.
 
-### bounding-box()
+### bbox()
 
 The outline's bounding box for this face is returned as an `FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max` accessors. Values are in unscaled font units
 
-### bbox()
+### bounding-box()
 
 The outline's bounding box returned as a 4 element array: `($x-min, $y-min, $x-max, $y-max)`. Values are in unscaled font units.
 

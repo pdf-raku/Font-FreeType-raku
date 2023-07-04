@@ -117,7 +117,7 @@ subtest "named-info" => {
 };
 
 subtest "bounding box" => sub {
-    my $bb = $vera.bounding-box;
+    my $bb = $vera.bbox;
     ok $bb;
     is $bb.x-min, -375, "x-min is correct";
     is $bb.y-min, -483, "y-min is correct";

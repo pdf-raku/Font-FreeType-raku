@@ -9,7 +9,7 @@ constant Dot6  = Font::FreeType::Raw::Defs::Dot6;
 constant Dot16 = Font::FreeType::Raw::Defs::Dot16;
 constant Dot22 = Dot16 * Dot6;
 
-has FT_Face $!face;
+has FT_Face $!face handles <units-per-EM>;
 has FT_Size_Metrics $.raw handles <x-ppem y-ppem>;
 
 multi submethod TWEAK(FT_Size_Metrics:D :$raw!, :$face) {
@@ -52,11 +52,15 @@ method underline-thickness {
     $!face.underline-thickness * $.y-scale;
 }
 
-method max-advance {
+method max-advance-width is also<max-advance> {
     $!raw.max-advance * $.x-scale;
 }
 
-method bbox is also<Array FontBBox> {
+method max-advance-height {
+    $!face.max-advance-height * $.y-scale;
+}
+
+method bbox is also<FontBBox Array> {
     given $!face.bbox {
         [
             .x-min * $.x-scale,
@@ -115,9 +119,13 @@ or `Numeric:U` if the information isn't provided.  In font units.
 The scaled line-height of the font, i.e. distance between baselines of two
 lines of text.
 
-=head3 max-advance()
+=head3 max-advance-width()
 
 The scaled maximum advance width.
+
+=head3 max-advance-width()
+
+The scaled maximum advance height.
 
 =head3 bbox()
 

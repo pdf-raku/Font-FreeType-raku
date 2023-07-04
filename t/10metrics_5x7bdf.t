@@ -64,7 +64,7 @@ ok(abs($fixed-size.size * $fixed-size.y-res(:dpi) / 72
        - $fixed-size.y-res(:ppem)) < 0.1, 'fixed size y resolution in ppem');
 
 is $bdf.named-infos, Mu, "no named infos for fixed size font";
-is-deeply $bdf.bounding-box, FT_BBox, "no bounding box for fixed size font";
+is-deeply $bdf.bbox, FT_BBox, "no bounding box for fixed size font";
 
 my $glyph-list-filename = 't/fonts/bdf_glyphs.txt';
 my @glyph-list = $glyph-list-filename.IO.lines;

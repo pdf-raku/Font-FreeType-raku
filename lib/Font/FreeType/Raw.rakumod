@@ -454,6 +454,8 @@ class FT_Face is export {
         FT_Bool $is_cid is rw
     ) returns FT_Error is native($FT-LIB) {*};
 
+    method bounding-box { self.bbox.Array }
+
     #| A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
     method FT_Reference_Face
         returns FT_Error is native($FT-LIB) {*};

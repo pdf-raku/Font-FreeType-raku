@@ -56,9 +56,13 @@ The suggested position and thickness of underlining for the font, or `Numeric:U`
 
 The scaled line-height of the font, i.e. distance between baselines of two lines of text.
 
-### max-advance()
+### max-advance-width()
 
 The scaled maximum advance width.
+
+### max-advance-width()
+
+The scaled maximum advance height.
 
 ### bbox()
 

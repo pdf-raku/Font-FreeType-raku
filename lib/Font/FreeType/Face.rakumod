@@ -18,24 +18,25 @@ class Font::FreeType::Face {
     has $.ft-lib is required; # keep a reference to library root object. Just to avoid destroying it
     has FT_Face $.raw handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
-        height max-advance-width max-advance-height size>;
+        size> is required;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
     has Lock $!lock handles<protect> .= new;
+    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box> = $!raw;
 
-    submethod TWEAK(FT_Face:D :$!raw!) { }
-    method native is also<unbox struct> is DEPRECATED("please use .raw() method") { $!raw }
-    method units-per-EM returns UInt { self.is-scalable ?? $!raw.units-per-EM !! Int }
-    method underline-position returns Int { self.is-scalable ?? $!raw.underline-position  !! Int }
-    method underline-thickness returns Int { self.is-scalable ?? $!raw.underline-thickness !! Int }
-    method bounding-box returns FT_BBox {
+    method bbox returns FT_BBox {
         my FT_BBox $bbox = $!raw.bbox.clone
             if self.is-scalable;
         $bbox;
     }
-    method bbox is also<Array FontBBox> { $.bounding-box.Array }
+    class UnscaledMetrics {
+        method bbox { Array }
+        method FALLBACK(|) { Int }
+    }
 
-    method ascender returns Int { self.is-scalable ?? $!raw.ascender  !! Int }
-    method descender returns Int { self.is-scalable ?? $!raw.descender !! Int }
+    submethod TWEAK() {
+        $!metrics-delegate = UnscaledMetrics
+            unless self.is-scalable;
+    }
 
     subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT';
     method font-format returns FontFormat {
@@ -51,10 +52,10 @@ class Font::FreeType::Face {
         }
     }
 
+    has Font::FreeType::SizeMetrics $!scaled-metrics;
     method scaled-metrics(::?CLASS:D $face:) {
-        my Font::FreeType::SizeMetrics $scaled-metrics .= new: :$face, :size($_)
+        $!scaled-metrics //= Font::FreeType::SizeMetrics.new: :$face, :size($_)
             with $!raw.size;
-        $scaled-metrics;
     }
 
     method charmap returns Font::FreeType::CharMap {
@@ -283,18 +284,20 @@ class Font::FreeType::Face {
         my Font::FreeType::GlyphImage @ = self.forall-char-images({$_}, $text.ords, :$flags);
     }
 
-    method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
+    method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0, Bool :$scale-face-metrics) {
         $!lock.protect: sub () is hidden-from-backtrace {
             my FT_F26Dot6 $w = ($width * Dot6).round;
             my FT_F26Dot6 $h = ($height * Dot6).round;
             ft-try { $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) };
         }
+        $!metrics-delegate = $scale-face-metrics ?? self.scaled-metrics !! $!raw;
     }
 
-    method set-pixel-sizes(UInt $width, UInt $height) {
+    method set-pixel-sizes(UInt $width, UInt $height, Bool :$scale-face-metrics) {
         $!lock.protect: sub () is hidden-from-backtrace {
             ft-try { $!raw.FT_Set_Pixel_Sizes($width, $height) };
         }
+        $!metrics-delegate = $scale-face-metrics ?? self.scaled-metrics !! $!raw;
     }
 
     method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_UNSCALED) {
@@ -770,13 +773,13 @@ The current active L<Font::FreeType::CharMap> object for this face.
 
 An array of the available L<Font::FreeType::CharMap> objects for the face.
 
-=head3 bounding-box()
+=head3 bbox()
 
 The outline's bounding box for this face is returned as an
 `FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max`
 accessors. Values are in unscaled font units
 
-=head3 bbox()
+=head3 bounding-box()
 
 The outline's bounding box returned as a 4 element array:
 `($x-min, $y-min, $x-max, $y-max)`. Values are in unscaled font
