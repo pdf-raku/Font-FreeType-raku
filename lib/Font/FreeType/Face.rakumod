@@ -714,6 +714,8 @@ Returns the glyph index for the given glyph name.
 Set the size at which glyphs should be rendered. The width and height will usually be the same, and
 are in points.  The resolution is in dots-per-inch.
 
+The height and resolution may be omitted. The height defaults to the width and the reslution defaults to 72 (dpi).
+
 When generating PostScript or PDF outlines a resolution of 72 will scale
 to PostScript points.
 
@@ -722,11 +724,9 @@ Font metrics and metrics for individual glyphs are also scaled to match.
 
 =head3 set-char-size(_width_, _height_, _x-res_, _y-res_)
 
-Perl backwards compatible alternative to `set-font-size`. Font metrics are scaled for individual
-glyphs, but are not scaled for font metrics. The `scaled-metrics` method may be called to get the scaled
-metrics.
-
-This method may be deprecated in future released.
+Older alternative to `set-font-size`. Font metrics are scaled for individual
+glyphs, but are not scaled for font metrics. The `scaled-metrics` method may
+be called to get the scaled metrics.
 
 =head3 set-pixel-sizes(_width_, _height_, :$scale-font)
 

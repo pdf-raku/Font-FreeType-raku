@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.5.0  2023-07-06T09:50:41+12:00
     - Add set-font-size() method. This is a replacement method
       that sets both character-level and font-level metrics
     - kerning default mode is now FT_KERNING_UNSCALED before
