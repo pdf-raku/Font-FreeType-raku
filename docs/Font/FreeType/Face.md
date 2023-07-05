@@ -239,38 +239,19 @@ Returns the name for the given character.
 
 Returns the glyph index for the given glyph name.
 
-### set-char-size(_width_, _height_, _x-res_, _y-res_)
+### set-font-size(_width_, _height_, _x-res_, _y-res_)
 
 Set the size at which glyphs should be rendered. The width and height will usually be the same, and are in points. The resolution is in dots-per-inch.
 
 When generating PostScript or PDF outlines a resolution of 72 will scale to PostScript points.
 
-The metrics for individual glyphs are also scaled to match.
+Font metrics and metrics for individual glyphs are also scaled to match.
 
-However, this method does not affect face metrics.
+### set-char-size(_width_, _height_, _x-res_, _y-res_)
 
-  * [glyph object](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) metrics will be scaled
+Perl backwards compatible alternative to `set-font-size`. Font metrics are scaled for individual glyphs, but not for the font face. The `scaled-metrics` method may be called to get the scaled metrics.
 
-  * face metrics remain unscaled, however `scaled-metrics` may be called to return [scaled values](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/SizeMetrics).
-
-```raku
-use Font::FreeType;
-use Font::FreeType::Raw::Defs;
-my Font::FreeType $ft .= new;
-my $vera = $ft.face: 't/fonts/Vera.ttf';
-my $vera-scaled = $vera.scaled-metrics;
-
-say $vera.height;               # 2384 (unscaled)
-$vera.for-glyphs: "T", { say .width; } # 1263 (unscaled)
-
-$vera.set-char-size(12,12,72);
-$vera.for-glyphs: "T", { say .width } # 9 (scaled)
-say $vera.height;               # 2384 (unscaled)
-say $vera-scaled.height;        # 5.25 (scaled)
-say $vera.kerning('T', '.').x;  # -243 (unscaled)
-my $mode = FT_KERNING_UNFITTED;
-say $vera.kerning('T', '.', :$mode).x;  # -1.421875 (scaled)
-```
+This method may be deprecated in future released.
 
 ### set-pixel-sizes(_width_, _height_)
 

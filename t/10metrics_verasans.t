@@ -63,13 +63,8 @@ is $vera.height, 2384, 'height';
 my @fixed-sizes = $vera.fixed-sizes;
 is +@fixed-sizes, 0, 'Vera has no fixed sizes';
 
-subtest 'scaled-metrics', {
-    my Font::FreeType::SizeMetrics $scaled-metrics = $vera.scaled-metrics;
-    is $scaled-metrics.x-ppem, 0, '.xppem before .set-char-size()';
-    $vera.set-char-size(12,12,72,72);
-    $scaled-metrics = $vera.scaled-metrics;
-
-    ok $scaled-metrics.defined, 'defined after .set-char-size()';
+sub scaled-metrics-tests($scaled-metrics) {
+    ok $scaled-metrics.defined, 'defined after .set-font-size()';
     is-approx $scaled-metrics.x-scale * $vera.units-per-EM, 12, '.x-scale';
     is-approx $scaled-metrics.y-scale * $vera.units-per-EM, 12, '.y-scale';
     is $scaled-metrics.x-ppem, 12, '.x-ppem';
@@ -80,12 +75,22 @@ subtest 'scaled-metrics', {
     is $scaled-metrics.max-advance, 6.0, '.max-advance';
     is-approx $scaled-metrics.underline-position, -1.664063, '.underline-position';
     is-approx $scaled-metrics.underline-thickness, 0.837891, '.underline-thickness';
-    my @bbox = $scaled-metrics.bbox;
+    my @bbox = $scaled-metrics.bounding-box;
     enum <x-min y-min x-max y-max>;
     is-approx @bbox[x-min], -2.197266, '@bbox[x-min]';
     is-approx @bbox[y-min], -2.830078, '@bbox[y-min]';
     is-approx @bbox[x-max], 15.445313, '@bbox[x-max]';
     is-approx @bbox[y-max], 11.138672, '@bbox[y-max]';
+}
+
+subtest 'scaled-metrics', {
+    my Font::FreeType::SizeMetrics $scaled-metrics = $vera.scaled-metrics;
+    is $scaled-metrics.x-ppem, 0, '.xppem before .set-char-size()';
+
+    $vera.set-font-size(12,12,72,72);
+    scaled-metrics-tests $scaled-metrics;
+    scaled-metrics-tests $vera;
+
 }
 
 subtest "charmaps" => {

@@ -21,7 +21,7 @@ class Font::FreeType::Face {
         size> is required;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
     has Lock $!lock handles<protect> .= new;
-    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box> = $!raw;
+    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box max-advance max-advance-height> = $!raw;
 
     method bbox returns FT_BBox {
         my FT_BBox $bbox = $!raw.bbox.clone
@@ -53,7 +53,7 @@ class Font::FreeType::Face {
     }
 
     has Font::FreeType::SizeMetrics $!scaled-metrics;
-    method scaled-metrics(::?CLASS:D $face:) {
+    method scaled-metrics(::?CLASS:D $face:) handles <x-scale y-scale x-ppem y-ppem> {
         $!scaled-metrics //= Font::FreeType::SizeMetrics.new: :$face, :size($_)
             with $!raw.size;
     }
@@ -284,23 +284,28 @@ class Font::FreeType::Face {
         my Font::FreeType::GlyphImage @ = self.forall-char-images({$_}, $text.ords, :$flags);
     }
 
-    method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0, Bool :$scale-face-metrics) {
+    method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
         $!lock.protect: sub () is hidden-from-backtrace {
             my FT_F26Dot6 $w = ($width * Dot6).round;
             my FT_F26Dot6 $h = ($height * Dot6).round;
             ft-try { $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) };
         }
-        $!metrics-delegate = $scale-face-metrics ?? self.scaled-metrics !! $!raw;
+        $!metrics-delegate = $!raw;
     }
 
-    method set-pixel-sizes(UInt $width, UInt $height, Bool :$scale-face-metrics) {
+    method set-font-size(|c) is hidden-from-backtrace {
+        self.set-char-size(|c);
+        $!metrics-delegate = self.scaled-metrics;
+    }
+
+    method set-pixel-sizes(UInt $width, UInt $height, Bool :$scale-font) {
         $!lock.protect: sub () is hidden-from-backtrace {
             ft-try { $!raw.FT_Set_Pixel_Sizes($width, $height) };
         }
-        $!metrics-delegate = $scale-face-metrics ?? self.scaled-metrics !! $!raw;
+        $!metrics-delegate = $scale-font ?? self.scaled-metrics !! $!raw;
     }
 
-    method kerning(Str $left, Str $right, UInt :$mode = FT_KERNING_UNSCALED) {
+    method kerning(Str $left, Str $right, UInt :$mode = $!metrics-delegate === $!scaled-metrics ?? FT_KERNING_UNFITTED !! FT_KERNING_UNSCALED) {
         my FT_UInt $left-idx = $!raw.FT_Get_Char_Index( $left.ord );
         my FT_UInt $right-idx = $!raw.FT_Get_Char_Index( $right.ord );
         my FT_Vector $vec .= new;
@@ -703,7 +708,8 @@ Returns the name for the given character.
 
 Returns the glyph index for the given glyph name.
 
-=head3 set-char-size(_width_, _height_, _x-res_, _y-res_)
+
+=head3 set-font-size(_width_, _height_, _x-res_, _y-res_)
 
 Set the size at which glyphs should be rendered. The width and height will usually be the same, and
 are in points.  The resolution is in dots-per-inch.
@@ -711,31 +717,16 @@ are in points.  The resolution is in dots-per-inch.
 When generating PostScript or PDF outlines a resolution of 72 will scale
 to PostScript points.
 
-The metrics for individual glyphs are also scaled to match.
+Font metrics and metrics for individual glyphs are also scaled to match.
 
-However, this method does not affect face metrics.
 
-=item L<glyph object|Font::FreeType::Glyph> metrics will be scaled
-=item face metrics remain unscaled, however `scaled-metrics` may be called to return L<scaled values|Font::FreeType::SizeMetrics>.
+=head3 set-char-size(_width_, _height_, _x-res_, _y-res_)
 
-=begin code :lang<raku>
-use Font::FreeType;
-use Font::FreeType::Raw::Defs;
-my Font::FreeType $ft .= new;
-my $vera = $ft.face: 't/fonts/Vera.ttf';
-my $vera-scaled = $vera.scaled-metrics;
+Perl backwards compatible alternative to `set-font-size`. Font metrics are scaled for individual
+glyphs, but not for the font face. The `scaled-metrics` method may be called to get the scaled
+metrics.
 
-say $vera.height;               # 2384 (unscaled)
-$vera.for-glyphs: "T", { say .width; } # 1263 (unscaled)
-
-$vera.set-char-size(12,12,72);
-$vera.for-glyphs: "T", { say .width } # 9 (scaled)
-say $vera.height;               # 2384 (unscaled)
-say $vera-scaled.height;        # 5.25 (scaled)
-say $vera.kerning('T', '.').x;  # -243 (unscaled)
-my $mode = FT_KERNING_UNFITTED;
-say $vera.kerning('T', '.', :$mode).x;  # -1.421875 (scaled)
-=end code
+This method may be deprecated in future released.
 
 =head3 set-pixel-sizes(_width_, _height_)
 

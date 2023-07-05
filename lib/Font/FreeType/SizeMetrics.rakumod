@@ -9,7 +9,7 @@ constant Dot6  = Font::FreeType::Raw::Defs::Dot6;
 constant Dot16 = Font::FreeType::Raw::Defs::Dot16;
 constant Dot22 = Dot16 * Dot6;
 
-has FT_Face $!face handles <units-per-EM>;
+has FT_Face $!face handles <units-per-EM bbox>;
 has FT_Size_Metrics $.raw handles <x-ppem y-ppem>;
 
 multi submethod TWEAK(FT_Size_Metrics:D :$raw!, :$face) {
@@ -60,8 +60,8 @@ method max-advance-height {
     $!face.max-advance-height * $.y-scale;
 }
 
-method bbox is also<FontBBox Array> {
-    given $!face.bbox {
+method bounding-box is also<FontBBox Array> {
+    given $.bbox {
         [
             .x-min * $.x-scale,
             .y-min * $.y-scale,
