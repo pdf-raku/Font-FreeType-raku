@@ -28,7 +28,7 @@ is $face.font-format, 'TrueType', 'font format';
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Sans', 'face family name';
 is $face.num-glyphs, 6253, 'num-glyphs';
-my $bbox = $face.bbox;
+my $bbox = $face.bounding-box;
 ok $bbox.defined, 'got bounding-box';
 is $bbox.x-min, -2090, 'bbox.x-min';
 is $bbox.x-max, 3673, 'bbox.x-max';

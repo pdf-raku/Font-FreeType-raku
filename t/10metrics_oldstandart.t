@@ -82,7 +82,7 @@ subtest "named-info" => {
 };
 
 subtest "bbox" => {
-    my $bb = $font.bbox;
+    my $bb = $font.bounding-box;
     ok $bb;
     is $bb.x-min, -868, "x-min is correct";
     is $bb.y-min, -294, "y-min is correct";

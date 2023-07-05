@@ -1,5 +1,11 @@
 {{$NEXT}}
-    - Change kerning default mode to FT_KERNING_UNSCALED
+    - Add set-font-size() method. This is a replacement method
+      that sets both character-level and font-level metrics
+    - kerning default mode is now FT_KERNING_UNSCALED before
+      set-font-size() has been called. Then Changes to
+      FT_KERNING_UNFITTED.
+    - Face bbox() method, which doesn't scaled has been deprecated
+      in favour of bounding-box(), which does scale.
 
 0.4.9  2023-07-04T07:46:39+12:00
     - Fix handling of unscaled font units in Face kerning and Glyph

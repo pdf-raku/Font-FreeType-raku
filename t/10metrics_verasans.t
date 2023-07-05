@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 2711;
+plan 2712;
 use Font::FreeType;
 use Font::FreeType::SizeMetrics;
 use Font::FreeType::Raw::Defs;
@@ -63,6 +63,15 @@ is $vera.height, 2384, 'height';
 my @fixed-sizes = $vera.fixed-sizes;
 is +@fixed-sizes, 0, 'Vera has no fixed sizes';
 
+subtest "bounding box unscaled" => sub {
+    my $bb = $vera.bounding-box;
+    ok $bb;
+    is $bb.x-min, -375, "x-min is correct";
+    is $bb.y-min, -483, "y-min is correct";
+    is $bb.x-max, 2636, "x-max is correct";
+    is $bb.y-max, 1901, "y-max is correct";
+};
+
 sub scaled-metrics-tests($scaled-metrics) {
     ok $scaled-metrics.defined, 'defined after .set-font-size()';
     is-approx $scaled-metrics.x-scale * $vera.units-per-EM, 12, '.x-scale';
@@ -93,6 +102,15 @@ subtest 'scaled-metrics', {
 
 }
 
+subtest "bounding box scaled" => sub {
+    my $bb = $vera.bounding-box;
+    ok $bb;
+    is-approx $bb.x-min, -2.197266, "x-min is correct";
+    is-approx $bb.y-min, -2.830078, "y-min is correct";
+    is-approx $bb.x-max, 15.445313, "x-max is correct";
+    is-approx $bb.y-max, 11.138672, "y-max is correct";
+};
+
 subtest "charmaps" => {
     plan 2;
     subtest {
@@ -120,16 +138,6 @@ subtest "named-info" => {
     is $copy-info.name-id, 0;
     is $copy-info.encoding-id, 0;
 };
-
-subtest "bounding box" => sub {
-    my $bb = $vera.bbox;
-    ok $bb;
-    is $bb.x-min, -375, "x-min is correct";
-    is $bb.y-min, -483, "y-min is correct";
-    is $bb.x-max, 2636, "x-max is correct";
-    is $bb.y-max, 1901, "y-max is correct";
-};
-
 
 # Test iterating over all the characters.  256*2 tests.
 # Note that this only gets us 256 glyphs, because there are another 10 which

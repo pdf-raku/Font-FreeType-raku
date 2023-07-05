@@ -73,7 +73,7 @@ subtest "charmaps" => {
 };
 
 subtest "bounding box" => sub {
-    my $bb = $tnr.bbox;
+    my $bb = $tnr.bounding-box;
     ok $bb;
     is $bb.x-min, -167, "x-min is correct";
     is $bb.y-min, -216, "y-min is correct";

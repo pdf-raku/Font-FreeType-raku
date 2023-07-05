@@ -23,13 +23,13 @@ class Font::FreeType::Face {
     has Lock $!lock handles<protect> .= new;
     has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box max-advance max-advance-height> = $!raw;
 
-    method bbox returns FT_BBox {
+    method bbox returns FT_BBox is DEPRECATED<bounding-box> {
         my FT_BBox $bbox = $!raw.bbox.clone
             if self.is-scalable;
         $bbox;
     }
     class UnscaledMetrics {
-        method bbox { Array }
+        method bbox is also<bounding-box> { Array }
         method FALLBACK(|) { Int }
     }
 
@@ -453,7 +453,7 @@ Usually a face represents all the information in the font file (such as
 a TTF file), although it is possible to have multiple faces in a single
 file.
 
-Never 'use' this module directly; the class is loaded automatically from Font::FreeType.  Use the `Font::FreeType.face()`
+This class is loaded automatically from Font::FreeType.  Use the `Font::FreeType.face()`
 method to create a new Font::FreeType::Face object from a filename and then use the `forall-chars()`, or `forall-glyphs()` methods.
 
 =head2 Methods
@@ -565,7 +565,7 @@ method will return an exception object.
 
 =head3 forall-char-images($text, &code)
 
-    $face.forall-char-imagess: "Raku", -> Font::FreeType::GlyphImage $glyph-image { ... }
+    $face.forall-char-images: "Raku", -> Font::FreeType::GlyphImage $glyph-image { ... }
 
 Iterates through all the characters in the text, and passes the corresponding
 L<Font::FreeType::GlyphImage> object for each of them in turn.  Glyphs which don't correspond to Unicode characters are ignored.
@@ -616,7 +616,7 @@ See also `has-glyph-names()` above.
 
 =head3 height()
 
-The line-height of the text in unscaled font units, i.e. distance between baselines of two
+The line-height of the text, i.e. distance between baselines of two
 lines of text.
 
 =head3 is-bold()
@@ -656,7 +656,7 @@ The `mode` option controls how the kerning is calculated, with
 the following options available:
 
 =begin item
-I<FT_KERNING_UNSCALED> (default)
+I<FT_KERNING_UNSCALED>
 
 Leave the measurements in font units, without scaling, and without hinting.
 =end item
@@ -723,21 +723,42 @@ Font metrics and metrics for individual glyphs are also scaled to match.
 =head3 set-char-size(_width_, _height_, _x-res_, _y-res_)
 
 Perl backwards compatible alternative to `set-font-size`. Font metrics are scaled for individual
-glyphs, but not for the font face. The `scaled-metrics` method may be called to get the scaled
+glyphs, but are not scaled for font metrics. The `scaled-metrics` method may be called to get the scaled
 metrics.
 
 This method may be deprecated in future released.
 
-=head3 set-pixel-sizes(_width_, _height_)
+=head3 set-pixel-sizes(_width_, _height_, :$scale-font)
 
 Set the size at which bit-mapped fonts will be loaded.  Bitmap fonts are
 automatically set to the first available standard size, so this usually
 isn't needed.
 
+Font metrics are scaled for individual glyphs. The `:scale-font`
+option will also cause scaling of font metrics:
+
+=begin code :lang<raku>
+use Font::FreeType;
+
+my Font::FreeType $ft .= new;
+my $vera = $ft.face: 't/fonts/Vera.ttf';
+
+$vera.set-pixel-sizes(24,24,);
+
+$vera.for-glyphs: "T", { say .width; } # 16 (scaled)
+say $vera.height;               # 2384 (unscaled)
+say $vera.kerning('T', '.').x;  # -243 (scaled)
+
+$vera.set-pixel-sizes(24,24, :scale-font);
+
+$vera.for-glyphs: "T", { say .width; } # 16
+say $vera.height;               # 5.25
+say $vera.kerning('T', '.').x;  # -1.421875
+=end code
 
 =head3 scaled-metrics()
 
-This method can be called after calling `set-char-size()` or `set-pixel-sizes()` to get a L<Font::FreeType::SizeMetrics> object for computing scaled font metrics.
+This method can be called after calling `set-char-size()` or `set-pixel-sizes()` without the `:scale-font` option to get a L<Font::FreeType::SizeMetrics> object that returns scaled font metrics.
 
 =head3 style-name()
 
@@ -747,7 +768,7 @@ A string describing the style of the font, such as 'Roman' or
 =head3 underline-position()
 =head3 underline-thickness()
 
-The suggested position and thickness of underlining for the font, in unscaled font units.  `Int:U` is returned if the information isn't available.
+The suggested position and thickness of underlining for the font.  `Int:U` is returned if the information isn't available.
 
 =head3 units-per-EM()
 
@@ -764,17 +785,10 @@ The current active L<Font::FreeType::CharMap> object for this face.
 
 An array of the available L<Font::FreeType::CharMap> objects for the face.
 
-=head3 bbox()
-
-The outline's bounding box for this face is returned as an
-`FT_BBox` object with `x-min`, `y-min`, `x-max`, `y-max`
-accessors. Values are in unscaled font units
-
 =head3 bounding-box()
 
 The outline's bounding box returned as a 4 element array:
-`($x-min, $y-min, $x-max, $y-max)`. Values are in unscaled font
-units.
+`($x-min, $y-min, $x-max, $y-max)`.
 
 =head3 raw()
 
