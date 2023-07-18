@@ -38,7 +38,7 @@ Synopsis
     my Font::FreeType $freetype .= new;
     my $face = $freetype.face('t/fonts/Vera.ttf');
 
-    $face.set-char-size(24, 24, 100, 100);
+    $face.set-font-size(12, 12, 72, 72);
     for $face.glyph-images('ABC') {
         my $outline = .outline;
         my $bitmap = .bitmap;
