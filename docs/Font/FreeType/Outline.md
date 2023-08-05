@@ -36,8 +36,8 @@ The bounding box of the glyph's outline. This box will enclose all the 'ink' tha
 
 The bounding box is returned as an array of four values, so the method may be called as follows:
 
-    my #bbox = $outline.bounding-box();
-    my $xmin = $bbox[0];
+    my @bbox[4] = $outline.bounding-box();
+    my ($left, $bottom, $top, $right) = @bbox;
 
 ### bold(Int $strength)
 

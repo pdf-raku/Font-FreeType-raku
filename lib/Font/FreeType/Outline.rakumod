@@ -186,8 +186,8 @@ not be particularly efficient.
 The bounding box is returned as an array of four values, so the method
 may be called as follows:
 
-    my #bbox = $outline.bounding-box();
-    my $xmin = $bbox[0];
+    my @bbox[4] = $outline.bounding-box();
+    my ($left, $bottom, $top, $right) = @bbox;
 
 =head3 bold(Int $strength)
 
