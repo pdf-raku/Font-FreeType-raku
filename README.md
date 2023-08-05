@@ -1,6 +1,6 @@
 [[Raku PDF Project]](https://pdf-raku.github.io)
 / [[Font-FreeType Module]](https://pdf-raku.github.io/Font-FreeType-raku/)
-[![Build Status](https://travis-ci.org/pdf-raku/Font-FreeType-raku.svg?branch=master)](https://travis-ci.org/pdf-raku/Font-FreeType-raku)
+[![Actions Status](https://github.com/pdf-raku/FontConfig-raku/workflows/test/badge.svg)](https://github.com/pdf-raku/FontConfig-raku/actions)
 
 Font-FreeType-raku - Raku binding to the FreeType font library (version 2)
 =============================================================

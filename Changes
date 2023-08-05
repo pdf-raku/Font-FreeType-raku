@@ -1,4 +1,6 @@
 {{$NEXT}}
+    - Fix Font::FreeType::Outline Array() method and add
+      bounding-box() method.
 
 0.5.0  2023-07-06T09:50:41+12:00
     - Add set-font-size() method. This is a replacement method

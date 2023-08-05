@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 2712;
+plan 2714;
 use Font::FreeType;
 use Font::FreeType::SizeMetrics;
 use Font::FreeType::Raw::Defs;
@@ -180,7 +180,7 @@ my %glyph-metrics = (
     'g' => { name => 'g', advance => 1300,
              LBearing => 113, RBearing => 186 },
     '|' => { name => 'bar', advance => 690,
-             LBearing => 260, RBearing => 260 },
+             LBearing => 260, RBearing => 260, Height => 2048, BBox => [260, -483, 430, 1565] },
 );
 
 # 5*2 tests.
@@ -198,6 +198,11 @@ $vera.for-glyphs: $chars, -> $glyph {
            "right bearing of glyph '$char'";
         is $glyph.width, .<advance> - .<LBearing> - .<RBearing>,
            "width of glyph '$char'";
+        is $glyph.height, $_, "height of '$char'"
+            with .<Height>;
+        is-deeply $glyph.outline.bounding-box, $_, "bbox of '$char'"
+            with .<BBox>;
+
     }
 }
 

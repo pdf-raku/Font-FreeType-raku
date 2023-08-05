@@ -7,6 +7,7 @@ class Font::FreeType::Outline {
     use Font::FreeType::BBox;
     use Font::FreeType::Raw;
     use Font::FreeType::Raw::Defs;
+    use Method::Also;
 
     method !library(--> FT_Library:D) {
         $!face.ft-lib.raw;
@@ -101,8 +102,8 @@ class Font::FreeType::Outline {
         Font::FreeType::BBox.new: :$bbox;
     }
 
-    method Array {
-        my FT_BBox $bbox = self.bbox;
+    method bounding-box is also<Array> {
+        my Font::FreeType::BBox $bbox = self.bbox;
         [floor($bbox.x-min), floor($bbox.y-min),
          ceiling($bbox.x-max), ceiling($bbox.y-max)]
     }
