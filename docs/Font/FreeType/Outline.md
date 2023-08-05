@@ -30,14 +30,14 @@ This class represents scalable glyph images; known as outlines.
 Methods
 -------
 
-### bbox()
+### bounding-box()
 
 The bounding box of the glyph's outline. This box will enclose all the 'ink' that would be laid down if the outline were filled in. It is calculated by studying each segment of the outline, so may not be particularly efficient.
 
-The bounding box is returned as a list of four values, so the method should be called as follows:
+The bounding box is returned as an array of four values, so the method may be called as follows:
 
-    my $bbox = $outline.bbox();
-    my $xmin = $bbox.x-min;
+    my #bbox = $outline.bounding-box();
+    my $xmin = $bbox[0];
 
 ### bold(Int $strength)
 

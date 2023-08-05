@@ -1,6 +1,10 @@
 {{$NEXT}}
+
+0.5.1  2023-08-06T09:06:18+12:00
     - Fix Font::FreeType::Outline Array() method and add
       bounding-box() method.
+    - Add glyph top-bearing() method. Only available if
+      has-vertical-metrics() is True for the face.
 
 0.5.0  2023-07-06T09:50:41+12:00
     - Add set-font-size() method. This is a replacement method

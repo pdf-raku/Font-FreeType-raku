@@ -97,6 +97,15 @@ The distance from the right edge of the glyph image to the place where the origi
 
 The distance from the origin of the current glyph to the place where the next glyph's origin should be, moving down the page. Only applies to vertical layouts. Always positive.
 
+head
+====
+
+top-bearing()
+
+The vertical distance from the baseline to the top of the glyph's bbox.It is usually positive for horizontal layouts, and negative for vertical ones.
+
+This method is only available if the font face `has-vertical-metrics` is True.
+
 ### width()
 
 The width of the glyph. This is the distance from the left side to the right side, not the amount you should move along before placing the next glyph when typesetting. For that, see the `horizontal_advance()` method.

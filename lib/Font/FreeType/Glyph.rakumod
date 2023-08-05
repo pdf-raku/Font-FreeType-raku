@@ -30,6 +30,7 @@ class Font::FreeType::Glyph {
         (.hori-advance - .hori-bearing-x - .width) / $!x-scale
             with $.metrics
     }
+    method top-bearing returns Rat:D { $.metrics.vert-bearing-y / $!y-scale }
     method horizontal-advance returns Rat:D {
         $.metrics.hori-advance / $!x-scale;
     }
@@ -157,6 +158,12 @@ advance width).  Only applies to horizontal layouts.  Usually positive.
 The distance from the origin of the current glyph to the place where
 the next glyph's origin should be, moving down the page.  Only applies
 to vertical layouts.  Always positive.
+
+=head top-bearing()
+
+The vertical distance from the baseline to the top of the glyph's bbox.It is usually positive for horizontal layouts, and negative for vertical ones.
+
+This method is only available if the font face `has-vertical-metrics` is True.
 
 =head3 width()
 
