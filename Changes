@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.5.2  2023-08-07T08:18:25+12:00
     - Various fixes to bin/font-say and examples/*.raku
 
 0.5.1  2023-08-06T09:06:18+12:00
