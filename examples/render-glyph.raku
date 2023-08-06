@@ -3,11 +3,11 @@ use Font::FreeType;
 
 # write or display a Glyph's bit-map as PGM (Netpbm grayscale image format)
 
-sub MAIN(Str $filename, Str $char is copy, Numeric $size? is copy, Str :$save-as) {
+sub MAIN(Str $font-file, Str $char is copy, Numeric $size? is copy, Str :$save-as) {
 
     my $dpi = 100;
 
-    my $face = Font::FreeType.new.face($filename);
+    my $face = Font::FreeType.new.face($font-file);
 
     # If the size wasn't specified, and it's a bitmap font, then leave the size
     # to the default, which will be right.

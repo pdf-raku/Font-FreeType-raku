@@ -41,7 +41,7 @@ sub MAIN(Str $font-file,
         $char-spacing //= 2 + $pixels div 25; 
     }
     else {
-        try $face.set-char-size(24, 0, $resolution, $resolution);
+        try $face.set-font-size(24, 0, $resolution, $resolution);
         $char-spacing //= $resolution > 40
             ?? ($resolution + 20) div 40
             !! 1;

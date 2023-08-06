@@ -3,8 +3,8 @@ use Font::FreeType::Glyph;
 use Font::FreeType::Raw::Defs;
 
 # dump all characters that are mapped to a font
-sub MAIN(Str $filename, Bool :$mapped = True) {
-    my $face = Font::FreeType.new.face($filename);
+sub MAIN(Str $font-file, Bool :$mapped = True) {
+    my $face = Font::FreeType.new.face($font-file);
     my @charmap;
 
     $face.forall-chars: :!load, :flags(FT_LOAD_NO_RECURSE), -> Font::FreeType::Glyph:D $_ {

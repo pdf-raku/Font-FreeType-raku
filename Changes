@@ -1,4 +1,5 @@
 {{$NEXT}}
+    - Various fixes to bin/font-say and examples/*.raku
 
 0.5.1  2023-08-06T09:06:18+12:00
     - Fix Font::FreeType::Outline Array() method and add

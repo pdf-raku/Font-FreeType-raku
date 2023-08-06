@@ -12,7 +12,7 @@ given Cairo::Image.create(Cairo::FORMAT_ARGB32, 256, 256) {
         my Font::FreeType::Face $face = $freetype.face('t/fonts/DejaVuSans.ttf');
         # construct a Cairo Font
         my Cairo::Font $font .= create(
-            $face.struct, :free-type,
+            $face.raw, :free-type,
         );
 
         # use it to display text

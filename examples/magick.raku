@@ -18,8 +18,8 @@ use NativeCall;
 
 enum <x y>;
 
-sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$border=23, Str :$text="\xC2g.", Bool :$shape ) {
-    my Font::FreeType::Face $ft-face = Font::FreeType.face($font-filename);
+sub MAIN(Str $font-file, $output-image, Int :$size=72, Int :$dpi=600, Int :$border=23, Str :$text="\xC2g.", Bool :$shape ) {
+    my Font::FreeType::Face $ft-face = Font::FreeType.face($font-file);
     $ft-face.set-char-size($size, 0, $dpi, $dpi);
     my @metrics = do if $shape {
         if (try require HarfBuzz::Font::FreeType) === Nil {
@@ -133,7 +133,7 @@ sub MAIN($font-filename, $output-filename, Int :$size=72, Int :$dpi=600, Int :$b
    my $adj-x = adjust-position(0, 0)[x];
    $img.&set-stroke-color('#CCCC00');
    $img.draw-line($adj-x, 0,  $adj-x, $*height);
-   $img.write($output-filename);
+   $img.write($output-image);
 }
 
 # Y coordinates need to be flipped over, and both x and y adjusted to the

@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 use Font::FreeType;
-use Font::FreeType::Native::Types;
+use Font::FreeType::Raw::Defs;
 
-sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
+sub MAIN(Str $font-file, Str $char is copy, UInt :$bold) {
 
-    my $face = Font::FreeType.new.face($filename,
+    my $face = Font::FreeType.new.face($font-file,
                                        :load-flags(FT_LOAD_NO_HINTING));
     $face.set-char-size(24, 0, 600, 600);
 
@@ -12,6 +12,7 @@ sub MAIN(Str $filename, Str $char is copy, UInt :$bold) {
     # actual character itself.
     $char = :16($char).chr
         if $char ~~ /^(<xdigit>**2..*)$/;
+    $char .= substr(0, 1);
     $face.for-glyphs: $char, {
         die "Glyph has no outline.\n" unless .is-outline;
 

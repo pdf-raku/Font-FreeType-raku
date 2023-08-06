@@ -36,7 +36,7 @@ sub MAIN(Str $filename) {
 
     say "Units per em: ", $face.units-per-EM if $face.units-per-EM;
     if $face.is-scalable {
-        with $face.bbox -> $bb {
+        with $face.bounding-box -> $bb {
             say sprintf('Global BBox: (%d,%d):(%d,%d)', |$bb );
         }
         say "Ascent: ", $face.ascender;
