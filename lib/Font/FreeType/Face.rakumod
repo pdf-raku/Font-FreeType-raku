@@ -23,6 +23,10 @@ class Font::FreeType::Face {
     has Lock $!lock handles<protect> .= new;
     has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box max-advance max-advance-height> = $!raw;
 
+    method attach-file(Str:D() $filepath) {
+        ft-try { self.raw.FT_Attach_File($filepath); }
+    }
+
     method bbox returns FT_BBox is DEPRECATED<bounding-box> {
         my FT_BBox $bbox = $!raw.bbox.clone
             if self.is-scalable;
@@ -33,7 +37,9 @@ class Font::FreeType::Face {
         method FALLBACK(|) { Int }
     }
 
-    submethod TWEAK() {
+    submethod TWEAK(Str :$attach-file) {
+        self.attach-file($_)
+            with $attach-file;
         $!metrics-delegate = UnscaledMetrics
             unless self.is-scalable;
     }
@@ -464,7 +470,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 The height above the baseline of the 'top' of the font's glyphs.
 
-=head3 attach-file(_filename_)   *** NYI ***
+=head3 attach-file(_filename_)
 
 Informs FreeType of an ancillary file needed for reading the font.
 Hasn't been tested yet.

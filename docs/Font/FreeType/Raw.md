@@ -187,6 +187,16 @@ class Font::FreeType::Raw::FT_Face
 
 A handle to a typographic face object. A face object models a given typeface, in a given style. Note: A face object also owns a single FT_GlyphSlot object, as well as one or more FT_Size objects.
 
+### method FT_Attach_File
+
+```raku
+method FT_Attach_File(
+    Str $filename
+) returns uint32
+```
+
+Return true if a given face provides reliable PostScript glyph names.
+
 ### method FT_Has_PS_Glyph_Names
 
 ```raku

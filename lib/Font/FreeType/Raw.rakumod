@@ -360,6 +360,10 @@ class FT_Face is export {
     has FT_CharMap        $.charmap;
 
     #| Return true if a given face provides reliable PostScript glyph names. 
+    method FT_Attach_File(Str  $filename)
+        returns FT_Error is native($FT-LIB) {*};
+
+    #| Return true if a given face provides reliable PostScript glyph names. 
     method FT_Has_PS_Glyph_Names(  )
         returns FT_Int is native($FT-LIB) {*};
 

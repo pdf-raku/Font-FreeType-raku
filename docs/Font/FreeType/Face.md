@@ -46,7 +46,7 @@ Unless otherwise stated, all methods will die if there is an error.
 
 The height above the baseline of the 'top' of the font's glyphs.
 
-### attach-file(_filename_) *** NYI ***
+### attach-file(_filename_)
 
 Informs FreeType of an ancillary file needed for reading the font. Hasn't been tested yet.
 
