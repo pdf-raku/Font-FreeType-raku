@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.5.3  2023-08-10T06:26:27+12:00
+    - Implement face .attach-file method and face creation option
+
 0.5.2  2023-08-07T08:18:25+12:00
     - Various fixes to bin/font-say and examples/*.raku
 

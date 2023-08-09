@@ -359,7 +359,7 @@ class FT_Face is export {
     has FT_Size           $.size;
     has FT_CharMap        $.charmap;
 
-    #| Return true if a given face provides reliable PostScript glyph names. 
+    #| ‘Attach’ data to a face object. Normally, this is used to read additional information for the face object. For example, you can attach an AFM file that comes with a Type 1 font to get the kerning values and other metrics.
     method FT_Attach_File(Str  $filename)
         returns FT_Error is native($FT-LIB) {*};
 
