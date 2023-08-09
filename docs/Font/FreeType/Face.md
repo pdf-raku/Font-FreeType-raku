@@ -48,7 +48,7 @@ The height above the baseline of the 'top' of the font's glyphs.
 
 ### attach-file(_filename_)
 
-Informs FreeType of an ancillary file needed for reading the font. Hasn't been tested yet.
+Informs FreeType of an ancillary file needed for reading the font. For example an `*.afm` (font metrics) file to accompany a `*.pfa` or `*.pfb` file.
 
 ### font-format()
 

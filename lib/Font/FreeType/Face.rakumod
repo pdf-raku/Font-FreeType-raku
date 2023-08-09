@@ -473,7 +473,7 @@ The height above the baseline of the 'top' of the font's glyphs.
 =head3 attach-file(_filename_)
 
 Informs FreeType of an ancillary file needed for reading the font.
-Hasn't been tested yet.
+For example an `*.afm` (font metrics) file to accompany a `*.pfa` or `*.pfb` file.
 
 =head3 font-format()
 
