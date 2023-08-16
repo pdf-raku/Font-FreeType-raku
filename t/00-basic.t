@@ -7,6 +7,7 @@ use Font::FreeType::Raw;
 use Font::FreeType::Raw::Defs;
 use NativeCall;
 
+ok $FT-WRAPPER-LIB.IO.s, $FT-WRAPPER-LIB.IO.path ~ ' library has been built';
 unless $FT-WRAPPER-LIB.IO.s {
     bail-out "unable to access {$FT-WRAPPER-LIB.basename}, has it been built, (e.g. 'zef build .' or 'raku Build.rakumod'" ~ ('Makefile'.IO.e ?? ", or 'make'" !! '') ~ ')';
 }
