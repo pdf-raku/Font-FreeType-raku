@@ -7,20 +7,23 @@ use Font::FreeType::Raw;
 use Font::FreeType::Raw::Defs;
 use NativeCall;
 
+unless $FT-WRAPPER-LIB.IO.s {
+    bail-out "unable to access {$FT-WRAPPER-LIB.basename}, has it been built, (e.g. 'zef build .' or 'raku Build.rakumod')";
+}
+
 # sanity check our libraries
 lives-ok({ cglobal($FT-LIB, "FT_Library_Version", Pointer) }, 'FreeType lib access')
-    or die "unable to access FreeType library; is the FreeType library installed?";
+    or bail-out "unable to access FreeType library; is the FreeType library installed?";
 
 my Font::FreeType $freetype;
 lives-ok { $freetype .= new }, 'font freetype creation';
 my Version $version;
 lives-ok { $version = $freetype.version }, 'got version';
 note "FreeType2 version is $version";
-die "FreeType2 version $version is too old"
+bail-out "FreeType2 version $version is too old"
     unless $version >= v2.1.1;
 
-lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper lib access')
-    or die "unable to access FreeType wrapper library; has it been built? (e.g. 'zef build .)";
+lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper symbol lib access');
 
 my Font::FreeType::Face $face;
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from file';
