@@ -11,7 +11,7 @@ use NativeCall;
 lives-ok({ cglobal($FT-LIB, "FT_Library_Version", Pointer) }, 'FreeType lib access')
     or bail-out "unable to access FreeType library; is the FreeType library installed?";
 
-ok $FT-WRAPPER-LIB.IO.s, $FT-WRAPPER-LIB.IO.path ~ ' library has been built';
+#ok $FT-WRAPPER-LIB.IO.s, $FT-WRAPPER-LIB.IO.path, ' library has been built';
 unless $FT-WRAPPER-LIB.IO.s {
     bail-out "unable to access {$FT-WRAPPER-LIB.basename}, has it been built, (e.g. 'zef build .' or 'raku Build.rakumod'" ~ ('Makefile'.IO.e ?? ", or 'make'" !! '') ~ ')';
 }
