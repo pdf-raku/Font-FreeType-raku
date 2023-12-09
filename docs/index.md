@@ -113,7 +113,7 @@ Testing
 To checkout and test this module from the Git repository:
 
     $ git checkout https://github.com/pdf-raku/Font-FreeType-raku.git
-    $ zef build .  # -OR- raku Build.pm
+    $ zef build .  # -OR- raku Build.rakumod
     $ prove -e'raku -I .' -v t
 
 Authors

@@ -96,16 +96,10 @@ class Font::FreeType::Outline {
         $shape;
     }
 
-    method bbox returns Font::FreeType::BBox:D {
+    method bbox returns Font::FreeType::BBox:D handles<bounding-box> {
         my FT_BBox $bbox .= new;
         ft-try { $!raw.FT_Outline_Get_BBox($bbox); };
         Font::FreeType::BBox.new: :$bbox;
-    }
-
-    method bounding-box is also<Array> {
-        my Font::FreeType::BBox $bbox = self.bbox;
-        [floor($bbox.x-min), floor($bbox.y-min),
-         ceiling($bbox.x-max), ceiling($bbox.y-max)]
     }
 
     method postscript returns Str:D {

@@ -3,6 +3,7 @@ unit class Font::FreeType::SizeMetrics;
 
 use Font::FreeType::Raw;
 use Font::FreeType::Raw::Defs;
+use  Font::FreeType::BBox;
 use Method::Also;
 
 constant Dot6  = Font::FreeType::Raw::Defs::Dot6;
@@ -60,26 +61,19 @@ method max-advance-height {
     $!face.max-advance-height * $.y-scale;
 }
 
-method Array is also<FontBBox> {
-     with $!face.bbox {
-        [
-            .x-min * $.x-scale,
-            .y-min * $.y-scale,
-            .x-max * $.x-scale,
-            .y-max * $.y-scale,
-        ]
-     }
-     else {
-         Array
-     }
-}
-
-method bounding-box {
-    self.Array does role {
-        method x-min { self[0] }
-        method y-min { self[1] }
-        method x-max { self[2] }
-        method y-max { self[3] }
+method bbox is also<bounding-box FontBBox> {
+    with $!face.bbox {
+        Font::FreeType::BBox.new(
+            :bbox[
+                     .x-min * $.x-scale,
+                     .y-min * $.y-scale,
+                     .x-max * $.x-scale,
+                     .y-max * $.y-scale,
+                 ],
+        );
+    }
+    else {
+        Font::FreeType::BBox;
     }
 }
 

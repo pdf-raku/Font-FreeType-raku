@@ -29,7 +29,7 @@ our $FT-LIB is export = Rakudo::Internals.IS-WIN ?? find-library('freetype') !! 
 # library bindings
 
 # additional C bindings
-our $FT-WRAPPER-LIB is export =  Rakudo::Internals.IS-WIN ?? find-library('ft6') !! %?RESOURCES<libraries/ft6>;
+our $FT-WRAPPER-LIB is export = Rakudo::Internals.IS-WIN ?? find-library('ft6') !! %?RESOURCES<libraries/ft6>;
 our $CLIB = Rakudo::Internals.IS-WIN ?? 'msvcrt' !! Str;
 
 constant FT_Bool   is export = uint8;

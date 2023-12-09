@@ -11,6 +11,7 @@ class Font::FreeType::Face {
     use Font::FreeType::NamedInfo;
     use Font::FreeType::CharMap;
     use Font::FreeType::SizeMetrics;
+    use Font::FreeType::BBox;
     use Method::Also;
 
     constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
@@ -27,10 +28,14 @@ class Font::FreeType::Face {
         ft-try { self.raw.FT_Attach_File($filepath); }
     }
 
-    method bbox returns FT_BBox is DEPRECATED<bounding-box> {
-        my FT_BBox $bbox = $!raw.bbox.clone
-            if self.is-scalable;
-        $bbox;
+    method bbox returns Font::FreeType::BBox {
+        if self.is-scalable {
+            my FT_BBox $bbox = $!raw.bbox;
+            Font::FreeType::BBox.new: :$bbox;
+        }
+        else {
+            Font::FreeType::BBox;
+        }
     }
     class UnscaledMetrics {
         method bbox is also<bounding-box> { Array }
