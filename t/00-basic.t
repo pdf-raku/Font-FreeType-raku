@@ -46,7 +46,17 @@ lives-ok { $face = $freetype.face('t/fonts/DejaVuSerif.ttf'.IO.slurp(:bin)) }, '
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Serif', 'face family name';
 
-$face.set-char-size(2048, 2048, 72, 72);
+$face.set-font-size(1024, 1024, 72, 72);
+
+$bbox = $face.bounding-box;
+ok $bbox.defined, 'got bounding-box';
+is $bbox.x-min, -788, 'bbox.x-min';
+is $bbox.x-max, 2156, 'bbox.x-max';
+is $bbox.y-min, -355, 'bbox.y-min';
+is $bbox.y-max, 1136, 'bbox.y-max';
+is $bbox.width, 2944, 'bbox.width';
+is $bbox.height, 1491, 'bbox.height';
+
 $face.for-glyphs: 'AI', -> $gslot {
     ok $gslot, '.for-glyphs';
 

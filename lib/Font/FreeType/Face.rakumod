@@ -22,21 +22,12 @@ class Font::FreeType::Face {
         size> is required;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
     has Lock $!lock handles<protect> .= new;
-    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box max-advance max-advance-height> = $!raw;
+    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box bbox max-advance max-advance-height> = $!raw;
 
     method attach-file(Str:D() $filepath) {
         ft-try { self.raw.FT_Attach_File($filepath); }
     }
 
-    method bbox returns Font::FreeType::BBox {
-        if self.is-scalable {
-            my FT_BBox $bbox = $!raw.bbox;
-            Font::FreeType::BBox.new: :$bbox;
-        }
-        else {
-            Font::FreeType::BBox;
-        }
-    }
     class UnscaledMetrics {
         method bbox is also<bounding-box> { Array }
         method FALLBACK(|) { Int }
