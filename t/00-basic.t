@@ -49,6 +49,7 @@ is $face.family-name, 'DejaVu Serif', 'face family name';
 $face.set-font-size(1024, 1024, 72, 72);
 
 $bbox = $face.bounding-box;
+is $bbox.x-scale, 0.5, 'bbox.x-scale';
 ok $bbox.defined, 'got bounding-box';
 is $bbox.x-min, -788, 'bbox.x-min';
 is $bbox.x-max, 2156, 'bbox.x-max';

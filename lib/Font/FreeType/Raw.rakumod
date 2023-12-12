@@ -458,7 +458,7 @@ class FT_Face is export {
         FT_Bool $is_cid is rw
     ) returns FT_Error is native($FT-LIB) {*};
 
-    method bounding-box {
+    method bounding-box is DEPRECATED {
         self.bbox.Array does role {
             method x-min { self[0] }
             method y-min { self[1] }

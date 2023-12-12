@@ -84,12 +84,12 @@ sub scaled-metrics-tests($scaled-metrics) {
     is $scaled-metrics.max-advance, 6.0, '.max-advance';
     is-approx $scaled-metrics.underline-position, -1.664063, '.underline-position';
     is-approx $scaled-metrics.underline-thickness, 0.837891, '.underline-thickness';
-    my @bbox = $scaled-metrics.bounding-box;
+    my $bbox = $scaled-metrics.bounding-box;
     enum <x-min y-min x-max y-max>;
-    is-approx @bbox[x-min], -2.197266, '@bbox[x-min]';
-    is-approx @bbox[y-min], -2.830078, '@bbox[y-min]';
-    is-approx @bbox[x-max], 15.445313, '@bbox[x-max]';
-    is-approx @bbox[y-max], 11.138672, '@bbox[y-max]';
+    is-approx $bbox[x-min], -2.197266, '@bbox[x-min]';
+    is-approx $bbox[y-min], -2.830078, '@bbox[y-min]';
+    is-approx $bbox[x-max], 15.445313, '@bbox[x-max]';
+    is-approx $bbox[y-max], 11.138672, '@bbox[y-max]';
 }
 
 subtest 'scaled-metrics', {

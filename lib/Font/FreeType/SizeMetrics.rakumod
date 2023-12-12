@@ -62,15 +62,8 @@ method max-advance-height {
 }
 
 method bbox is also<bounding-box FontBBox> {
-    with $!face.bbox {
-        Font::FreeType::BBox.new(
-            :bbox[
-                     .x-min * $.x-scale,
-                     .y-min * $.y-scale,
-                     .x-max * $.x-scale,
-                     .y-max * $.y-scale,
-                 ],
-        );
+    with $!face.bbox  -> $bbox {
+        Font::FreeType::BBox.new: :$bbox, :$.x-scale, :$.y-scale;
     }
     else {
         Font::FreeType::BBox;

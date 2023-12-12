@@ -22,14 +22,25 @@ class Font::FreeType::Face {
         size> is required;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
     has Lock $!lock handles<protect> .= new;
-    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height bounding-box bbox max-advance max-advance-height> = $!raw;
+    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height max-advance max-advance-height> = $!raw;
 
     method attach-file(Str:D() $filepath) {
         ft-try { self.raw.FT_Attach_File($filepath); }
     }
+    method bbox is also<bounding-box> returns Font::FreeType::BBox {
+        my Font::FreeType::BBox $bbox;
+        if $!metrics-delegate === $!raw {
+            $bbox .= new: :bbox($!raw.bbox), :x-scale(1), :y-scale(1)
+                if self.is-scalable;
+        }
+        else {
+            $bbox = $!metrics-delegate.bbox;
+        }
+        $bbox;
+    }
 
     class UnscaledMetrics {
-        method bbox is also<bounding-box> { Array }
+        method bbox is also<bounding-box> { Font::FreeType::BBox }
         method FALLBACK(|) { Int }
     }
 
@@ -445,7 +456,7 @@ class Font::FreeType::Face {
     use Font::FreeType::Face;
 
     my Font::FreeType $freetype .= new;
-    my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
+    my Font::Freetype::Face $vera = $freetype.face('Vera.ttf');
     =end code
 
 =head2 Description
@@ -787,9 +798,9 @@ The current active L<Font::FreeType::CharMap> object for this face.
 
 An array of the available L<Font::FreeType::CharMap> objects for the face.
 
-=head3 bounding-box()
+=head3 bounding-box() [or bbox()]
 
-The outline's bounding box returned as a 4 element array:
+The outline's bounding box returned as a L<Font::FreeType::BBox> array:
 `($x-min, $y-min, $x-max, $y-max)`.
 
 =head3 raw()
