@@ -84,12 +84,12 @@ sub scaled-metrics-tests($scaled-metrics) {
     is $scaled-metrics.max-advance, 6.0, '.max-advance';
     is-approx $scaled-metrics.underline-position, -1.664063, '.underline-position';
     is-approx $scaled-metrics.underline-thickness, 0.837891, '.underline-thickness';
-    my $bbox = $scaled-metrics.bounding-box;
+    my @bbox := $scaled-metrics.bounding-box;
     enum <x-min y-min x-max y-max>;
-    is-approx $bbox[x-min], -2.197266, '@bbox[x-min]';
-    is-approx $bbox[y-min], -2.830078, '@bbox[y-min]';
-    is-approx $bbox[x-max], 15.445313, '@bbox[x-max]';
-    is-approx $bbox[y-max], 11.138672, '@bbox[y-max]';
+    is-approx @bbox[x-min], -2.197266, '@bbox[x-min]';
+    is-approx @bbox[y-min], -2.830078, '@bbox[y-min]';
+    is-approx @bbox[x-max], 15.445313, '@bbox[x-max]';
+    is-approx @bbox[y-max], 11.138672, '@bbox[y-max]';
 }
 
 subtest 'scaled-metrics', {
@@ -180,7 +180,7 @@ my %glyph-metrics = (
     'g' => { name => 'g', advance => 1300,
              LBearing => 113, RBearing => 186 },
     '|' => { name => 'bar', advance => 690,
-             LBearing => 260, RBearing => 260, Height => 2048, BBox => [260, -483, 430, 1565] },
+             LBearing => 260, RBearing => 260, Height => 2048, BBox => [260.0, -483.0, 430.0, 1565.0] },
 );
 
 # 5*2 tests.
@@ -200,7 +200,7 @@ $vera.for-glyphs: $chars, -> $glyph {
            "width of glyph '$char'";
         is $glyph.height, $_, "height of '$char'"
             with .<Height>;
-        is-deeply $glyph.outline.bounding-box, $_, "bbox of '$char'"
+        is-deeply $glyph.outline.bounding-box.Array, $_, "bbox of '$char'"
             with .<BBox>;
 
     }

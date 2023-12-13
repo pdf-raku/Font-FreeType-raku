@@ -96,7 +96,7 @@ class Font::FreeType::Outline {
         $shape;
     }
 
-    method bbox returns Font::FreeType::BBox:D handles<bounding-box> {
+    method bbox returns Font::FreeType::BBox:D is also<bounding-box> {
         my FT_BBox $bbox .= new;
         ft-try { $!raw.FT_Outline_Get_BBox($bbox); };
         Font::FreeType::BBox.new: :$bbox;
