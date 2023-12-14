@@ -9,13 +9,10 @@ class Font::FreeType::GlyphImage {
     use Font::FreeType::Raw::Defs;
 
     use Font::FreeType::BitMap;
-    use Font::FreeType::Outline;
 
-    has FT_Glyph $!raw handles <top left>;
+    has FT_Glyph $.raw is built handles <top left>;
 
-    method !library(--> FT_Library:D) {
-        $.face.ft-lib.raw;
-    }
+    method !library(--> FT_Library:D) { $.face.ft-lib.raw; }
 
     submethod TWEAK(FT_GlyphSlot :$glyph!, :$top = $glyph.bitmap-top, :$left = $glyph.bitmap-left,) {
         my $glyph-p = Pointer[FT_Glyph].new;
@@ -40,16 +37,6 @@ class Font::FreeType::GlyphImage {
     }
     method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
 
-    method is-outline {
-        .format == FT_GLYPH_FORMAT_OUTLINE with $!raw;
-    }
-    method outline handles<decompose> returns  Font::FreeType::Outline:D {
-        die "not an outline glyph"
-            unless self.is-outline;
-        my FT_Outline:D $outline = $!raw.outline;
-        my FT_Outline $raw = $outline.clone(self!library);
-        Font::FreeType::Outline.new: :$raw, :$.face;
-    }
     method bold(Int $s) is DEPRECATED<set-bold> { self.set-bold($s) }
     method set-bold(Int $strength) {
         if self.is-outline {

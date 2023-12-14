@@ -11,10 +11,9 @@ class Font::FreeType::Glyph {
     use Font::FreeType::Error;
 
     use Font::FreeType::BitMap;
-    use Font::FreeType::Outline;
     constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
-    has FT_GlyphSlot $!raw handles <metrics>;
+    has FT_GlyphSlot $.raw is built handles <metrics>;
     has UInt:D $.flags = FT_LOAD_DEFAULT;
     has Numeric $!x-scale;
     has Numeric $!y-scale;
@@ -40,10 +39,6 @@ class Font::FreeType::Glyph {
     method width returns Rat:D { $.metrics.width / $!x-scale }
     method height returns Rat:D { $.metrics.height / $!y-scale }
     method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
-
-    method is-outline {
-        $.format == FT_GLYPH_FORMAT_OUTLINE;
-    }
 
     method glyph-image handles<bitmap outline decompose> returns Font::FreeType::GlyphImage:D {
         my $top = $!raw.bitmap-top;

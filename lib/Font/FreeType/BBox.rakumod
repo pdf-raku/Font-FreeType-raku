@@ -48,10 +48,21 @@ class Font::FreeType::BBox
 
     my Font::FreeType $freetype .= new;
     my Font::Freetype::Face $vera = $freetype.face('Vera.ttf');
+
+    # get the font bounding box
     my Font::FreeType::BBox $bbox = $vera.bbox;
     say $bbox.x-min;
     say $bbox.x-max;
+    say $bbox.width;
+    say $bbox.height;
+
+    # get the bounding box for an individual glyph
+    $vera.for-glyphs: "X", -> $gslot {
+    }
     =end code
+
+=head2 Description
+           
 
 =head2 Methods
 
