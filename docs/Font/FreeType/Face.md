@@ -27,7 +27,7 @@ use Font::FreeType;
 use Font::FreeType::Face;
 
 my Font::FreeType $freetype .= new;
-my Font::Freetype::face $vera = $freetype.face('Vera.ttf');
+my Font::Freetype::Face $vera = $freetype.face('Vera.ttf');
 ```
 
 Description
@@ -304,9 +304,9 @@ The current active [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-Fre
 
 An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap) objects for the face.
 
-### bounding-box()
+### bounding-box() [or bbox()]
 
-The outline's bounding box returned as a 4 element array: `($x-min, $y-min, $x-max, $y-max)`.
+The outline's bounding box returned as a [Font::FreeType::BBox](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/BBox) array: `($x-min, $y-min, $x-max, $y-max)`.
 
 ### raw()
 

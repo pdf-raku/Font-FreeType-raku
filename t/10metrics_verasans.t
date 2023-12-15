@@ -7,9 +7,10 @@
 
 use v6;
 use Test;
-plan 2714;
+plan 2715;
 use Font::FreeType;
 use Font::FreeType::SizeMetrics;
+use Font::FreeType::Glyph;
 use Font::FreeType::Raw::Defs;
 
 # Load the Vera Sans face.
@@ -167,7 +168,7 @@ is $i, +@character-list, "we aren't missing any glyphs";
 
 $i = 0;
 $vera.forall-char-images: &check-glyph-char;
-is $i, +@character-list, "we aren't missing any glyphs";
+is $i, +@character-list, "we aren't missing any glyph images";
 
 # Test metrics on some particlar glyphs.
 my %glyph-metrics = (
@@ -185,9 +186,9 @@ my %glyph-metrics = (
 
 # 5*2 tests.
 my $chars = %glyph-metrics.keys.sort.join;
-$vera.for-glyphs: $chars, -> $glyph {
+$vera.for-glyphs: $chars, -> Font::FreeType::Glyph $glyph {
     my $char = $glyph.Str;
-    with %glyph-metrics{$char} {
+    given %glyph-metrics{$char} {
         is $glyph.name, .<name>,
            "name of glyph '$char'";
         is $glyph.horizontal-advance, .<advance>,
@@ -200,8 +201,10 @@ $vera.for-glyphs: $chars, -> $glyph {
            "width of glyph '$char'";
         is $glyph.height, $_, "height of '$char'"
             with .<Height>;
-        is-deeply $glyph.outline.bounding-box.Array, $_, "bbox of '$char'"
-            with .<BBox>;
+        with .<BBox> {
+            is-deeply $glyph.outline.bounding-box.Array, $_, "bbox of '$char'";
+            is-deeply $glyph.glyph-image.outline.bounding-box.Array, $_, "outline.bbox of '$char'";
+        }
 
     }
 }

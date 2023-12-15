@@ -40,7 +40,7 @@ class Font::FreeType::Glyph {
     method height returns Rat:D { $.metrics.height / $!y-scale }
     method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
 
-    method glyph-image handles<bitmap outline decompose> returns Font::FreeType::GlyphImage:D {
+    method glyph-image handles<bitmap decompose> returns Font::FreeType::GlyphImage:D {
         my $top = $!raw.bitmap-top;
         my $left = $!raw.bitmap-left;
         Font::FreeType::GlyphImage.new: :$.face, :glyph($!raw), :$left, :$top, :$.char-code, :$.index, :$.stat;

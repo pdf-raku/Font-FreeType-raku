@@ -22,7 +22,7 @@ method is-outline {
     .format == FT_GLYPH_FORMAT_OUTLINE with $.raw;
 }
 
-method outline handles<decompose> returns  Font::FreeType::Outline:D {
+method outline handles<decompose bbox bounding-box> returns  Font::FreeType::Outline:D {
     die "not an outline glyph"
         unless self.is-outline;
     my FT_Outline:D $outline = $.raw.outline;
