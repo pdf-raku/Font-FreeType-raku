@@ -1,4 +1,6 @@
 {{$NEXT}}
+    - Fix face height and advance-width. Thanks Tom Browder
+    - Add face bbox() alias for bounding-box() #23.
 
 0.5.3  2023-08-10T06:26:27+12:00
     - Implement face .attach-file method and face creation option

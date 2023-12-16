@@ -81,8 +81,8 @@ sub scaled-metrics-tests($scaled-metrics) {
     is $scaled-metrics.y-ppem, 12, '.y-ppem';
     is-approx $scaled-metrics.ascender, 11.138672, '.ascender';
     is-approx $scaled-metrics.descender, -2.830078, '.descender';
-    is $scaled-metrics.height, 5.25, '.height';
-    is $scaled-metrics.max-advance, 6.0, '.max-advance';
+    is $scaled-metrics.height, 14, '.height';
+    is $scaled-metrics.max-advance, 16, '.max-advance';
     is-approx $scaled-metrics.underline-position, -1.664063, '.underline-position';
     is-approx $scaled-metrics.underline-thickness, 0.837891, '.underline-thickness';
     my @bbox := $scaled-metrics.bounding-box;

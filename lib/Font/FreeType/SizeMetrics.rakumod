@@ -42,7 +42,7 @@ method descender {
 }
 
 method height {
-    $!raw.height * $.y-scale;
+    $!raw.height / Dot6;
 }
 
 method underline-position {
@@ -54,7 +54,7 @@ method underline-thickness {
 }
 
 method max-advance-width is also<max-advance> {
-    $!raw.max-advance * $.x-scale;
+    $!raw.max-advance / Dot6;
 }
 
 method max-advance-height {
