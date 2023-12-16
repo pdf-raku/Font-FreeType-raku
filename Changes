@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.5.4  2023-12-17T06:55:36+13:00
     - Fix face height and advance-width. Thanks Tom Browder
     - Add face bbox() alias for bounding-box() #23.
 

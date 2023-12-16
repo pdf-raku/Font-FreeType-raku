@@ -48,15 +48,16 @@ is $face.family-name, 'DejaVu Serif', 'face family name';
 
 $face.set-font-size(1024, 1024, 72, 72);
 
-$bbox = $face.bounding-box;
-is $bbox.x-scale, 0.5, 'bbox.x-scale';
-ok $bbox.defined, 'got bounding-box';
-is $bbox.x-min, -788, 'bbox.x-min';
-is $bbox.x-max, 2156, 'bbox.x-max';
-is $bbox.y-min, -355, 'bbox.y-min';
-is $bbox.y-max, 1136, 'bbox.y-max';
-is $bbox.width, 2944, 'bbox.width';
-is $bbox.height, 1491, 'bbox.height';
+for  $face.bounding-box, $face.bbox -> $bbox {
+    is $bbox.x-scale, 0.5, 'bbox.x-scale';
+    ok $bbox.defined, 'got bounding-box';
+    is $bbox.x-min, -788, 'bbox.x-min';
+    is $bbox.x-max, 2156, 'bbox.x-max';
+    is $bbox.y-min, -355, 'bbox.y-min';
+    is $bbox.y-max, 1136, 'bbox.y-max';
+    is $bbox.width, 2944, 'bbox.width';
+    is $bbox.height, 1491, 'bbox.height';
+}
 
 $face.for-glyphs: 'AI', -> $gslot {
     ok $gslot, '.for-glyphs';
