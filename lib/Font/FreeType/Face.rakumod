@@ -163,14 +163,18 @@ class Font::FreeType::Face {
         self.forall-chars(&code, $text.ords, |c);
     }
 
-    multi method forall-char-images(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags --> Seq) {
+    method glyph-image(::?CLASS:D $face: UInt:D $char-code, :$flags = $!load-flags --> Font::FreeType::GlyphImage) {
         my FT_GlyphSlot:D $glyph = $!raw.glyph;
 
+        $!lock.protect: {
+            my $stat = $!raw.FT_Load_Char($char-code, $flags);
+            Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$stat;
+        }    
+    }
+
+    multi method forall-char-images(::?CLASS:D: &code, @ords, :$flags = $!load-flags --> Seq) {
         @ords.map: -> UInt:D $char-code {
-            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
-                my $stat = $!raw.FT_Load_Char($char-code, $flags);
-                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$stat;
-            }
+            my $glyph-image = self.glyph-image($char-code, :$flags);
             &code($glyph-image);
         }
     }
@@ -189,16 +193,12 @@ class Font::FreeType::Face {
         }
     }
 
-    multi method forall-char-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
-        my FT_GlyphSlot:D $glyph = $!raw.glyph;
+    multi method forall-char-images(::?CLASS:D: &code, :$flags = $!load-flags) {
         my FT_UInt $glyph-index;
         my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
 
         while $glyph-index {
-            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
-                my $stat = $!raw.FT_Load_Char($char-code, $flags);
-                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
-            }
+            my $glyph-image := self.glyph-image($char-code, :$flags);
             &code($glyph-image);
             $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
         }
@@ -598,6 +598,10 @@ Similar to `forall-glyphs`, except that detachable L<Font::FreeType::GlyphImage>
 
 If there was an error loading the glyph, then the glyph-images's, `stat` method will return non-zero and the `error`
 method will return an exception object.
+
+=head3 glyph-image()
+
+Returns a single L<Font::FreeType::GlyphImage> object for a code-point.
 
 =head3 has-glyph-names()
 

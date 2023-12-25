@@ -142,6 +142,10 @@ Similar to `forall-glyphs`, except that detachable [Font::FreeType::GlyphImage](
 
 If there was an error loading the glyph, then the glyph-images's, `stat` method will return non-zero and the `error` method will return an exception object.
 
+### glyph-image()
+
+Returns a single [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage) object for a code-point.
+
 ### has-glyph-names()
 
 True if individual glyphs have names. If so, the names can be retrieved with the `name()` method on [Font::FreeType::Glyph](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Glyph) objects.
