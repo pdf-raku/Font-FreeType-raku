@@ -4,7 +4,6 @@ unit module Font::FreeType::Raw::TT_Sfnt;
 use Font::FreeType::Raw;
 use Font::FreeType::Error;
 use Font::FreeType::Raw::Defs;
-use Font::FreeType::Face;
 use NativeCall;
 
 =begin pod
@@ -42,11 +41,6 @@ PCLT | TT_PCLT       | PCLT Specific property table | capHeight characterComplem
 
 role TT_Sfnt[FT_Sfnt_Tag \Tag] is export {
 
-    multi method load(Font::FreeType::Face :face($_)!) {
-        my FT_Face:D $face = .raw;
-        $.load(:$face);
-    }
-
     multi method load($obj is copy: FT_Face:D :$face!) {
         with $face.FT_Get_Sfnt_Table(+Tag) -> $p {
             $_ .= new without $obj;
@@ -58,6 +52,12 @@ role TT_Sfnt[FT_Sfnt_Tag \Tag] is export {
             self.WHAT;
         }
     }
+
+    multi method load(:face($_)! where .isa("Font::FreeType::Face")) {
+        my FT_Face:D $face = .raw;
+        $.load(:$face);
+    }
+
 }
 
 class TT_Header does TT_Sfnt[Ft_Sfnt_head] is export is repr('CStruct') {

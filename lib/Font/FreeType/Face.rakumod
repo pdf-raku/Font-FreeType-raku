@@ -5,6 +5,7 @@ class Font::FreeType::Face {
     use Font::FreeType::Error;
     use Font::FreeType::Raw;
     use Font::FreeType::Raw::Defs;
+    use Font::FreeType::Raw::TT_Sfnt;
 
     use Font::FreeType::BitMap;
     use Font::FreeType::Glyph;
@@ -51,9 +52,17 @@ class Font::FreeType::Face {
             unless self.is-scalable;
     }
 
-    subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT';
-    method font-format returns FontFormat {
-        $!raw.FT_Get_Font_Format;
+    subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT'|'OpenType';
+    method font-format(::?CLASS:D $face: --> FontFormat) {
+        my $type := $!raw.FT_Get_Font_Format;
+        if $type eq 'CFF' {
+            # Is this simple CFF or OpenType/CFF font?
+            TT_Header.load(:$face).defined
+                ?? 'OpenType' !! 'CFF';
+        }
+        else {
+            $type;
+        }
     }
 
     method fixed-sizes returns Seq {
@@ -330,12 +339,7 @@ class Font::FreeType::Face {
     method is-internally-keyed-cid returns Bool {
         my FT_Bool $is-cid;
         $!raw.FT_Get_CID_Is_Internally_CID_Keyed($is-cid);
-        with $is-cid {
-            .so
-        }
-        else {
-            Bool
-        }
+        $is-cid.so;
     }
 
     method Numeric is also<elems> {
@@ -550,7 +554,7 @@ For example, to load particular glyphs (character images):
         # Glyphs can be rendered to bitmap images, among other things:
         my $bitmap = .bitmap;
         say $bitmap.Str;
-    }
+    }`
 
 
 =head3 forall-chars($text, &code)
