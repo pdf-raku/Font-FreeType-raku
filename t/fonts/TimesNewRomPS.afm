@@ -250,4 +250,9 @@ C 254 ; WX 333 ; N ogonek ; B 72 -177 297 8 ;
 C 255 ; WX 333 ; N caron ; B 28 551 304 712 ;
 C -1 ; WX 500 ; N currency ; B 13 94 487 568 ;
 EndCharMetrics
+StartKernData
+StartKernPairs 1
+KPX A V -128
+EndKernPairs
+EndKernData
 EndFontMetrics

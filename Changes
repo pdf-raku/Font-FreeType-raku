@@ -1,5 +1,6 @@
 {{$NEXT}}
-    - Add glyph-image() method
+    - Add face glyph-image() method
+    - Change OpenType/CFF to return type font-format 'OpenType'
 
 0.5.4  2023-12-17T06:55:36+13:00
     - Fix face height and advance-width. Thanks Tom Browder

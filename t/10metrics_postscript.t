@@ -27,7 +27,7 @@ sub test-times-font($tnr, Bool :$afm) {
     my %expected-flags = (
         :has-glyph-names(True),
         :has-horizontal-metrics(True),
-        :has-kerning(False),
+        :has-kerning($afm.so),
         :has-reliable-glyph-names(True),
         :has-vertical-metrics(False),
         :is-bold(False),
@@ -131,10 +131,21 @@ for qw<pfb pfa> -> $ext  {
     subtest ($ext.uc ~ " font format"), { test-times-font($tnr) };
 }
 
-my $tnr2 = $ft.face: "t/fonts/TimesNewRomPS.pfa";
-$tnr2.attach-file: "t/fonts/TimesNewRomPS.afm";
+subtest ("pfa with afm attach-file method"), {
+    my $left  := 'A';
+    my $right := 'V';
 
-subtest ("pfa with afm attach-file method"), { test-times-font($tnr2, :afm) };
+    my $tnr2 = $ft.face: "t/fonts/TimesNewRomPS.pfa";
+    nok $tnr2.has-kerning;
+    is $tnr2.kerning( $left, $right).x, 0;
+    subtest 'before attach-file()', { test-times-font($tnr2, :!afm); }
+
+    $tnr2.attach-file: "t/fonts/TimesNewRomPS.afm";
+    ok $tnr2.has-kerning;
+    is $tnr2.kerning( $left, $right).x, -128;
+    subtest 'after attach-file', { test-times-font($tnr2, :afm) };
+
+};
 
 my $tnr3 = $ft.face: "t/fonts/TimesNewRomPS.pfa", :attach-file<t/fonts/TimesNewRomPS.afm>;
 
