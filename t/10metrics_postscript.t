@@ -57,22 +57,6 @@ sub test-times-font($tnr, Bool :$afm) {
     my @fixed-sizes = $tnr.fixed-sizes;
     is +@fixed-sizes, 0, 'Tnr has no fixed sizes';
 
-    subtest "charmaps" => {
-        plan 2;
-        subtest "default-charmap" => {
-            plan 4;
-            my $default-cm = $tnr.charmap;
-            ok $default-cm;
-            is $default-cm.platform-id, 3;
-            is $default-cm.encoding-id, 1;
-            is $default-cm.encoding, FT_ENCODING_UNICODE;
-        };
-
-        my @charmaps = $tnr.charmaps;
-        is +@charmaps, 2, "available charmaps"
-
-    };
-
     subtest "bounding box" => sub {
         my $bb = $tnr.bounding-box;
         ok $bb;
@@ -123,6 +107,36 @@ sub test-times-font($tnr, Bool :$afm) {
     }
 
     lives-ok {$tnr.set-pixel-sizes(100, 120)}, 'set pixel sizes';
+
+    subtest "charmaps" => {
+        plan 6;
+        is $tnr.num-charmaps, 2, "num-charmaps";
+        my @charmaps = $tnr.charmaps;
+        is +@charmaps, 2, "available charmaps";
+
+        subtest "default-charmap" => {
+            plan 4;
+            my $default-cm = $tnr.charmap;
+            ok $default-cm;
+            is $default-cm.platform-id, 3;
+            is $default-cm.encoding-id, 1;
+            is $default-cm.encoding, FT_ENCODING_UNICODE;
+        }
+
+        lives-ok { $tnr.set-charmap(2); }, 'set-charmap';
+
+        subtest "alternate-charmap" => {
+            plan 4;
+            my $alternate-cm = $tnr.charmap;
+            ok $alternate-cm;
+            is $alternate-cm.platform-id, 7;
+            is $alternate-cm.encoding-id, 2;
+            is $alternate-cm.encoding, FT_ENCODING_ADOBE_CUSTOM;
+        }
+
+        lives-ok { $tnr.set-charmap(1); }, 'restore charmap';
+    };
+
 }
 
 

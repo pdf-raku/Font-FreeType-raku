@@ -7,7 +7,7 @@
 
 use v6;
 use Test;
-plan 2715;
+plan 2717;
 use Font::FreeType;
 use Font::FreeType::SizeMetrics;
 use Font::FreeType::Glyph;
@@ -238,6 +238,8 @@ $vera.forall-glyph-images: [42], &check-glyph-index;
 
 is $vera.index-from-glyph-name('G'), 42, 'index-from-glyph-name';
 is $vera.glyph-name-from-index(42), 'G', 'glyph-name-from-index';
+is $vera.index-to-unicode[42].chr, 'G', 'index-to-unicode';
+is $vera.index-to-unicode(42).chr, 'G', 'index-to-unicode';
 
 # Test kerning.
 my %kerning = (

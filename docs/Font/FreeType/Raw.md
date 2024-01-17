@@ -244,6 +244,16 @@ method FT_Get_Glyph_Name(
 
 Retrieve the ASCII name of a given glyph in a face.
 
+### method FT_Set_Charmap
+
+```raku
+method FT_Set_Charmap(
+    Font::FreeType::Raw::FT_CharMap $charmap
+) returns uint32
+```
+
+Select a given charmap for character code to glyph index mapping.
+
 ### method FT_Get_Char_Index
 
 ```raku

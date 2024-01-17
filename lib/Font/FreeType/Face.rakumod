@@ -86,6 +86,13 @@ class Font::FreeType::Face {
         $charmap;
     }
 
+    method set-charmap(UInt $n where 1 <= * <= $!raw.num-charmaps --> Font::FreeType::CharMap) {
+        my FT_CharMap:D $nth-charmap = $!raw.charmaps[$n - 1];
+        ft-try {$!raw.FT_Set_Charmap($nth-charmap); }
+        @!to-unicode = ();
+        self.charmap;
+    }
+
     method charmaps returns Seq {
         my int $n-sizes = self.num-charmaps;
         my $ptr = $!raw.charmaps;
@@ -164,6 +171,27 @@ class Font::FreeType::Face {
             !! Int;
     }
 
+    has uint32 @!to-unicode;
+    multi method index-to-unicode {
+        $.protect: {
+            unless @!to-unicode {
+                my FT_Face $struct := $!raw;
+                my FT_UInt $glyph-idx;
+                my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
+                @!to-unicode[self.num-glyphs] = 0;
+                while $glyph-idx {
+                    @!to-unicode[ $glyph-idx ] = $char-code;
+                    $char-code = $struct.FT_Get_Next_Char( $char-code, $glyph-idx);
+                }
+            }
+        }
+        @!to-unicode;
+    }
+    multi method index-to-unicode(UInt:D $i) {
+        self.index-to-unicode unless @!to-unicode;
+        @!to-unicode[$i];
+    }
+
     multi method forall-chars(Str:D $text, &code, |c) is also<for-glyphs> {
         self.forall-chars(&code, $text.ords, |c);
     }
@@ -231,23 +259,9 @@ class Font::FreeType::Face {
         }
     }
 
-    has array $!unicode-map;
-    method !unicode-map {
-        $!unicode-map //= do {
-            my uint16 @to-unicode[$.num-glyphs];
-            my FT_UInt  $index;
-            my FT_ULong $char-code = $!raw.FT_Get_First_Char( $index);
-            while $index {
-                @to-unicode[ $index ] = $char-code;
-                $char-code = $!raw.FT_Get_Next_Char( $char-code, $index);
-            }
-            @to-unicode;
-        }
-    }
-
     multi method forall-glyph-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $glyph = $!raw.glyph;
-        my $to-unicode := self!unicode-map;
+        my $to-unicode := $.index-to-unicode;
         (^$!raw.num-glyphs).map: -> $glyph-index {
             my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
                 my $stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
@@ -261,9 +275,9 @@ class Font::FreeType::Face {
     multi method forall-glyphs(::?CLASS:D $face: &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
-        my $to-unicode := self!unicode-map;
+        my $to-unicode := $.index-to-unicode;
 
-        (^$!raw.num-glyphs).map: -> $glyph-index {
+        (^$!raw.num-glyphs).map: -> uint $glyph-index {
             $!lock.protect: {
                 $glyph.stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
                 $glyph.glyph-index = $glyph-index;
@@ -275,7 +289,7 @@ class Font::FreeType::Face {
 
     multi method forall-glyph-images(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $glyph = $!raw.glyph;
-        my $to-unicode := self!unicode-map;
+        my $to-unicode := $.index-to-unicode;
 
         @gids.map: -> UInt $glyph-index {
             my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
@@ -290,7 +304,7 @@ class Font::FreeType::Face {
     multi method forall-glyphs(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
         my FT_GlyphSlot:D $raw = $!raw.glyph;
         my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
-        my $to-unicode := self!unicode-map;
+        my $to-unicode := $.index-to-unicode;
 
         @gids.map: -> UInt $glyph-index {
             $!lock.protect: {
@@ -437,7 +451,7 @@ class Font::FreeType::Face {
             }
             method iterator { self }
         }
-        my $to-unicode := self!unicode-map;
+        my $to-unicode := $.index-to-unicode;
         AllGlyphsIteration.new: :face(self), :$to-unicode, :$flags, :$!lock;
     }
 
@@ -484,7 +498,8 @@ The height above the baseline of the 'top' of the font's glyphs.
 =head3 attach-file(_filename_)
 
 Informs FreeType of an ancillary file needed for reading the font.
-For example an `*.afm` (font metrics) file to accompany a `*.pfa` or `*.pfb` file.
+
+In particular an `*.afm` (font metrics) file needs to accompany a Type-1 `*.pfa` or `*.pfb` file to obtain kerning and other font metrics.
 
 =head3 font-format()
 
@@ -805,6 +820,18 @@ The current active L<Font::FreeType::CharMap> object for this face.
 =head3 charmaps()
 
 An array of the available L<Font::FreeType::CharMap> objects for the face.
+
+=head3 num-charmaps()
+
+The number of charmaps for this face.
+
+=head3 set-charmap(n)
+
+Select a charmap, where C<n> is in the range C<1 .. $.num-charmaps>.
+
+=head3 index-to-unicode()
+
+Returns an C<array[uint32]> of glyph-index to unicode code-point mappings. Unmapped glyphs are set to zero.     
 
 =head3 bounding-box() [or bbox()]
 

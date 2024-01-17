@@ -335,7 +335,7 @@ class FT_Face is export {
     has Pointer[FT_Bitmap_Size]   $.available-sizes;
 
     has FT_Int            $.num-charmaps;
-    has Pointer[FT_CharMap]       $.charmaps;
+    has CArray[FT_CharMap]       $.charmaps;
 
     HAS FT_Generic        $.generic;
 ##
@@ -386,6 +386,11 @@ class FT_Face is export {
         FT_UInt $glyph-index,
         buf8    $buffer,
         FT_UInt $buffer-max )
+    returns FT_Error is native($FT-LIB) {*};
+
+    #| Select a given charmap for character code to glyph index mapping.
+    method FT_Set_Charmap(
+        FT_CharMap  $charmap )
     returns FT_Error is native($FT-LIB) {*};
 
     #| Return the glyph index of a given character code. This function uses the currently selected charmap to do the mapping.

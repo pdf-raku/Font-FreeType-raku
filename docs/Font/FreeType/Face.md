@@ -48,7 +48,9 @@ The height above the baseline of the 'top' of the font's glyphs.
 
 ### attach-file(_filename_)
 
-Informs FreeType of an ancillary file needed for reading the font. For example an `*.afm` (font metrics) file to accompany a `*.pfa` or `*.pfb` file.
+Informs FreeType of an ancillary file needed for reading the font.
+
+In particular an `*.afm` (font metrics) file needs to accompany a Type-1 `*.pfa` or `*.pfb` file to obtain kerning and other font metrics.
 
 ### font-format()
 
@@ -100,7 +102,7 @@ For example, to load particular glyphs (character images):
         # Glyphs can be rendered to bitmap images, among other things:
         my $bitmap = .bitmap;
         say $bitmap.Str;
-    }
+    }`
 
 ### forall-chars($text, &code)
 
@@ -307,6 +309,18 @@ The current active [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-Fre
 ### charmaps()
 
 An array of the available [Font::FreeType::CharMap](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/CharMap) objects for the face.
+
+### num-charmaps()
+
+The number of charmaps for this face.
+
+### set-charmap(n)
+
+Select a charmap, where `n` is in the range `1 .. $.num-charmaps`.
+
+### index-to-unicode()
+
+Returns an `array[uint32]` of glyph-index to unicode code-point mappings. Unmapped glyphs are set to zero. 
 
 ### bounding-box() [or bbox()]
 
