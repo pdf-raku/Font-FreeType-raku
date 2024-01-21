@@ -1,6 +1,8 @@
 {{$NEXT}}
+
+0.5.5  2024-01-22T05:46:45+13:00
     - Add face glyph-image() method
-    - Change OpenType/CFF to return type font-format 'OpenType'
+    - Change OpenType/CFF to return type font-format 'OpenType' #27.
     - Add index-to-unicode() method
     - Add set-charmap() method
 
