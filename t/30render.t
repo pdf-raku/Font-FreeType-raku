@@ -22,8 +22,7 @@ plan +@test * 4 + 17;
 # changes the rendering algorithm.
 my Font::FreeType $ft .= new;
 use Font::FreeType::Face;
-my Font::FreeType::Face $vera = $ft.face('t/fonts/Vera.ttf',
-                    :load-flags(FT_LOAD_NO_HINTING));
+my Font::FreeType::Face $vera = $ft.face('t/fonts/Vera.ttf');
 
 is-deeply $vera.ft-lib, $ft, 'back-reference from font to library';
 
@@ -62,11 +61,11 @@ for $vera.glyph-images('B') {
 
     my $bbox = $outline.bbox;
     is-approx $bbox.x-max, 184.578125, 'bbox x-max';
-    is-approx $bbox.y-max, 218.703125, 'bbox y-max';
+    is-approx $bbox.y-max, 219, 'bbox y-max';
 
     my $ps = $outline.postscript;
     my $bmp = .bitmap;
     ok($ps && $bmp, 'can get both outline and then bitmap from glyph');
-    is $ps.lines[0], '59.03 104.44 moveto';
+    is $ps.lines[0], '59.03 104.00 moveto';
 }
 

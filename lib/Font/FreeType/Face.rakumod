@@ -21,7 +21,7 @@ class Font::FreeType::Face {
     has FT_Face $.raw handles <num-faces face-index face-flags style-flags
         num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
         size> is required;
-    has UInt $.load-flags = FT_LOAD_DEFAULT;
+    has UInt $.load-flags is rw = FT_LOAD_NO_SCALE +| FT_LOAD_NO_HINTING;
     has Lock $!lock handles<protect> .= new;
     has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height max-advance max-advance-height> = $!raw;
 
@@ -324,6 +324,12 @@ class Font::FreeType::Face {
         $!lock.protect: sub () is hidden-from-backtrace {
             my FT_F26Dot6 $w = ($width * Dot6).round;
             my FT_F26Dot6 $h = ($height * Dot6).round;
+            $!load-flags -= FT_LOAD_NO_SCALE
+                if $!load-flags +& FT_LOAD_NO_SCALE;
+            if $horiz-res || $vert-res {
+                $!load-flags -= FT_LOAD_NO_HINTING
+                    if $!load-flags +& FT_LOAD_NO_HINTING;
+            }
             ft-try { $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) };
         }
         $!metrics-delegate = $!raw;
@@ -337,6 +343,10 @@ class Font::FreeType::Face {
     method set-pixel-sizes(UInt $width, UInt $height, Bool :$scale-font) {
         $!lock.protect: sub () is hidden-from-backtrace {
             ft-try { $!raw.FT_Set_Pixel_Sizes($width, $height) };
+            $!load-flags -= FT_LOAD_NO_SCALE
+                if $!load-flags +& FT_LOAD_NO_SCALE;
+            $!load-flags -= FT_LOAD_NO_HINTING
+                if $!load-flags +& FT_LOAD_NO_HINTING;
         }
         $!metrics-delegate = $scale-font ?? self.scaled-metrics !! $!raw;
     }
