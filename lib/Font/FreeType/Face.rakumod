@@ -65,12 +65,12 @@ class Font::FreeType::Face {
         }
     }
 
-    method fixed-sizes returns Seq {
+    method fixed-sizes($face:) returns Seq {
         my int $n-sizes = self.num-fixed-sizes;
         my $ptr = $!raw.available-sizes;
         (^$n-sizes).map: {
-            my FT_Bitmap_Size $raw = $ptr[$_];
-            Font::FreeType::BitMap::Size.new: :$raw, :face(self);
+            my FT_Bitmap_Size $raw = $!raw.available-sizes[$_];
+            Font::FreeType::BitMap::Size.new: :$raw, :$face;
         }
     }
 
@@ -80,8 +80,8 @@ class Font::FreeType::Face {
             with $!raw.size;
     }
 
-    method charmap returns Font::FreeType::CharMap {
-        my Font::FreeType::CharMap $charmap .= new: :face(self), :raw($_)
+    method charmap($face:) returns Font::FreeType::CharMap {
+        my Font::FreeType::CharMap $charmap .= new: :$face, :raw($_)
             with $!raw.charmap;
         $charmap;
     }
@@ -93,12 +93,12 @@ class Font::FreeType::Face {
         self.charmap;
     }
 
-    method charmaps returns Seq {
+    method charmaps($face:) returns Seq {
         my int $n-sizes = self.num-charmaps;
         my $ptr = $!raw.charmaps;
         (^$n-sizes).map: {
             my FT_CharMap $raw = $ptr[$_];
-            Font::FreeType::CharMap.new: :face(self), :$raw;
+            Font::FreeType::CharMap.new: :$face, :$raw;
         }
     }
 
@@ -370,7 +370,7 @@ class Font::FreeType::Face {
         $!raw.num-glyphs;
     }
 
-    multi method iterate-chars(::?CLASS:D: Str:D $text, :$flags = $!load-flags) is DEPRECATED<forall-chars> {
+    multi method iterate-chars(::?CLASS:D $face: Str:D $text, :$flags = $!load-flags) is DEPRECATED<forall-chars> {
         class TextIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has Int:D $.flags is required;
@@ -396,11 +396,11 @@ class Font::FreeType::Face {
             method iterator { self }
         }
         my @ords = $text.ords;
-        TextIteration.new: :face(self), :$flags, :@ords, :$!lock;
+        TextIteration.new: :$face, :$flags, :@ords, :$!lock;
     }
 
     # not thread-safe: deprecated
-    multi method iterate-chars(::?CLASS:D: :$flags = $!load-flags, Bool :$load = True) is DEPRECATED<forall-chars> {
+    multi method iterate-chars(::?CLASS:D $face: :$flags = $!load-flags, Bool :$load = True) is DEPRECATED<forall-chars> {
         class AllCharsIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has Int:D $.flags is required;
@@ -432,11 +432,11 @@ class Font::FreeType::Face {
             }
             method iterator { self }
         }
-        AllCharsIteration.new: :face(self), :$flags, :$load, :$!lock;
+        AllCharsIteration.new: :$face, :$flags, :$load, :$!lock;
     }
 
     # not thread-safe: deprecated
-    method iterate-glyphs(::?CLASS:D: :$flags = $!load-flags) is DEPRECATED<forall-glyphs> {
+    method iterate-glyphs(::?CLASS:D $face: :$flags = $!load-flags) is DEPRECATED<forall-glyphs> {
         class AllGlyphsIteration does Iterator does Iterable {
             has Font::FreeType::Face:D $.face is required;
             has $.to-unicode is required;
@@ -462,7 +462,7 @@ class Font::FreeType::Face {
             method iterator { self }
         }
         my $to-unicode := $.index-to-unicode;
-        AllGlyphsIteration.new: :face(self), :$to-unicode, :$flags, :$!lock;
+        AllGlyphsIteration.new: :$face, :$to-unicode, :$flags, :$!lock;
     }
 
     method NativeCall::Types::Pointer { nativecast(Pointer, $!raw) }
