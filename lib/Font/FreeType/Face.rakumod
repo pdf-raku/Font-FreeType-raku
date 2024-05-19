@@ -65,10 +65,9 @@ class Font::FreeType::Face {
         }
     }
 
-    method fixed-sizes($face:) returns Seq {
-        my int $n-sizes = self.num-fixed-sizes;
-        my $ptr = $!raw.available-sizes;
-        (^$n-sizes).map: {
+    has Font::FreeType::BitMap::Size @!fixed-sizes;
+    method fixed-sizes($face:) returns Array {
+        @!fixed-sizes ||= (^$!raw.num-fixed-sizes).map: {
             my FT_Bitmap_Size $raw = $!raw.available-sizes[$_];
             Font::FreeType::BitMap::Size.new: :$raw, :$face;
         }

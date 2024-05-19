@@ -5,11 +5,11 @@ use Font::FreeType;
 use Font::FreeType::Glyph;
 use Font::FreeType::Raw::Defs;
 
-sub test-metrics($fnt, $tst, :$lb = 10, :$ha = 722) {
+sub test-metrics($tnr, $tst, :$lb = 10, :$ha = 722) {
     subtest $tst, {
-        $fnt.for-glyphs: 'A', -> Font::FreeType::Glyph $glyph {
+        $tnr.for-glyphs: 'A', -> Font::FreeType::Glyph $glyph {
             is $glyph.name, 'A';
-            is $fnt.units-per-EM, 1000;
+            is $tnr.units-per-EM, 1000;
             is $glyph.left-bearing, $lb;
             is $glyph.horizontal-advance, $ha;
         }
