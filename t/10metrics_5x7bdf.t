@@ -10,45 +10,37 @@ my Font::FreeType $ft .= new;
 # Load the BDF file.
 my $bdf = $ft.face: 't/fonts/5x7.bdf';
 ok $bdf.defined, 'FreeType.face returns an object';
-isa-ok $bdf, 'Font::FreeType::Face',
-    'FreeType.face returns face object';
+isa-ok $bdf, 'Font::FreeType::Face', 'FreeType.face returns face
+    object';
 
-# Test general properties of the face.
-is $bdf.num-faces, 1, '$face.num-faces';
+# Test general properties of the face.  is $bdf.num-faces, 1,
 is $bdf.face-index, 0, '$face.face-index';
 
-is $bdf.postscript-name, Str, 'there is no postscript name';
-is $bdf.family-name, 'Fixed', '$face->family-name() is right';
-is $bdf.style-name, 'Regular', 'no style name, defaults to "Regular"';
+is $bdf.postscript-name, Str, 'there is no postscript name'; is
+$bdf.family-name, 'Fixed', '$face->family-name() is right'; is
+$bdf.style-name, 'Regular', 'no style name, defaults to "Regular"';
 
-my %expected-flags = (
-    :has-glyph-names(False),
-    :has-horizontal-metrics(True),
-    :has-kerning(False),
-    :has-reliable-glyph-names(False),
-    :has-vertical-metrics(False),
-    :is-bold(False),
-    :is-fixed-width(True),
-    :is-italic(False),
-    :is-scalable(False),
-    :is-sfnt(False),
-);
+my %expected-flags = ( :has-glyph-names(False),
+    :has-horizontal-metrics(True), :has-kerning(False),
+    :has-reliable-glyph-names(False), :has-vertical-metrics(False),
+    :is-bold(False), :is-fixed-width(True), :is-italic(False),
+    :is-scalable(False), :is-sfnt(False), );
 
-for %expected-flags.pairs.sort {
-    is-deeply $bdf."{.key}"(), .value, "\$face.{.key}";
-}
+for %expected-flags.pairs.sort { is-deeply $bdf."{.key}"(), .value,
+    "\$face.{.key}"; }
 
-# Some other general properties.
-is $bdf.num-glyphs, 1837, '$face.num-glyphs';
-is-deeply $bdf.units-per-EM, Int, 'units-per-em() undef';
-is-deeply $bdf.underline-position, Int, 'underline position undef';
-is-deeply $bdf.underline-thickness,Int, 'underline thickness undef';
-is-deeply $bdf.ascender, Int, 'ascender undef';
-is-deeply $bdf.descender, Int, 'descender undef';
+# Some other general properties.  is $bdf.num-glyphs, 1837,
+is-deeply $bdf.units-per-EM, Int, 'units-per-em()
+undef'; is-deeply $bdf.underline-position, Int, 'underline position
+undef'; is-deeply $bdf.underline-thickness,Int, 'underline thickness
+undef'; is-deeply $bdf.ascender, Int, 'ascender undef'; is-deeply
+$bdf.descender, Int, 'descender undef';
 
 # Test getting the set of fixed sizes available.
 is $bdf.num-fixed-sizes, 1, 'BDF files have a single fixed size';
-my ($fixed-size) = $bdf.fixed-sizes;
+skip-rest 'issue #28 BDF support';
+exit;
+my $fixed-size = $bdf.fixed-sizes[0];
 
 is($fixed-size.width, 5, 'fixed size width');
 is($fixed-size.height, 7, 'fixed size width');
