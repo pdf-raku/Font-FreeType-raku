@@ -92,7 +92,7 @@ class Font::FreeType::BitMap {
     }
 
     class Size {
-        submethod BUILD(:$!raw) {}
+        submethod BUILD(:$!raw) { $!raw .= clone; }
         has FT_Bitmap_Size $!raw is required handles <width height x-ppem y-ppem>;
         method size { $!raw.size / Dot6 }
         multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Dot6 }

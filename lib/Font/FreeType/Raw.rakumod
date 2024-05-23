@@ -93,8 +93,19 @@ class FT_Bitmap is repr('CStruct') is export {
     }
 }
 
+my role Clonable {
+    #| shallow clone. Works best on leaf structs
+    method clone(::?ROLE:D:) {
+        my $obj = self.new;
+        my Pointer:D $src = nativecast(Pointer, self);
+        my Pointer:D $dest = nativecast(Pointer, $obj);
+        memcpy($dest, $src, nativesizeof($obj));
+        $obj;
+    }
+}
+
 #| This structure models the metrics of a bitmap strike (i.e., a set of glyphs for a given point size and resolution) in a bitmap font. It is used for the ‘available-sizes’ field of FT_Face.
-class FT_Bitmap_Size is repr('CStruct') is export {
+class FT_Bitmap_Size is repr('CStruct') is export does Clonable {
     has FT_Short  $.height;
     has FT_Short  $.width;
 
@@ -118,18 +129,11 @@ class FT_Generic is repr('CStruct') {
 }
 
 #| A structure used to hold an outline's bounding box, i.e., the coordinates of its extrema in the horizontal and vertical directions.
-class FT_BBox is repr('CStruct') is export {
+class FT_BBox is repr('CStruct') is export does Clonable {
     has FT_Pos  ($.x-min, $.y-min);
     has FT_Pos  ($.x-max, $.y-max);
     #| returns [x-min, y-min, x-max, y-max]
     method Array { [$!x-min, $!y-min, $!x-max, $!y-max] }
-    method clone(::?CLASS:D:) {
-        my $bbox = self.new;
-        my Pointer:D $src = nativecast(Pointer, self);
-        my Pointer:D $dest = nativecast(Pointer, $bbox);
-        memcpy($dest, $src, nativesizeof($bbox));
-        $bbox;
-    }
  }
 
 #| A structure to model the metrics of a single glyph. The values are expressed in 26.6 fractional pixel format; if the flag FT_LOAD_NO_SCALE has been used while loading the glyph, values are expressed in font units instead.
