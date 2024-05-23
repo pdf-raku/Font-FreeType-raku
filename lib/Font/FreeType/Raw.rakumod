@@ -463,6 +463,12 @@ class FT_Face is export {
         FT_Bool $is_cid is rw
     ) returns FT_Error is native($FT-LIB) {*};
 
+    method get-bitmap-size(FT_Int)
+        is native($FT-WRAPPER-LIB)
+        is symbol('ft6_face_get_bitmap_size')
+        returns FT_Bitmap_Size
+    {*}
+
     method bounding-box is DEPRECATED {
         self.bbox.Array does role {
             method x-min { self[0] }
