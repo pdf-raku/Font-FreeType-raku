@@ -1,7 +1,7 @@
 # Information obtained from looking at the BDF file.
 use v6;
 use Test;
-plan 59 + 4 * 1 + 1836 * 1;
+plan 59 + 4 * 1 + 1834 * 1;
 use Font::FreeType;
 use Font::FreeType::Raw;
 use Font::FreeType::Raw::Defs;
@@ -38,8 +38,6 @@ $bdf.descender, Int, 'descender undef';
 
 # Test getting the set of fixed sizes available.
 is $bdf.num-fixed-sizes, 1, 'BDF files have a single fixed size';
-skip-rest 'issue #28 BDF support';
-exit;
 my $fixed-size = $bdf.fixed-sizes[0];
 
 is($fixed-size.width, 5, 'fixed size width');

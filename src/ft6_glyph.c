@@ -5,13 +5,11 @@
 /* Get prototype. */
 #include "ft6_glyph.h"
 
-DLLEXPORT FT_Bitmap
-*ft6_glyph_bitmap(FT_BitmapGlyph bm_glyph) {
+DLLEXPORT FT_Bitmap* ft6_glyph_bitmap(FT_BitmapGlyph bm_glyph) {
   return &(bm_glyph->bitmap);
 }
 
-DLLEXPORT FT_Outline
-*ft6_glyph_outline(FT_OutlineGlyph ol_glyph) {
+DLLEXPORT FT_Outline* ft6_glyph_outline(FT_OutlineGlyph ol_glyph) {
   return &(ol_glyph->outline);
 }
 
