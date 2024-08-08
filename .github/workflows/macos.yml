@@ -25,7 +25,9 @@ jobs:
           raku-version: ${{ matrix.raku-version }}
       - name: Install Libraries (MacOS)
         if: matrix.os == 'macOS-latest'
-        run: brew reinstall freetype
+        run: |
+          brew reinstall freetype
+          brew link --overwrite freetype
       - name: Install Dependencies
         run: |
           zef install --/test App::Prove6
