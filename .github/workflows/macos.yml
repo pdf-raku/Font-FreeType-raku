@@ -27,6 +27,8 @@ jobs:
         if: matrix.os == 'macOS-latest'
         run: |
           brew reinstall freetype
+          ls -l /opt/homebrew/opt/freetype/lib
+          ln -s /usr/lib/libfreetype.6.dylib /opt/homebrew/opt/freetype/lib/libfreetype.6.dylib
       - name: Install Dependencies
         run: |
           zef install --/test App::Prove6
