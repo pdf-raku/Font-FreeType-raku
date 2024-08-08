@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+0.5.8  2024-08-09T06:21:56+12:00
+    - Fix tests on Windows
+    - Take a copy of FT_Bitmap_Size structs. To avoid any chance of
+      dangling references.
+
 0.5.7  2024-05-24T07:49:27+12:00
     - Add FT_Face.get-bitmap-size() accessor. Fix and reinstate BDF fonts.
 

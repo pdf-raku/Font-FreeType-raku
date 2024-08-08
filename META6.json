@@ -36,12 +36,12 @@
     "libraries/ft6",
     "libraries/freetype"
   ],
-  "source-url": "git://github.com/pdf-raku/Font-FreeType-raku.git",
+  "source-url": "https://github.com/pdf-raku/Font-FreeType-raku.git",
   "tags": [
     "font",
     "freetype"
   ],
   "test-depends": [
   ],
-  "version": "0.5.7"
+  "version": "0.5.8"
 }
