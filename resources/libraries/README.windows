@@ -6,7 +6,7 @@ This is built maaually from now, using binaries and includes from the repo https
 
 Building on Windows
 -------------------
-This is a minimal build of libxml2 and xml6 (binding) DLLs,
+This is a minimal build of freetype and ft6 (binding) DLLs,
 without iconv for Unicode support.
 
 From a Rakudo Powershell (running as administrator):
