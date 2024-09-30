@@ -24,6 +24,7 @@ This module contains datatype and enumerations for the FreeType library.
 
 use NativeCall;
 use NativeCall::Types;
+use MacOS::NativeLib 'freetype';
 
 our $FT-LIB is export = Rakudo::Internals.IS-WIN ?? find-library('freetype') !! ('freetype', v6);
 # library bindings

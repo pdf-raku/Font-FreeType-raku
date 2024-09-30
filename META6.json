@@ -7,6 +7,7 @@
     "LibraryMake"
   ],
   "depends": [
+    "MacOS::NativeLib",
     "Method::Also"
   ],
   "description": "Raku bindings to the FreeType font library (version 2)",
