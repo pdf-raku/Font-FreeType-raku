@@ -70,10 +70,18 @@ method clone(
 
 make a copy of the bitmap
 
+### method clone
+
+```raku
+method clone() returns Mu
+```
+
+shallow clone. Works best on leaf structs
+
 class Font::FreeType::Raw::FT_Bitmap_Size
 -----------------------------------------
 
-This structure models the metrics of a bitmap strike (i.e., a set of glyphs for a given point size and resolution) in a bitmap font. It is used for the ‘available_sizes’ field of FT_Face.
+This structure models the metrics of a bitmap strike (i.e., a set of glyphs for a given point size and resolution) in a bitmap font. It is used for the ‘available-sizes’ field of FT_Face.
 
 class Font::FreeType::Raw::FT_CharMap
 -------------------------------------

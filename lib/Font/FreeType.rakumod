@@ -31,7 +31,7 @@ class Font::FreeType:ver<0.5.9> {
     }
 
     multi method face(::?CLASS:D $ft-lib:
-                      Str:D $file-path-name,
+                      IO:D() $file-io,
                       Int :$index = 0,
                       |c --> Font::FreeType::Face:D
                      ) is hidden-from-backtrace {
@@ -39,11 +39,11 @@ class Font::FreeType:ver<0.5.9> {
         $lock.protect: sub () is hidden-from-backtrace {
             CATCH {
                 when Font::FreeType::Error {
-                    .details = "loading file '$file-path-name'";
+                    .details = "loading file '{$file-io.path}'";
                     .rethrow;
                 }
             }
-            ft-try { $!raw.FT_New_Face($file-path-name, $index, $p); };
+            ft-try { $!raw.FT_New_Face($file-io.path, $index, $p); };
         }
         my FT_Face:D $raw = $p.deref;
         Font::FreeType::Face.new: :$raw, :$ft-lib, |c;
@@ -134,7 +134,7 @@ object to a variable:
     my Font::FreeType::Face $face = $freetype.face('Vera.ttf');
 
 Return a L<Font::FreeType::Face> object representing
-a font face from the specified file or Blob.
+a font face from the specified file (`Str` or `IO::Path`) or a Blob.
 
 If your font is scalable (i.e., not a bit-mapped font) then set the size
 and resolution you want to see it at, for example 24pt at 100dpi:

@@ -47,7 +47,7 @@ Create a new 'instance' of the freetype library and return the object. This is a
     my Font::FreeType $freetype .= new;
     my Font::FreeType::Face $face = $freetype.face('Vera.ttf');
 
-Return a [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face) object representing a font face from the specified file or Blob.
+Return a [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face) object representing a font face from the specified file (`Str` or `IO::Path`) or a Blob.
 
 If your font is scalable (i.e., not a bit-mapped font) then set the size and resolution you want to see it at, for example 24pt at 100dpi:
 

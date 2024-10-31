@@ -27,7 +27,7 @@ bail-out "FreeType2 version $version is too old"
 lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper symbol lib access');
 
 my Font::FreeType::Face $face;
-lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from file';
+lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from filename';
 is $face.font-format, 'TrueType', 'font format';
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Sans', 'face family name';
@@ -41,6 +41,9 @@ is $bbox.y-max, 2524, 'bbox.y-max';
 is $face.units-per-EM, 2048, '.units-per-EM';
 is $face.ascender, 1901, '.ascender';
 is $face.descender, -483, '.ascender';
+
+lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf'.IO) }, 'face creation from IO path';
+is $face.font-format, 'TrueType', 'font format';
 
 lives-ok { $face = $freetype.face('t/fonts/DejaVuSerif.ttf'.IO.slurp(:bin)) }, 'face creation from buffer';
 is $face.num-faces, 1, 'num-faces';
