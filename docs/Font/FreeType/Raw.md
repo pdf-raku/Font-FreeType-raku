@@ -70,14 +70,6 @@ method clone(
 
 make a copy of the bitmap
 
-### method clone
-
-```raku
-method clone() returns Mu
-```
-
-shallow clone. Works best on leaf structs
-
 class Font::FreeType::Raw::FT_Bitmap_Size
 -----------------------------------------
 

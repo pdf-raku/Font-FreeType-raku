@@ -94,8 +94,8 @@ class FT_Bitmap is repr('CStruct') is export {
 }
 
 my role Clonable {
-    #| shallow clone. Works best on leaf structs
-    method clone(::?ROLE:D:) {
+    # shallow clone. Works best on leaf structs
+    method clone(::?ROLE:D: --> ::?ROLE:D) {
         my $obj = self.new;
         my Pointer:D $src = nativecast(Pointer, self);
         my Pointer:D $dest = nativecast(Pointer, $obj);
