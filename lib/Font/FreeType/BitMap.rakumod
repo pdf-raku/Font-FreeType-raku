@@ -1,106 +1,104 @@
 #| Bitmaps from rendered glyphs
-class Font::FreeType::BitMap {
+unit class Font::FreeType::BitMap;
 
-    use NativeCall;
-    use Font::FreeType::Error;
-    use Font::FreeType::Raw;
-    use Font::FreeType::Raw::Defs;
+use NativeCall;
+use Font::FreeType::Error;
+use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
 
-    constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
-    constant Dpi = 72.0;
+constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
+constant Dpi = 72.0;
 
-    has $.face;
-    has FT_Bitmap $!raw handles <rows width pitch num-grays pixel-mode pallette>;
-    has Int      $.left is required;
-    has Int      $.top is required;
-    has FT_ULong $.char-code is required;
+has $.face;
+has FT_Bitmap $!raw handles <rows width pitch num-grays pixel-mode pallette>;
+has Int      $.left is required;
+has Int      $.top is required;
+has FT_ULong $.char-code is required;
 
-    submethod TWEAK(FT_Bitmap:D :$!raw!) {
-        $!top *= 3
-            if $!raw.pixel-mode == +FT_PIXEL_MODE_LCD_V;
+submethod TWEAK(FT_Bitmap:D :$!raw!) {
+    $!top *= 3
+        if $!raw.pixel-mode == +FT_PIXEL_MODE_LCD_V;
+}
+
+method !library(--> FT_Library:D) {
+    $!face.ft-lib.raw;
+}
+
+method size returns Rat:D { $!raw.size / Dot6 }
+multi method x-res(:$ppem! where .so) returns Rat:D { $!raw.x-ppem / Dot6 }
+multi method x-res(:$dpi!  where .so) returns Rat:D { Dpi/Dot6 * $!raw.x-ppem / self.size }
+multi method y-res(:$ppem! where .so) returns Rat:D { $!raw.y-ppem / Dot6 }
+multi method y-res(:$dpi!  where .so) returns Rat:D { Dpi/Dot6 * $!raw.y-ppem / self.size }
+
+method convert(UInt :$alignment = 1 --> ::?CLASS:D) {
+    my FT_Bitmap $target .= new;
+    ft-try { self!library.FT_Bitmap_Convert($!raw, $target, $alignment); };
+    self.new: :$!face, :raw($target), :$!left, :$!top;
+}
+
+method depth returns UInt:D {
+    constant @BitsPerPixel = [Mu, 1, 8, 2, 4, 8, 8, 24];
+    with $!raw.pixel-mode {
+        @BitsPerPixel[$_];
     }
+}
 
-    method !library(--> FT_Library:D) {
-        $!face.ft-lib.raw;
-    }
+method !get-pixel-buf(Bool :$color = False --> buf8) {
+    my buf8 $pixels .= allocate($.depth * $.rows * $.width);
+    ft-try { $!raw.get-pixels($pixels); };
+    $pixels;
+}
 
-    method size returns Rat:D { $!raw.size / Dot6 }
-    multi method x-res(:$ppem! where .so) returns Rat:D { $!raw.x-ppem / Dot6 }
-    multi method x-res(:$dpi!  where .so) returns Rat:D { Dpi/Dot6 * $!raw.x-ppem / self.size }
-    multi method y-res(:$ppem! where .so) returns Rat:D { $!raw.y-ppem / Dot6 }
-    multi method y-res(:$dpi!  where .so) returns Rat:D { Dpi/Dot6 * $!raw.y-ppem / self.size }
+method pixels returns array[uint8] {
+    my uint8 @pixels[$.rows;$.width] Z= self!get-pixel-buf;
+    @pixels;
+}
 
-    method convert(UInt :$alignment = 1 --> ::?CLASS:D) {
-        my FT_Bitmap $target .= new;
-        ft-try { self!library.FT_Bitmap_Convert($!raw, $target, $alignment); };
-        self.new: :$!face, :raw($target), :$!left, :$!top;
-    }
-
-    method depth returns UInt:D {
-        constant @BitsPerPixel = [Mu, 1, 8, 2, 4, 8, 8, 24];
-        with $!raw.pixel-mode {
-            @BitsPerPixel[$_];
+method Str {
+    return "\n" x $.rows
+        unless $.width;
+    constant on  = '#'.ord;
+    constant off = ' '.ord;
+    my buf8 $row .= allocate($.width);
+    my $pixbuf = $.pixels;
+    my Str @lines;
+    for ^$.rows -> $y {
+        for ^$.width -> $x {
+            $row[$x] = $pixbuf[$y;$x] ?? on !! off;
         }
+        @lines.push: $row.decode("latin-1");
     }
+    @lines.join: "\n";
+}
 
-    method !get-pixel-buf(Bool :$color = False --> buf8) {
-        my buf8 $pixels .= allocate($.depth * $.rows * $.width);
-        ft-try { $!raw.get-pixels($pixels); };
-        $pixels;
-    }
+# create pgm - Netpbm grayscale image format
+method pgm returns Buf {
+    my $pixels = self.pixels;
+    my UInt ($ht, $wd) = $pixels.shape.list;
+    my buf8 $buf .= new: "P5\n$wd $ht\n255\n".encode('latin-1');
+    $buf.append: $pixels.list;
+    $buf;
+}
 
-    method pixels returns array[uint8] {
-        my uint8 @pixels[$.rows;$.width] Z= self!get-pixel-buf;
-        @pixels;
-    }
+method clone returns ::?CLASS:D {
+    return self unless self.defined;
+    my $bitmap = $!raw.clone(self!library);
+    self.new: :$!face, :raw($bitmap), :$!top, :$!left; 
+}
 
-    method Str {
-        return "\n" x $.rows
-            unless $.width;
-        constant on  = '#'.ord;
-        constant off = ' '.ord;
-        my buf8 $row .= allocate($.width);
-        my $pixbuf = $.pixels;
-        my Str @lines;
-        for ^$.rows -> $y {
-            for ^$.width -> $x {
-                $row[$x] = $pixbuf[$y;$x] ?? on !! off;
-            }
-            @lines.push: $row.decode("latin-1");
-        }
-        @lines.join: "\n";
-    }
+method DESTROY {
+    ft-try { self!library.FT_Bitmap_Done($!raw) };
+    $!raw = Nil;
+}
 
-    # create pgm - Netpbm grayscale image format
-    method pgm returns Buf {
-        my $pixels = self.pixels;
-        my UInt ($ht, $wd) = $pixels.shape.list;
-        my buf8 $buf .= new: "P5\n$wd $ht\n255\n".encode('latin-1');
-        $buf.append: $pixels.list;
-        $buf;
-    }
-
-    method clone returns ::?CLASS:D {
-        return self unless self.defined;
-        my $bitmap = $!raw.clone(self!library);
-        self.new: :$!face, :raw($bitmap), :$!top, :$!left; 
-    }
-
-    method DESTROY {
-        ft-try { self!library.FT_Bitmap_Done($!raw) };
-        $!raw = Nil;
-    }
-
-    class Size {
-        submethod BUILD(:$!raw) { $!raw .= clone; }
-        has FT_Bitmap_Size $!raw is required handles <width height x-ppem y-ppem>;
-        method size { $!raw.size / Dot6 }
-        multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Dot6 }
-        multi method x-res(:$dpi!  where .so) { $!raw.x-ppem * Dpi / (self.size * Dot6) }
-        multi method y-res(:$ppem! where .so) { $!raw.y-ppem / Dot6 }
-        multi method y-res(:$dpi!  where .so) { $!raw.y-ppem* Dpi / (self.size * Dot6) }
-    }
-
+class Size {
+    submethod BUILD(:$!raw) { $!raw .= clone; }
+    has FT_Bitmap_Size $!raw is required handles <width height x-ppem y-ppem>;
+    method size { $!raw.size / Dot6 }
+    multi method x-res(:$ppem! where .so) { $!raw.x-ppem / Dot6 }
+    multi method x-res(:$dpi!  where .so) { $!raw.x-ppem * Dpi / (self.size * Dot6) }
+    multi method y-res(:$ppem! where .so) { $!raw.y-ppem / Dot6 }
+    multi method y-res(:$dpi!  where .so) { $!raw.y-ppem* Dpi / (self.size * Dot6) }
 }
 
 =begin pod

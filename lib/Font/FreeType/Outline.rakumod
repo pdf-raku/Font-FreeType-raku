@@ -1,152 +1,151 @@
 #| Glyph outlines from font typefaces
-class Font::FreeType::Outline {
+unit class Font::FreeType::Outline;
 
-    has $.face is required;
-    use NativeCall;
-    use Font::FreeType::Error;
-    use Font::FreeType::BBox;
-    use Font::FreeType::Raw;
-    use Font::FreeType::Raw::Defs;
-    use Method::Also;
+has $.face is required;
+use NativeCall;
+use Font::FreeType::Error;
+use Font::FreeType::BBox;
+use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
+use Method::Also;
 
-    method !library(--> FT_Library:D) {
-        $!face.ft-lib.raw;
+method !library(--> FT_Library:D) {
+    $!face.ft-lib.raw;
+}
+
+enum FT_OUTLINE_OP «
+    :FT_OUTLINE_OP_NONE
+    :FT_OUTLINE_OP_MOVE_TO
+    :FT_OUTLINE_OP_LINE_TO
+    :FT_OUTLINE_OP_CUBIC_TO
+    :FT_OUTLINE_OP_CONIC_TO
+    »;
+
+class ft6_shape_t is repr('CStruct') {
+    has int32 $.n-points;
+    has int32 $.n-ops;
+    has int32 $!max-points;
+    has CArray[uint8] $.ops;
+    has CArray[num64] $.points;
+
+    submethod TWEAK(:$!max-points!) { }
+
+    method gather_outlines(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
+        returns FT_Error is native($FT-WRAPPER-LIB) is symbol('ft6_outline_gather') {*}
+
+    method ft6_outline_gather_done
+        is native($FT-WRAPPER-LIB) {*}
+
+    submethod DESTROY {
+        self.ft6_outline_gather_done;
     }
+}
 
-    enum FT_OUTLINE_OP «
-        :FT_OUTLINE_OP_NONE
-        :FT_OUTLINE_OP_MOVE_TO
-        :FT_OUTLINE_OP_LINE_TO
-        :FT_OUTLINE_OP_CUBIC_TO
-        :FT_OUTLINE_OP_CONIC_TO
-        »;
+has FT_Outline $!raw handles <n-contours n-points points tags contours flags>;
 
-    class ft6_shape_t is repr('CStruct') {
-        has int32 $.n-points;
-        has int32 $.n-ops;
-        has int32 $!max-points;
-        has CArray[uint8] $.ops;
-        has CArray[num64] $.points;
+submethod TWEAK(:$!raw!) { }
 
-        submethod TWEAK(:$!max-points!) { }
+method !render-shape(ft6_shape_t:D $shape, %cb) {
 
-        method gather_outlines(FT_Outline $outline, int32 $shift, FT_Pos $delta, uint8 $conic-opt)
-            returns FT_Error is native($FT-WRAPPER-LIB) is symbol('ft6_outline_gather') {*}
+    my $ops = $shape.ops;
+    my $pts = $shape.points;
+    my int $j = 0;
+    my $*cur-x = 0e0;
+    my $*cur-y = 0e0;
 
-        method ft6_outline_gather_done
-            is native($FT-WRAPPER-LIB) {*}
-
-        submethod DESTROY {
-            self.ft6_outline_gather_done;
+    with %cb<cubic-to> -> &cubic-to {
+        %cb<conic-to> //= -> $x, $y, $cx, $cy {
+            &cubic-to(
+                $x, $y,
+                ($*cur-x  +  2 * $cx) / 3,
+                ($*cur-y  +  2 * $cy) / 3,
+                (2 * $cx + $x) / 3,
+                (2 * $cy + $y) / 3,
+            );
         }
     }
 
-    has FT_Outline $!raw handles <n-contours n-points points tags contours flags>;
-
-    submethod TWEAK(:$!raw!) { }
-
-    method !render-shape(ft6_shape_t:D $shape, %cb) {
-
-        my $ops = $shape.ops;
-        my $pts = $shape.points;
-        my int $j = 0;
-        my $*cur-x = 0e0;
-        my $*cur-y = 0e0;
-
-        with %cb<cubic-to> -> &cubic-to {
-            %cb<conic-to> //= -> $x, $y, $cx, $cy {
-                &cubic-to(
-                    $x, $y,
-                    ($*cur-x  +  2 * $cx) / 3,
-                    ($*cur-y  +  2 * $cy) / 3,
-                    (2 * $cx + $x) / 3,
-                    (2 * $cy + $y) / 3,
-                );
-            }
+    for ^$shape.n-ops -> int $i {
+        my $op = $ops[$i];
+        my $key = <move-to line-to cubic-to conic-to>[$op - 1];
+        my $n-args = $op == 1|2 ?? 2 !! 6;
+        my @args = $pts[$j++] xx $n-args;
+        with %cb{$key} {
+            .(|@args);
         }
-
-        for ^$shape.n-ops -> int $i {
-            my $op = $ops[$i];
-            my $key = <move-to line-to cubic-to conic-to>[$op - 1];
-            my $n-args = $op == 1|2 ?? 2 !! 6;
-            my @args = $pts[$j++] xx $n-args;
-            with %cb{$key} {
-                .(|@args);
-            }
-            else {
-                note sprintf("unhandled outline callback: \%s(\%s)", $key, @args>>.fmt('%.2f').join(', '));
-            }
-            $*cur-x = @args[0];
-            $*cur-y = @args[1];
+        else {
+            note sprintf("unhandled outline callback: \%s(\%s)", $key, @args>>.fmt('%.2f').join(', '));
         }
+        $*cur-x = @args[0];
+        $*cur-y = @args[1];
     }
+}
 
-    method decompose(
-        Bool :$conic = False,
-        Int :$shift = 0,
-        Int :$delta = 0,
-        :%callbacks
-        --> ft6_shape_t:D
-    ) {
-        my int32 $max-points = $!raw.n-points * 6;
-        my ft6_shape_t $shape .= new: :$max-points;
-        ft-try { $shape.gather_outlines($!raw, $shift, $delta, $conic ?? 1 !! 0); };
-        self!render-shape($shape, %callbacks)
-            if %callbacks;
-        $shape;
-    }
+method decompose(
+    Bool :$conic = False,
+    Int :$shift = 0,
+    Int :$delta = 0,
+    :%callbacks
+    --> ft6_shape_t:D
+) {
+    my int32 $max-points = $!raw.n-points * 6;
+    my ft6_shape_t $shape .= new: :$max-points;
+    ft-try { $shape.gather_outlines($!raw, $shift, $delta, $conic ?? 1 !! 0); };
+    self!render-shape($shape, %callbacks)
+        if %callbacks;
+    $shape;
+}
 
-    method bbox returns Font::FreeType::BBox:D is also<bounding-box> {
-        my FT_BBox $bbox .= new;
-        ft-try { $!raw.FT_Outline_Get_BBox($bbox); };
-        Font::FreeType::BBox.new: :$bbox;
-    }
+method bbox returns Font::FreeType::BBox:D is also<bounding-box> {
+    my FT_BBox $bbox .= new;
+    ft-try { $!raw.FT_Outline_Get_BBox($bbox); };
+    Font::FreeType::BBox.new: :$bbox;
+}
 
-    method postscript returns Str:D {
-        my Str @lines;
-        my ft6_shape_t $shape = self.decompose;
-        my $ops = $shape.ops;
-        my $pts = $shape.points;
-        my int $j = 0;
-        for ^$shape.n-ops -> int $i {
-            my $op = $ops[$i];
-            my $ps-op = <moveto lineto curveto conicto>[$op - 1];
-            my $n-args = $op == 1|2 ?? 2 !! 6;
-            my @args = $pts[$j++] xx $n-args;
-            @lines.push: @args>>.fmt('%.2f').join(' ') ~ " $ps-op";
-        }
-        @lines.push: '';
-        @lines.join: "\n";
+method postscript returns Str:D {
+    my Str @lines;
+    my ft6_shape_t $shape = self.decompose;
+    my $ops = $shape.ops;
+    my $pts = $shape.points;
+    my int $j = 0;
+    for ^$shape.n-ops -> int $i {
+        my $op = $ops[$i];
+        my $ps-op = <moveto lineto curveto conicto>[$op - 1];
+        my $n-args = $op == 1|2 ?? 2 !! 6;
+        my @args = $pts[$j++] xx $n-args;
+        @lines.push: @args>>.fmt('%.2f').join(' ') ~ " $ps-op";
     }
+    @lines.push: '';
+    @lines.join: "\n";
+}
 
-    method svg returns Str:D {
-        my Str @path;
-        my ft6_shape_t $shape = self.decompose(:conic);
-        my $ops = $shape.ops;
-        my $pts = $shape.points;
-        my int $j = 0;
-        for ^$shape.n-ops -> int $i {
-            my $op = $ops[$i];
-            my $svg-op = <M L C Q>[$op - 1];
-            my $n-args = [2, 2, 6, 4][$op - 1];
-            my @args = $pts[$j++] xx $n-args;
-            @path.push: $svg-op ~ @args>>.fmt('%.2f').join(' ');
-        }
-        @path.join: ' ';
+method svg returns Str:D {
+    my Str @path;
+    my ft6_shape_t $shape = self.decompose(:conic);
+    my $ops = $shape.ops;
+    my $pts = $shape.points;
+    my int $j = 0;
+    for ^$shape.n-ops -> int $i {
+        my $op = $ops[$i];
+        my $svg-op = <M L C Q>[$op - 1];
+        my $n-args = [2, 2, 6, 4][$op - 1];
+        my @args = $pts[$j++] xx $n-args;
+        @path.push: $svg-op ~ @args>>.fmt('%.2f').join(' ');
     }
+    @path.join: ' ';
+}
 
-    method bold(Int $strength) {
-        ft-try { $!raw.FT_Outline_Embolden($strength); }
-    }
+method bold(Int $strength) {
+    ft-try { $!raw.FT_Outline_Embolden($strength); }
+}
 
-    method clone returns ::?CLASS:D {
-        my $outline = $!raw.clone(self!library);
-        self.new: :raw($outline), :$!face;
-    }
+method clone returns ::?CLASS:D {
+    my $outline = $!raw.clone(self!library);
+    self.new: :raw($outline), :$!face;
+}
 
-    method DESTROY {
-        ft-try { self!library.FT_Outline_Done($!raw); };
-    }
+method DESTROY {
+    ft-try { self!library.FT_Outline_Done($!raw); };
 }
 
 =begin pod

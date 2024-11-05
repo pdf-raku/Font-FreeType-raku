@@ -1,476 +1,475 @@
 #| Font typefaces loaded from Font::FreeType
-class Font::FreeType::Face {
+unit class Font::FreeType::Face;
 
-    use NativeCall;
-    use Font::FreeType::Error;
-    use Font::FreeType::Raw;
-    use Font::FreeType::Raw::Defs;
-    use Font::FreeType::Raw::TT_Sfnt;
+use NativeCall;
+use Font::FreeType::Error;
+use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
+use Font::FreeType::Raw::TT_Sfnt;
 
-    use Font::FreeType::BitMap;
-    use Font::FreeType::Glyph;
-    use Font::FreeType::NamedInfo;
-    use Font::FreeType::CharMap;
-    use Font::FreeType::SizeMetrics;
-    use Font::FreeType::BBox;
-    use Method::Also;
+use Font::FreeType::BitMap;
+use Font::FreeType::Glyph;
+use Font::FreeType::NamedInfo;
+use Font::FreeType::CharMap;
+use Font::FreeType::SizeMetrics;
+use Font::FreeType::BBox;
+use Method::Also;
 
-    constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
+constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
-    has $.ft-lib is required; # keep a reference to library root object. Just to avoid destroying it
-    has FT_Face $.raw handles <num-faces face-index face-flags style-flags
-        num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
-        size> is required;
-    has UInt $.load-flags is rw = FT_LOAD_NO_SCALE +| FT_LOAD_NO_HINTING;
-    has Lock $!lock handles<protect> .= new;
-    has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height max-advance max-advance-height> = $!raw;
+has $.ft-lib is required; # keep a reference to library root object. Just to avoid destroying it
+has FT_Face $.raw handles <num-faces face-index face-flags style-flags
+    num-glyphs family-name style-name num-fixed-sizes num-charmaps generic
+    size> is required;
+has UInt $.load-flags is rw = FT_LOAD_NO_SCALE +| FT_LOAD_NO_HINTING;
+has Lock $!lock handles<protect> .= new;
+has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height max-advance max-advance-height> = $!raw;
 
-    method attach-file(Str:D() $filepath) {
-        ft-try { self.raw.FT_Attach_File($filepath); }
+method attach-file(Str:D() $filepath) {
+    ft-try { self.raw.FT_Attach_File($filepath); }
+}
+method bbox is also<bounding-box> returns Font::FreeType::BBox {
+    my Font::FreeType::BBox $bbox;
+    if $!metrics-delegate === $!raw {
+        $bbox .= new: :bbox($!raw.bbox), :x-scale(1), :y-scale(1)
+            if self.is-scalable;
     }
-    method bbox is also<bounding-box> returns Font::FreeType::BBox {
-        my Font::FreeType::BBox $bbox;
-        if $!metrics-delegate === $!raw {
-            $bbox .= new: :bbox($!raw.bbox), :x-scale(1), :y-scale(1)
-                if self.is-scalable;
-        }
-        else {
-            $bbox = $!metrics-delegate.bbox;
-        }
-        $bbox;
+    else {
+        $bbox = $!metrics-delegate.bbox;
     }
+    $bbox;
+}
 
-    class UnscaledMetrics {
-        method bbox is also<bounding-box> { Font::FreeType::BBox }
-        method FALLBACK(|) { Int }
-    }
+class UnscaledMetrics {
+    method bbox is also<bounding-box> { Font::FreeType::BBox }
+    method FALLBACK(|) { Int }
+}
 
-    submethod TWEAK(Str :$attach-file) {
-        self.attach-file($_)
-            with $attach-file;
-        $!metrics-delegate = UnscaledMetrics
-            unless self.is-scalable;
-    }
+submethod TWEAK(Str :$attach-file) {
+    self.attach-file($_)
+        with $attach-file;
+    $!metrics-delegate = UnscaledMetrics
+        unless self.is-scalable;
+}
 
-    subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT'|'OpenType';
-    method font-format(::?CLASS:D $face: --> FontFormat) {
-        my $type := $!raw.FT_Get_Font_Format;
-        if $type eq 'CFF' {
-            # Is this simple CFF or OpenType/CFF font?
-            TT_Header.load(:$face).defined
-                ?? 'OpenType' !! 'CFF';
-        }
-        else {
-            $type;
-        }
+subset FontFormat of Str where 'TrueType'|'Type 1'|'BDF'|'PCF'|'Type 42'|'CID Type 1'|'CFF'|'PFR'|'Windows FNT'|'OpenType';
+method font-format(::?CLASS:D $face: --> FontFormat) {
+    my $type := $!raw.FT_Get_Font_Format;
+    if $type eq 'CFF' {
+        # Is this simple CFF or OpenType/CFF font?
+        TT_Header.load(:$face).defined
+            ?? 'OpenType' !! 'CFF';
     }
+    else {
+        $type;
+    }
+}
 
-    has Font::FreeType::BitMap::Size @!fixed-sizes;
-    method fixed-sizes($face:) returns Array {
-        @!fixed-sizes ||= (^$!raw.num-fixed-sizes).map: {
-            my FT_Bitmap_Size $raw = $!raw.get-bitmap-size($_);
-            Font::FreeType::BitMap::Size.new: :$raw, :$face;
-        }
+has Font::FreeType::BitMap::Size @!fixed-sizes;
+method fixed-sizes($face:) returns Array {
+    @!fixed-sizes ||= (^$!raw.num-fixed-sizes).map: {
+        my FT_Bitmap_Size $raw = $!raw.get-bitmap-size($_);
+        Font::FreeType::BitMap::Size.new: :$raw, :$face;
     }
+}
 
-    has Font::FreeType::SizeMetrics $!scaled-metrics;
-    method scaled-metrics(::?CLASS:D $face:) handles <x-scale y-scale x-ppem y-ppem> {
-        $!scaled-metrics //= Font::FreeType::SizeMetrics.new: :$face, :size($_)
-            with $!raw.size;
-    }
+has Font::FreeType::SizeMetrics $!scaled-metrics;
+method scaled-metrics(::?CLASS:D $face:) handles <x-scale y-scale x-ppem y-ppem> {
+    $!scaled-metrics //= Font::FreeType::SizeMetrics.new: :$face, :size($_)
+        with $!raw.size;
+}
 
-    method charmap($face:) returns Font::FreeType::CharMap {
-        my Font::FreeType::CharMap $charmap .= new: :$face, :raw($_)
-            with $!raw.charmap;
-        $charmap;
-    }
+method charmap($face:) returns Font::FreeType::CharMap {
+    my Font::FreeType::CharMap $charmap .= new: :$face, :raw($_)
+        with $!raw.charmap;
+    $charmap;
+}
 
-    method set-charmap(UInt $n where 1 <= * <= $!raw.num-charmaps --> Font::FreeType::CharMap) {
-        my FT_CharMap:D $nth-charmap = $!raw.charmaps[$n - 1];
-        ft-try {$!raw.FT_Set_Charmap($nth-charmap); }
-        @!to-unicode = ();
-        self.charmap;
-    }
+method set-charmap(UInt $n where 1 <= * <= $!raw.num-charmaps --> Font::FreeType::CharMap) {
+    my FT_CharMap:D $nth-charmap = $!raw.charmaps[$n - 1];
+    ft-try {$!raw.FT_Set_Charmap($nth-charmap); }
+    @!to-unicode = ();
+    self.charmap;
+}
 
-    method charmaps($face:) returns Seq {
-        my int $n-sizes = self.num-charmaps;
-        my $ptr = $!raw.charmaps;
-        (^$n-sizes).map: {
-            my FT_CharMap $raw = $ptr[$_];
-            Font::FreeType::CharMap.new: :$face, :$raw;
-        }
+method charmaps($face:) returns Seq {
+    my int $n-sizes = self.num-charmaps;
+    my $ptr = $!raw.charmaps;
+    (^$n-sizes).map: {
+        my FT_CharMap $raw = $ptr[$_];
+        Font::FreeType::CharMap.new: :$face, :$raw;
     }
+}
 
-    my class Vector {
-        has FT_Vector $!raw;
-        has UInt:D $.scale = Dot6;
-        submethod TWEAK(FT_Vector:D :$!raw!) { }
-        method x { $!raw.x / $!scale }
-        method y { $!raw.y / $!scale }
-        method gist { $.x ~ ' ' ~ $.y };
-    }
+my class Vector {
+    has FT_Vector $!raw;
+    has UInt:D $.scale = Dot6;
+    submethod TWEAK(FT_Vector:D :$!raw!) { }
+    method x { $!raw.x / $!scale }
+    method y { $!raw.y / $!scale }
+    method gist { $.x ~ ' ' ~ $.y };
+}
 
-    method named-infos {
-        return Mu unless self.is-scalable;
-        my int $n-sizes = $!raw.FT_Get_Sfnt_Name_Count;
-        (^$n-sizes).map: -> $i {
-            my FT_SfntName $sfnt .= new;
-            ft-try { $!raw.FT_Get_Sfnt_Name($i, $sfnt); };
-            Font::FreeType::NamedInfo.new: :raw($sfnt);
-        }
+method named-infos {
+    return Mu unless self.is-scalable;
+    my int $n-sizes = $!raw.FT_Get_Sfnt_Name_Count;
+    (^$n-sizes).map: -> $i {
+        my FT_SfntName $sfnt .= new;
+        ft-try { $!raw.FT_Get_Sfnt_Name($i, $sfnt); };
+        Font::FreeType::NamedInfo.new: :raw($sfnt);
     }
+}
 
-    method postscript-name returns Str { $!raw.FT_Get_Postscript_Name }
+method postscript-name returns Str { $!raw.FT_Get_Postscript_Name }
 
-    method !flag-set(FT_FACE_FLAG $f) { ?($!raw.face-flags +& $f) }
-    method is-scalable { self!flag-set: FT_FACE_FLAG_SCALABLE }
-    method has-fixed-sizes { self!flag-set: FT_FACE_FLAG_FIXED_SIZES }
-    method is-fixed-width { self!flag-set: FT_FACE_FLAG_FIXED_WIDTH }
-    method is-sfnt { self!flag-set: FT_FACE_FLAG_SFNT }
-    method has-horizontal-metrics { self!flag-set: FT_FACE_FLAG_HORIZONTAL }
-    method has-vertical-metrics { self!flag-set: FT_FACE_FLAG_VERTICAL }
-    method has-kerning { self!flag-set: FT_FACE_FLAG_KERNING }
-    method has-glyph-names { self!flag-set: FT_FACE_FLAG_GLYPH_NAMES }
-    method has-reliable-glyph-names { self.has-glyph-names && ? $!raw.FT_Has_PS_Glyph_Names }
-    method is-bold { ?($!raw.style-flags +& FT_STYLE_FLAG_BOLD) }
-    method is-italic { ?($!raw.style-flags +& FT_STYLE_FLAG_ITALIC) }
+method !flag-set(FT_FACE_FLAG $f) { ?($!raw.face-flags +& $f) }
+method is-scalable { self!flag-set: FT_FACE_FLAG_SCALABLE }
+method has-fixed-sizes { self!flag-set: FT_FACE_FLAG_FIXED_SIZES }
+method is-fixed-width { self!flag-set: FT_FACE_FLAG_FIXED_WIDTH }
+method is-sfnt { self!flag-set: FT_FACE_FLAG_SFNT }
+method has-horizontal-metrics { self!flag-set: FT_FACE_FLAG_HORIZONTAL }
+method has-vertical-metrics { self!flag-set: FT_FACE_FLAG_VERTICAL }
+method has-kerning { self!flag-set: FT_FACE_FLAG_KERNING }
+method has-glyph-names { self!flag-set: FT_FACE_FLAG_GLYPH_NAMES }
+method has-reliable-glyph-names { self.has-glyph-names && ? $!raw.FT_Has_PS_Glyph_Names }
+method is-bold { ?($!raw.style-flags +& FT_STYLE_FLAG_BOLD) }
+method is-italic { ?($!raw.style-flags +& FT_STYLE_FLAG_ITALIC) }
 
-    method !get-glyph-name(UInt $glyph-index) {
-        my buf8 $buf .= allocate(256);
-        ft-try { $!raw.FT_Get_Glyph_Name($glyph-index, $buf, $buf.bytes); };
-        nativecast(Str, $buf);
-    }
+method !get-glyph-name(UInt $glyph-index) {
+    my buf8 $buf .= allocate(256);
+    ft-try { $!raw.FT_Get_Glyph_Name($glyph-index, $buf, $buf.bytes); };
+    nativecast(Str, $buf);
+}
 
-    proto glyph-name($ --> Str) {*}
-    multi method glyph-name(Str:D $char) {
-        my FT_UInt $index = $!raw.FT_Get_Char_Index( $char.ord );
-        $.glyph-name-from-index($index);
-    }
-    multi method glyph-name(UInt:D $char-code) {
-        my FT_UInt $index = $!raw.FT_Get_Char_Index( $char-code );
-        $.glyph-name-from-index($index);
-    }
-    proto glyph-index($ --> Int) {*}
-    multi method glyph-index(Str:D $char) {
-        $!raw.FT_Get_Char_Index($char.ord);
-    }
-    multi method glyph-index(UInt:D $char-code) {
-        $!raw.FT_Get_Char_Index($char-code);
-    }
+proto glyph-name($ --> Str) {*}
+multi method glyph-name(Str:D $char) {
+    my FT_UInt $index = $!raw.FT_Get_Char_Index( $char.ord );
+    $.glyph-name-from-index($index);
+}
+multi method glyph-name(UInt:D $char-code) {
+    my FT_UInt $index = $!raw.FT_Get_Char_Index( $char-code );
+    $.glyph-name-from-index($index);
+}
+proto glyph-index($ --> Int) {*}
+multi method glyph-index(Str:D $char) {
+    $!raw.FT_Get_Char_Index($char.ord);
+}
+multi method glyph-index(UInt:D $char-code) {
+    $!raw.FT_Get_Char_Index($char-code);
+}
 
-    method glyph-name-from-index(UInt:D $glyph-index --> Str) {
-        self.has-glyph-names
-            ?? self!get-glyph-name($glyph-index)
-            !! Str;
-    }
+method glyph-name-from-index(UInt:D $glyph-index --> Str) {
+    self.has-glyph-names
+        ?? self!get-glyph-name($glyph-index)
+        !! Str;
+}
 
-    method index-from-glyph-name(Str:D $glyph-name --> Int) {
-         self.has-glyph-names
-            ?? $!raw.FT_Get_Name_Index($glyph-name)
-            !! Int;
-    }
+method index-from-glyph-name(Str:D $glyph-name --> Int) {
+     self.has-glyph-names
+        ?? $!raw.FT_Get_Name_Index($glyph-name)
+        !! Int;
+}
 
-    has uint32 @!to-unicode;
-    multi method index-to-unicode {
-        $.protect: {
-            unless @!to-unicode {
-                my FT_Face $struct := $!raw;
-                my FT_UInt $glyph-idx;
-                my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
-                @!to-unicode[self.num-glyphs] = 0;
-                while $glyph-idx {
-                    @!to-unicode[ $glyph-idx ] = $char-code;
-                    $char-code = $struct.FT_Get_Next_Char( $char-code, $glyph-idx);
-                }
+has uint32 @!to-unicode;
+multi method index-to-unicode {
+    $.protect: {
+        unless @!to-unicode {
+            my FT_Face $struct := $!raw;
+            my FT_UInt $glyph-idx;
+            my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
+            @!to-unicode[self.num-glyphs] = 0;
+            while $glyph-idx {
+                @!to-unicode[ $glyph-idx ] = $char-code;
+                $char-code = $struct.FT_Get_Next_Char( $char-code, $glyph-idx);
             }
         }
-        @!to-unicode;
     }
-    multi method index-to-unicode(UInt:D $i) {
-        self.index-to-unicode unless @!to-unicode;
-        @!to-unicode[$i];
+    @!to-unicode;
+}
+multi method index-to-unicode(UInt:D $i) {
+    self.index-to-unicode unless @!to-unicode;
+    @!to-unicode[$i];
+}
+
+multi method forall-chars(Str:D $text, &code, |c) is also<for-glyphs> {
+    self.forall-chars(&code, $text.ords, |c);
+}
+
+multi method forall-chars(&code, Str:D $text, |c --> Seq) {
+    self.forall-chars(&code, $text.ords, |c);
+}
+
+method glyph-image(::?CLASS:D $face: UInt:D $char-code, :$flags = $!load-flags --> Font::FreeType::GlyphImage) {
+    my FT_GlyphSlot:D $glyph = $!raw.glyph;
+
+    $!lock.protect: {
+        my $stat = $!raw.FT_Load_Char($char-code, $flags);
+        Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$stat;
+    }    
+}
+
+multi method forall-char-images(::?CLASS:D: &code, @ords, :$flags = $!load-flags --> Seq) {
+    @ords.map: -> UInt:D $char-code {
+        my $glyph-image = self.glyph-image($char-code, :$flags);
+        &code($glyph-image);
     }
+}
 
-    multi method forall-chars(Str:D $text, &code, |c) is also<for-glyphs> {
-        self.forall-chars(&code, $text.ords, |c);
-    }
+multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags --> Seq) {
+    my FT_GlyphSlot:D $raw = $!raw.glyph;
+    my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
 
-    multi method forall-chars(&code, Str:D $text, |c --> Seq) {
-        self.forall-chars(&code, $text.ords, |c);
-    }
-
-    method glyph-image(::?CLASS:D $face: UInt:D $char-code, :$flags = $!load-flags --> Font::FreeType::GlyphImage) {
-        my FT_GlyphSlot:D $glyph = $!raw.glyph;
-
+    @ords.map: -> UInt:D $char-code {
         $!lock.protect: {
-            my $stat = $!raw.FT_Load_Char($char-code, $flags);
-            Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$stat;
-        }    
-    }
-
-    multi method forall-char-images(::?CLASS:D: &code, @ords, :$flags = $!load-flags --> Seq) {
-        @ords.map: -> UInt:D $char-code {
-            my $glyph-image = self.glyph-image($char-code, :$flags);
-            &code($glyph-image);
+            $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
+            $glyph.glyph-index = 0;
+            $glyph.char-code = $char-code;
+            &code($glyph);
         }
     }
+}
 
-    multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags --> Seq) {
-        my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
+multi method forall-char-images(::?CLASS:D: &code, :$flags = $!load-flags) {
+    my FT_UInt $glyph-index;
+    my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
 
-        @ords.map: -> UInt:D $char-code {
-            $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
-                $glyph.glyph-index = 0;
-                $glyph.char-code = $char-code;
-                &code($glyph);
-            }
+    while $glyph-index {
+        my $glyph-image := self.glyph-image($char-code, :$flags);
+        &code($glyph-image);
+        $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
+    }
+}
+
+#| iterate all char-mapped glyphs
+multi method forall-chars(::?CLASS:D $face: &code, :$flags = $!load-flags) {
+    my FT_GlyphSlot:D $raw = $!raw.glyph;
+    my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
+    my FT_UInt $glyph-index;
+    my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
+
+    while $glyph-index {
+        $!lock.protect: {
+            $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
+            $glyph.glyph-index = $glyph-index;
+            $glyph.char-code = $char-code;
+            &code($glyph);
+        }
+        $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
+    }
+}
+
+multi method forall-glyph-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
+    my FT_GlyphSlot:D $glyph = $!raw.glyph;
+    my $to-unicode := $.index-to-unicode;
+    (^$!raw.num-glyphs).map: -> $glyph-index {
+        my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
+            my $stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+            my $char-code = $to-unicode[$glyph-index];
+            Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
+        }
+        &code($glyph-image);
+    }
+}
+
+multi method forall-glyphs(::?CLASS:D $face: &code, :$flags = $!load-flags) {
+    my FT_GlyphSlot:D $raw = $!raw.glyph;
+    my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
+    my $to-unicode := $.index-to-unicode;
+
+    (^$!raw.num-glyphs).map: -> uint $glyph-index {
+        $!lock.protect: {
+            $glyph.stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+            $glyph.glyph-index = $glyph-index;
+            $glyph.char-code = $to-unicode[$glyph-index];
+            &code($glyph);
         }
     }
+}
 
-    multi method forall-char-images(::?CLASS:D: &code, :$flags = $!load-flags) {
-        my FT_UInt $glyph-index;
-        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
+multi method forall-glyph-images(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
+    my FT_GlyphSlot:D $glyph = $!raw.glyph;
+    my $to-unicode := $.index-to-unicode;
 
-        while $glyph-index {
-            my $glyph-image := self.glyph-image($char-code, :$flags);
-            &code($glyph-image);
-            $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
+    @gids.map: -> UInt $glyph-index {
+        my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
+            my $stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+            my $char-code = $to-unicode[$glyph-index];
+            Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
+        }
+        &code($glyph-image);
+    }
+}
+
+multi method forall-glyphs(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
+    my FT_GlyphSlot:D $raw = $!raw.glyph;
+    my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
+    my $to-unicode := $.index-to-unicode;
+
+    @gids.map: -> UInt $glyph-index {
+        $!lock.protect: {
+            $glyph.stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
+            $glyph.glyph-index = $glyph-index;
+            $glyph.char-code = $to-unicode[$glyph-index];
+            &code($glyph);
         }
     }
+}
 
-    #| iterate all char-mapped glyphs
-    multi method forall-chars(::?CLASS:D $face: &code, :$flags = $!load-flags) {
-        my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
-        my FT_UInt $glyph-index;
-        my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
+method glyph-images(Str $text, Int :$flags = $!load-flags) {
+    my Font::FreeType::GlyphImage @ = self.forall-char-images({$_}, $text.ords, :$flags);
+}
 
-        while $glyph-index {
-            $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
-                $glyph.glyph-index = $glyph-index;
-                $glyph.char-code = $char-code;
-                &code($glyph);
-            }
-            $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
-        }
-    }
-
-    multi method forall-glyph-images(::?CLASS:D $face: &code, :$flags = $!load-flags) {
-        my FT_GlyphSlot:D $glyph = $!raw.glyph;
-        my $to-unicode := $.index-to-unicode;
-        (^$!raw.num-glyphs).map: -> $glyph-index {
-            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
-                my $stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
-                my $char-code = $to-unicode[$glyph-index];
-                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
-            }
-            &code($glyph-image);
-        }
-    }
-
-    multi method forall-glyphs(::?CLASS:D $face: &code, :$flags = $!load-flags) {
-        my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
-        my $to-unicode := $.index-to-unicode;
-
-        (^$!raw.num-glyphs).map: -> uint $glyph-index {
-            $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
-                $glyph.glyph-index = $glyph-index;
-                $glyph.char-code = $to-unicode[$glyph-index];
-                &code($glyph);
-            }
-        }
-    }
-
-    multi method forall-glyph-images(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
-        my FT_GlyphSlot:D $glyph = $!raw.glyph;
-        my $to-unicode := $.index-to-unicode;
-
-        @gids.map: -> UInt $glyph-index {
-            my Font::FreeType::GlyphImage $glyph-image = $!lock.protect: {
-                my $stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
-                my $char-code = $to-unicode[$glyph-index];
-                Font::FreeType::GlyphImage.new: :$face, :$glyph, :$char-code, :$glyph-index, :$stat;
-            }
-            &code($glyph-image);
-        }
-    }
-
-    multi method forall-glyphs(::?CLASS:D $face: @gids, &code, :$flags = $!load-flags) {
-        my FT_GlyphSlot:D $raw = $!raw.glyph;
-        my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
-        my $to-unicode := $.index-to-unicode;
-
-        @gids.map: -> UInt $glyph-index {
-            $!lock.protect: {
-                $glyph.stat = $!raw.FT_Load_Glyph($glyph-index, $flags);
-                $glyph.glyph-index = $glyph-index;
-                $glyph.char-code = $to-unicode[$glyph-index];
-                &code($glyph);
-            }
-        }
-    }
-
-    method glyph-images(Str $text, Int :$flags = $!load-flags) {
-        my Font::FreeType::GlyphImage @ = self.forall-char-images({$_}, $text.ords, :$flags);
-    }
-
-    method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
-        $!lock.protect: sub () is hidden-from-backtrace {
-            my FT_F26Dot6 $w = ($width * Dot6).round;
-            my FT_F26Dot6 $h = ($height * Dot6).round;
-            $!load-flags -= FT_LOAD_NO_SCALE
-                if $!load-flags +& FT_LOAD_NO_SCALE;
-            if $horiz-res || $vert-res {
-                $!load-flags -= FT_LOAD_NO_HINTING
-                    if $!load-flags +& FT_LOAD_NO_HINTING;
-            }
-            ft-try { $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) };
-        }
-        $!metrics-delegate = $!raw;
-    }
-
-    method set-font-size(|c) is hidden-from-backtrace {
-        self.set-char-size(|c);
-        $!metrics-delegate = self.scaled-metrics;
-    }
-
-    method set-pixel-sizes(UInt $width, UInt $height, Bool :$scale-font) {
-        $!lock.protect: sub () is hidden-from-backtrace {
-            ft-try { $!raw.FT_Set_Pixel_Sizes($width, $height) };
-            $!load-flags -= FT_LOAD_NO_SCALE
-                if $!load-flags +& FT_LOAD_NO_SCALE;
+method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
+    $!lock.protect: sub () is hidden-from-backtrace {
+        my FT_F26Dot6 $w = ($width * Dot6).round;
+        my FT_F26Dot6 $h = ($height * Dot6).round;
+        $!load-flags -= FT_LOAD_NO_SCALE
+            if $!load-flags +& FT_LOAD_NO_SCALE;
+        if $horiz-res || $vert-res {
             $!load-flags -= FT_LOAD_NO_HINTING
                 if $!load-flags +& FT_LOAD_NO_HINTING;
         }
-        $!metrics-delegate = $scale-font ?? self.scaled-metrics !! $!raw;
+        ft-try { $!raw.FT_Set_Char_Size($w, $h, $horiz-res, $vert-res) };
     }
+    $!metrics-delegate = $!raw;
+}
 
-    method kerning(Str $left, Str $right, UInt :$mode = $!metrics-delegate === $!scaled-metrics ?? FT_KERNING_UNFITTED !! FT_KERNING_UNSCALED) {
-        my FT_UInt $left-idx = $!raw.FT_Get_Char_Index( $left.ord );
-        my FT_UInt $right-idx = $!raw.FT_Get_Char_Index( $right.ord );
-        my FT_Vector $vec .= new;
-        ft-try { $!raw.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); };
-        my $scale := ($mode == FT_KERNING_UNSCALED) ?? 1 !! Dot6;
-        Vector.new: :raw($vec), :$scale;
+method set-font-size(|c) is hidden-from-backtrace {
+    self.set-char-size(|c);
+    $!metrics-delegate = self.scaled-metrics;
+}
+
+method set-pixel-sizes(UInt $width, UInt $height, Bool :$scale-font) {
+    $!lock.protect: sub () is hidden-from-backtrace {
+        ft-try { $!raw.FT_Set_Pixel_Sizes($width, $height) };
+        $!load-flags -= FT_LOAD_NO_SCALE
+            if $!load-flags +& FT_LOAD_NO_SCALE;
+        $!load-flags -= FT_LOAD_NO_HINTING
+            if $!load-flags +& FT_LOAD_NO_HINTING;
     }
+    $!metrics-delegate = $scale-font ?? self.scaled-metrics !! $!raw;
+}
 
-    method is-internally-keyed-cid returns Bool {
-        my FT_Bool $is-cid;
-        $!raw.FT_Get_CID_Is_Internally_CID_Keyed($is-cid);
-        $is-cid.so;
+method kerning(Str $left, Str $right, UInt :$mode = $!metrics-delegate === $!scaled-metrics ?? FT_KERNING_UNFITTED !! FT_KERNING_UNSCALED) {
+    my FT_UInt $left-idx = $!raw.FT_Get_Char_Index( $left.ord );
+    my FT_UInt $right-idx = $!raw.FT_Get_Char_Index( $right.ord );
+    my FT_Vector $vec .= new;
+    ft-try { $!raw.FT_Get_Kerning($left-idx, $right-idx, $mode, $vec); };
+    my $scale := ($mode == FT_KERNING_UNSCALED) ?? 1 !! Dot6;
+    Vector.new: :raw($vec), :$scale;
+}
+
+method is-internally-keyed-cid returns Bool {
+    my FT_Bool $is-cid;
+    $!raw.FT_Get_CID_Is_Internally_CID_Keyed($is-cid);
+    $is-cid.so;
+}
+
+method Numeric is also<elems> {
+    $!raw.num-glyphs;
+}
+
+multi method iterate-chars(::?CLASS:D $face: Str:D $text, :$flags = $!load-flags) is DEPRECATED<forall-chars> {
+    class TextIteration does Iterator does Iterable {
+        has Font::FreeType::Face:D $.face is required;
+        has Int:D $.flags is required;
+        has UInt:D @.ords is required;
+        has Lock:D $.lock is required;
+        has FT_Face $!raw = $!face.raw;
+        has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
+        has UInt:D $!idx = 0;
+        method pull-one {
+            if $!idx < @!ords {
+                $!lock.protect: {
+                    my $char-code := @!ords[$!idx++];
+                    $!glyph.stat = $!raw.FT_Load_Char($char-code, $!flags);
+                    $!glyph.glyph-index = 0;
+                    $!glyph.char-code = $char-code;
+                    $!glyph;
+                }
+            }
+            else {
+                IterationEnd;
+            }
+        }
+        method iterator { self }
     }
+    my @ords = $text.ords;
+    TextIteration.new: :$face, :$flags, :@ords, :$!lock;
+}
 
-    method Numeric is also<elems> {
-        $!raw.num-glyphs;
-    }
+# not thread-safe: deprecated
+multi method iterate-chars(::?CLASS:D $face: :$flags = $!load-flags, Bool :$load = True) is DEPRECATED<forall-chars> {
+    class AllCharsIteration does Iterator does Iterable {
+        has Font::FreeType::Face:D $.face is required;
+        has Int:D $.flags is required;
+        has Bool $.load is required;
+        has Lock:D $.lock is required;
+        has FT_Face $!raw = $!face.raw;
+        has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
+        has FT_UInt $!idx = 0;
 
-    multi method iterate-chars(::?CLASS:D $face: Str:D $text, :$flags = $!load-flags) is DEPRECATED<forall-chars> {
-        class TextIteration does Iterator does Iterable {
-            has Font::FreeType::Face:D $.face is required;
-            has Int:D $.flags is required;
-            has UInt:D @.ords is required;
-            has Lock:D $.lock is required;
-            has FT_Face $!raw = $!face.raw;
-            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
-            has UInt:D $!idx = 0;
-            method pull-one {
-                if $!idx < @!ords {
-                    $!lock.protect: {
-                        my $char-code := @!ords[$!idx++];
-                        $!glyph.stat = $!raw.FT_Load_Char($char-code, $!flags);
-                        $!glyph.glyph-index = 0;
-                        $!glyph.char-code = $char-code;
+        method pull-one {
+
+            given $!idx {
+                $!lock.protect: {
+                    $!glyph.char-code = $_
+                        ?? $!raw.FT_Get_Next_Char( $!glyph.char-code, $_)
+                        !! $!raw.FT_Get_First_Char($_);
+
+                    if $_ {
+                        $!glyph.stat = $!raw.FT_Load_Glyph($_, $!flags )
+                            if $!load;
+                        $!glyph.glyph-index = $_;
                         $!glyph;
                     }
-                }
-                else {
-                    IterationEnd;
-                }
-            }
-            method iterator { self }
-        }
-        my @ords = $text.ords;
-        TextIteration.new: :$face, :$flags, :@ords, :$!lock;
-    }
-
-    # not thread-safe: deprecated
-    multi method iterate-chars(::?CLASS:D $face: :$flags = $!load-flags, Bool :$load = True) is DEPRECATED<forall-chars> {
-        class AllCharsIteration does Iterator does Iterable {
-            has Font::FreeType::Face:D $.face is required;
-            has Int:D $.flags is required;
-            has Bool $.load is required;
-            has Lock:D $.lock is required;
-            has FT_Face $!raw = $!face.raw;
-            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
-            has FT_UInt $!idx = 0;
-
-            method pull-one {
-
-                given $!idx {
-                    $!lock.protect: {
-                        $!glyph.char-code = $_
-                            ?? $!raw.FT_Get_Next_Char( $!glyph.char-code, $_)
-                            !! $!raw.FT_Get_First_Char($_);
-
-                        if $_ {
-                            $!glyph.stat = $!raw.FT_Load_Glyph($_, $!flags )
-                                if $!load;
-                            $!glyph.glyph-index = $_;
-                            $!glyph;
-                        }
-                        else {
-                            IterationEnd;
-                        }
+                    else {
+                        IterationEnd;
                     }
                 }
             }
-            method iterator { self }
         }
-        AllCharsIteration.new: :$face, :$flags, :$load, :$!lock;
+        method iterator { self }
     }
+    AllCharsIteration.new: :$face, :$flags, :$load, :$!lock;
+}
 
-    # not thread-safe: deprecated
-    method iterate-glyphs(::?CLASS:D $face: :$flags = $!load-flags) is DEPRECATED<forall-glyphs> {
-        class AllGlyphsIteration does Iterator does Iterable {
-            has Font::FreeType::Face:D $.face is required;
-            has $.to-unicode is required;
-            has Int:D $.flags is required;
-            has Lock:D $.lock is required;
-            has FT_Face $!raw = $!face.raw;
-            has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
-            has UInt:D $!idx = 0;
+# not thread-safe: deprecated
+method iterate-glyphs(::?CLASS:D $face: :$flags = $!load-flags) is DEPRECATED<forall-glyphs> {
+    class AllGlyphsIteration does Iterator does Iterable {
+        has Font::FreeType::Face:D $.face is required;
+        has $.to-unicode is required;
+        has Int:D $.flags is required;
+        has Lock:D $.lock is required;
+        has FT_Face $!raw = $!face.raw;
+        has Font::FreeType::Glyph $!glyph .= new: :$!face, :raw($!raw.glyph), :$flags;
+        has UInt:D $!idx = 0;
 
-            method pull-one {
-                if $!idx < $!raw.num-glyphs {
-                    $!lock.protect: {
-                        $!glyph.stat = $!raw.FT_Load_Glyph( $!idx, $!flags );
-                        $!glyph.glyph-index = $!idx;
-                        $!glyph.char-code = $!to-unicode[$!idx++];
-                        $!glyph;
-                    }
-                }
-                else {
-                    IterationEnd;
+        method pull-one {
+            if $!idx < $!raw.num-glyphs {
+                $!lock.protect: {
+                    $!glyph.stat = $!raw.FT_Load_Glyph( $!idx, $!flags );
+                    $!glyph.glyph-index = $!idx;
+                    $!glyph.char-code = $!to-unicode[$!idx++];
+                    $!glyph;
                 }
             }
-            method iterator { self }
+            else {
+                IterationEnd;
+            }
         }
-        my $to-unicode := $.index-to-unicode;
-        AllGlyphsIteration.new: :$face, :$to-unicode, :$flags, :$!lock;
+        method iterator { self }
     }
+    my $to-unicode := $.index-to-unicode;
+    AllGlyphsIteration.new: :$face, :$to-unicode, :$flags, :$!lock;
+}
 
-    method NativeCall::Types::Pointer { nativecast(Pointer, $!raw) }
+method NativeCall::Types::Pointer { nativecast(Pointer, $!raw) }
 
-    submethod DESTROY {
-        with $!raw {
-            ft-try { .FT_Done_Face };
-            $_ = Nil;
-        }
+submethod DESTROY {
+    with $!raw {
+        ft-try { .FT_Done_Face };
+        $_ = Nil;
     }
 }
 

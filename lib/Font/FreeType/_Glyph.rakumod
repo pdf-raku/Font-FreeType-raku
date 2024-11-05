@@ -18,8 +18,8 @@ method name returns Str { $!face.glyph-name-from-index: $.index }
 method index returns UInt:D {
     $!glyph-index ||= $!face.raw.FT_Get_Char_Index: $!char-code;
 }
-method is-outline {
-    .format == FT_GLYPH_FORMAT_OUTLINE with $.raw;
+method is-outline returns Bool {
+    (.format == FT_GLYPH_FORMAT_OUTLINE with $.raw).so;
 }
 
 method outline handles<decompose bbox bounding-box> returns  Font::FreeType::Outline:D {

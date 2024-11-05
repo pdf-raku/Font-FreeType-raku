@@ -1,20 +1,20 @@
 #| Information from 'names table' in font file
-class Font::FreeType::NamedInfo {
-    use NativeCall;
-    use Font::FreeType::Raw;
+unit class Font::FreeType::NamedInfo;
 
-    has FT_SfntName $!raw handles <platform-id encoding-id language-id name-id string-len>;
-    submethod TWEAK(FT_SfntName:D :$!raw!) { }
+use NativeCall;
+use Font::FreeType::Raw;
 
-    method Str {
-        my $len := $.string-len;
-        my buf8 $buf .= allocate($len);
-        if $len {
-            Font::FreeType::Raw::memcpy(nativecast(Pointer, $buf), $!raw.string, $len);
-        }
-        # todo various encoding schemes
-        $buf.decode;
+has FT_SfntName $!raw handles <platform-id encoding-id language-id name-id string-len>;
+submethod TWEAK(FT_SfntName:D :$!raw!) { }
+
+method Str {
+    my $len := $.string-len;
+    my buf8 $buf .= allocate($len);
+    if $len {
+        Font::FreeType::Raw::memcpy(nativecast(Pointer, $buf), $!raw.string, $len);
     }
+    # todo various encoding schemes
+    $buf.decode;
 }
 
 =begin pod

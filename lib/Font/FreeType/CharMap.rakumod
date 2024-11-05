@@ -1,13 +1,13 @@
 #| Character map from font typefaces
-class Font::FreeType::CharMap {
-    use Font::FreeType::Raw;
-    use Font::FreeType::Raw::Defs;
+unit class Font::FreeType::CharMap;
 
-    has $.face is required; # to prevent GC
-    has FT_CharMap $!raw handles <platform-id encoding-id>;
-    submethod TWEAK(:$!raw!) { }
-    method encoding returns UInt:D { FT_ENCODING($!raw.encoding) }
-}
+use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
+
+has $.face is required; # to prevent GC
+has FT_CharMap $!raw handles <platform-id encoding-id>;
+submethod TWEAK(:$!raw!) { }
+method encoding returns UInt:D { FT_ENCODING($!raw.encoding) }
 
 =begin pod
 

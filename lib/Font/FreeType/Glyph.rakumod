@@ -1,51 +1,49 @@
 #| iterator for font typeface glyphs
-class Font::FreeType::Glyph {
+unit class Font::FreeType::Glyph;
 
-    use Font::FreeType::_Glyph;
-    also is Font::FreeType::_Glyph;
+use Font::FreeType::_Glyph;
+also is Font::FreeType::_Glyph;
 
-    use NativeCall;
-    use Font::FreeType::GlyphImage;
-    use Font::FreeType::Raw;
-    use Font::FreeType::Raw::Defs;
-    use Font::FreeType::Error;
+use NativeCall;
+use Font::FreeType::GlyphImage;
+use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
+use Font::FreeType::Error;
 
-    use Font::FreeType::BitMap;
-    constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
+use Font::FreeType::BitMap;
+constant Dot6 = Font::FreeType::Raw::Defs::Dot6;
 
-    has FT_GlyphSlot $.raw is built handles <metrics>;
-    has UInt:D $.flags = FT_LOAD_DEFAULT;
-    has Numeric $!x-scale;
-    has Numeric $!y-scale;
+has FT_GlyphSlot $.raw is built handles <metrics>;
+has UInt:D $.flags = FT_LOAD_DEFAULT;
+has Numeric $!x-scale;
+has Numeric $!y-scale;
 
-    submethod TWEAK(FT_GlyphSlot:D :$!raw!) {
-        my FT_Face:D $face := $!raw.face;
-        my FT_Size_Metrics:D $metrics := $face.size.metrics;
-        $!x-scale = $face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($metrics.x-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;
-        $!y-scale = $face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($metrics.y-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;
-    }
-    method left-bearing returns Rat:D { $.metrics.hori-bearing-x / $!x-scale }
-    method right-bearing returns Rat:D {
-        (.hori-advance - .hori-bearing-x - .width) / $!x-scale
-            with $.metrics
-    }
-    method top-bearing returns Rat:D { $.metrics.vert-bearing-y / $!y-scale }
-    method horizontal-advance returns Rat:D {
-        $.metrics.hori-advance / $!x-scale;
-    }
-    method vertical-advance returns Rat:D {
-        $.metrics.vert-advance / $!y-scale;
-    }
-    method width returns Rat:D { $.metrics.width / $!x-scale }
-    method height returns Rat:D { $.metrics.height / $!y-scale }
-    method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
+submethod TWEAK(FT_GlyphSlot:D :$!raw!) {
+    my FT_Face:D $face := $!raw.face;
+    my FT_Size_Metrics:D $metrics := $face.size.metrics;
+    $!x-scale = $face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($metrics.x-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;
+    $!y-scale = $face.face-flags +& FT_FACE_FLAG_SCALABLE == 0 || ($metrics.y-scale && ($!flags +& FT_LOAD_NO_SCALE == 0)) ?? Dot6 !! 1;
+}
+method left-bearing returns Rat:D { $.metrics.hori-bearing-x / $!x-scale }
+method right-bearing returns Rat:D {
+    (.hori-advance - .hori-bearing-x - .width) / $!x-scale
+        with $.metrics
+}
+method top-bearing returns Rat:D { $.metrics.vert-bearing-y / $!y-scale }
+method horizontal-advance returns Rat:D {
+    $.metrics.hori-advance / $!x-scale;
+}
+method vertical-advance returns Rat:D {
+    $.metrics.vert-advance / $!y-scale;
+}
+method width returns Rat:D { $.metrics.width / $!x-scale }
+method height returns Rat:D { $.metrics.height / $!y-scale }
+method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
 
-    method glyph-image handles<bitmap decompose> returns Font::FreeType::GlyphImage:D {
-        my $top = $!raw.bitmap-top;
-        my $left = $!raw.bitmap-left;
-        Font::FreeType::GlyphImage.new: :$.face, :glyph($!raw), :$left, :$top, :$.char-code, :$.index, :$.stat;
-    }
-
+method glyph-image handles<bitmap decompose> returns Font::FreeType::GlyphImage:D {
+    my $top = $!raw.bitmap-top;
+    my $left = $!raw.bitmap-left;
+    Font::FreeType::GlyphImage.new: :$.face, :glyph($!raw), :$left, :$top, :$.char-code, :$.index, :$.stat;
 }
 
 =begin pod

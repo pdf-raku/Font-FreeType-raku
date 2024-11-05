@@ -1,83 +1,82 @@
 #| Glyph images from font typefaces
-class Font::FreeType::GlyphImage {
+unit class Font::FreeType::GlyphImage;
 
-    use Font::FreeType::_Glyph;
-    also is Font::FreeType::_Glyph;
-    use NativeCall;
-    use Font::FreeType::Error;
-    use Font::FreeType::Raw;
-    use Font::FreeType::Raw::Defs;
+use Font::FreeType::_Glyph;
+also is Font::FreeType::_Glyph;
+use NativeCall;
+use Font::FreeType::Error;
+use Font::FreeType::Raw;
+use Font::FreeType::Raw::Defs;
 
-    use Font::FreeType::BitMap;
+use Font::FreeType::BitMap;
 
-    has FT_Glyph $.raw is built handles <top left>;
+has FT_Glyph $.raw is built handles <top left>;
 
-    method !library(--> FT_Library:D) { $.face.ft-lib.raw; }
+method !library(--> FT_Library:D) { $.face.ft-lib.raw; }
 
-    submethod TWEAK(FT_GlyphSlot :$glyph!, :$top = $glyph.bitmap-top, :$left = $glyph.bitmap-left,) {
-        my $glyph-p = Pointer[FT_Glyph].new;
-        ft-try { $glyph.FT_Get_Glyph($glyph-p) };
-        my FT_Glyph $glyph-image = $glyph-p.deref;
+submethod TWEAK(FT_GlyphSlot :$glyph!, :$top = $glyph.bitmap-top, :$left = $glyph.bitmap-left,) {
+    my $glyph-p = Pointer[FT_Glyph].new;
+    ft-try { $glyph.FT_Get_Glyph($glyph-p) };
+    my FT_Glyph $glyph-image = $glyph-p.deref;
 
-        given $glyph-image {
-            when .format == FT_GLYPH_FORMAT_OUTLINE {
-                $_ = nativecast(FT_OutlineGlyph, $_);
-            }
-            when .format == FT_GLYPH_FORMAT_BITMAP {
-                $_ = nativecast(FT_BitmapGlyph, $_);
-                .top = $top;
-                .left = $left;
-            }
-            default {
-                die "unknown glyph image format: {.format}";
-            }
+    given $glyph-image {
+        when .format == FT_GLYPH_FORMAT_OUTLINE {
+            $_ = nativecast(FT_OutlineGlyph, $_);
         }
-
-        $!raw := $glyph-image;
-    }
-    method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
-
-    method bold(Int $s) is DEPRECATED<set-bold> { self.set-bold($s) }
-    method set-bold(Int $strength) {
-        if self.is-outline {
-            my FT_Outline:D $outline = $!raw.outline;
-            ft-try { $outline.FT_Outline_Embolden($strength); };
+        when .format == FT_GLYPH_FORMAT_BITMAP {
+            $_ = nativecast(FT_BitmapGlyph, $_);
+            .top = $top;
+            .left = $left;
         }
-        elsif self.is-bitmap {
-            my FT_Bitmap:D $bitmap = $!raw.bitmap;
-            ft-try { self!library.FT_Bitmap_Embolden($bitmap, $strength, $strength); };
+        default {
+            die "unknown glyph image format: {.format}";
         }
     }
 
-    method is-bitmap {
-        .format == FT_GLYPH_FORMAT_BITMAP with $!raw;
+    $!raw := $glyph-image;
+}
+method format returns UInt:D { FT_GLYPH_FORMAT($!raw.format) }
+
+method bold(Int $s) is DEPRECATED<set-bold> { self.set-bold($s) }
+method set-bold(Int $strength) {
+    if self.is-outline {
+        my FT_Outline:D $outline = $!raw.outline;
+        ft-try { $outline.FT_Outline_Embolden($strength); };
     }
-    method to-bitmap(
-        :$render-mode = FT_RENDER_MODE_NORMAL,
-        :$origin = FT_Vector.new,
-        Bool :$destroy = True,
-        )  {
-        my FT_BBox $bbox .= new;
-        $!raw.FT_Glyph_Get_CBox(FT_GLYPH_BBOX_PIXELS, $bbox);
-        my $raw-p = nativecast(Pointer[FT_Glyph], $!raw);
-        ft-try { FT_Glyph_To_Bitmap($raw-p, +$render-mode, $origin, $destroy); };
-        $!raw = nativecast(FT_BitmapGlyph, $raw-p.deref);
-        $.left = $bbox.x-min;
-        $.top  = $bbox.y-max;
-        self;
-    }
-    method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL --> Font::FreeType::BitMap:D) {
-        self.to-bitmap(:$render-mode)
-            unless self.is-bitmap;
+    elsif self.is-bitmap {
         my FT_Bitmap:D $bitmap = $!raw.bitmap;
-        my FT_Bitmap $raw = $bitmap.clone(self!library);
-        my $top = $.top;
-        Font::FreeType::BitMap.new: :$.face, :$raw, :$.left, :$top, :$.char-code;
+        ft-try { self!library.FT_Bitmap_Embolden($bitmap, $strength, $strength); };
     }
+}
 
-    method DESTROY {
-        $!raw.FT_Done_Glyph;
-    }
+method is-bitmap {
+    .format == FT_GLYPH_FORMAT_BITMAP with $!raw;
+}
+method to-bitmap(
+    :$render-mode = FT_RENDER_MODE_NORMAL,
+    :$origin = FT_Vector.new,
+    Bool :$destroy = True,
+    )  {
+    my FT_BBox $bbox .= new;
+    $!raw.FT_Glyph_Get_CBox(FT_GLYPH_BBOX_PIXELS, $bbox);
+    my $raw-p = nativecast(Pointer[FT_Glyph], $!raw);
+    ft-try { FT_Glyph_To_Bitmap($raw-p, +$render-mode, $origin, $destroy); };
+    $!raw = nativecast(FT_BitmapGlyph, $raw-p.deref);
+    $.left = $bbox.x-min;
+    $.top  = $bbox.y-max;
+    self;
+}
+method bitmap(UInt :$render-mode = FT_RENDER_MODE_NORMAL --> Font::FreeType::BitMap:D) {
+    self.to-bitmap(:$render-mode)
+        unless self.is-bitmap;
+    my FT_Bitmap:D $bitmap = $!raw.bitmap;
+    my FT_Bitmap $raw = $bitmap.clone(self!library);
+    my $top = $.top;
+    Font::FreeType::BitMap.new: :$.face, :$raw, :$.left, :$top, :$.char-code;
+}
+
+method DESTROY {
+    $!raw.FT_Done_Glyph;
 }
 
 =begin pod
