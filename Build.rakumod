@@ -36,7 +36,6 @@ class Build {
 
         mkdir($destfolder);
         LibraryMake::process-makefile($folder, %vars);
-        dd :%vars;
         note (qx{freetype-config --prefix});
         shell(%vars<MAKE>);
     }
