@@ -27,5 +27,5 @@ method outline handles<decompose bbox bounding-box> returns  Font::FreeType::Out
         unless self.is-outline;
     my FT_Outline:D $outline = $.raw.outline;
     my FT_Outline $raw = $outline.clone(self!library);
-    Font::FreeType::Outline.new: :$raw, :$.face;
+    Font::FreeType::Outline.new: :$raw, :$!face;
 }

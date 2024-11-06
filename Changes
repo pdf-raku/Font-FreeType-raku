@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.5.10  2024-11-07T05:34:13+13:00
+    - Coerce to IO::Path objects on face creation #31
+
 0.5.9  2024-10-01T05:29:31+13:00
     - Use MacOS::NativeLib to locate libraries on MacOS
 
