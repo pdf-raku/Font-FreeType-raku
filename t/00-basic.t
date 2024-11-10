@@ -45,6 +45,9 @@ is $face.descender, -483, '.ascender';
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf'.IO) }, 'face creation from IO path';
 is $face.font-format, 'TrueType', 'font format';
 
+lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf'.IO.open(:r)) }, 'face creation from IO handle';
+is $face.font-format, 'TrueType', 'font format';
+
 lives-ok { $face = $freetype.face('t/fonts/DejaVuSerif.ttf'.IO.slurp(:bin)) }, 'face creation from buffer';
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Serif', 'face family name';
