@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.5.11  2024-12-07T06:47:11+13:00
     - Add top-bearing method #32
     - Add face file() file attribute
 
