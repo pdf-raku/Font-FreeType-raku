@@ -30,7 +30,7 @@ multi method face(::?CLASS:U \class: |c --> Font::FreeType::Face:D) is hidden-fr
 }
 
 multi method face(::?CLASS:D $ft-lib:
-                  IO:D() $file-io,
+                  IO:D() $file,
                   Int :$index = 0,
                   |c --> Font::FreeType::Face:D
                  ) is hidden-from-backtrace {
@@ -38,14 +38,28 @@ multi method face(::?CLASS:D $ft-lib:
     $lock.protect: sub () is hidden-from-backtrace {
         CATCH {
             when Font::FreeType::Error {
-                .details = "loading file '{$file-io.path}'";
+                .details = "loading file '{$file.path}'";
                 .rethrow;
             }
         }
-        ft-try { $!raw.FT_New_Face($file-io.path, $index, $p); };
+        ft-try { $!raw.FT_New_Face($file.path, $index, $p); };
     }
     my FT_Face:D $raw = $p.deref;
-    Font::FreeType::Face.new: :$raw, :$ft-lib, |c;
+    Font::FreeType::Face.new: :$raw, :$ft-lib, :$file, |c;
+}
+
+multi method face(::?CLASS:D:
+                  IO::Handle:D $file,
+                  |c --> Font::FreeType::Face:D
+                 ) is hidden-from-backtrace {
+    CATCH {
+        when Font::FreeType::Error {
+            .details = "loading IO handle '{$file.path}'";
+            .rethrow;
+        }
+    }
+    $file.seek(0, SeekFromBeginning);
+    $.face($file.slurp(:bin), :$file, |c);
 }
 
 multi method face(::?CLASS:D $ft-lib:
@@ -60,20 +74,6 @@ multi method face(::?CLASS:D $ft-lib:
               });
     my FT_Face:D $raw = $p.deref;
     Font::FreeType::Face.new: :$raw, :$ft-lib, |c;
-}
-
-multi method face(::?CLASS:D:
-                  IO::Handle:D $fh,
-                  |c --> Font::FreeType::Face:D
-                 ) is hidden-from-backtrace {
-    CATCH {
-        when Font::FreeType::Error {
-            .details = "loading IO handle '{$fh.path}'";
-            .rethrow;
-        }
-    }
-    $fh.seek(0, SeekFromBeginning);
-    $.face($fh.slurp(:bin), |c);
 }
 
 multi method version(::?CLASS:U:) {

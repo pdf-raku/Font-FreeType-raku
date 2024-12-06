@@ -24,6 +24,7 @@ has FT_Face $.raw handles <num-faces face-index face-flags style-flags
 has UInt $.load-flags is rw = FT_LOAD_NO_SCALE +| FT_LOAD_NO_HINTING;
 has Lock $!lock handles<protect> .= new;
 has $!metrics-delegate handles<units-per-EM underline-position underline-thickness ascender descender height max-advance max-advance-height> = $!raw;
+has $.file;
 
 method attach-file(Str:D() $filepath) {
     ft-try { self.raw.FT_Attach_File($filepath); }

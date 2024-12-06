@@ -28,6 +28,7 @@ lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper sy
 
 my Font::FreeType::Face $face;
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from filename';
+is-deeply $face.file, 't/fonts/DejaVuSans.ttf'.IO;
 is $face.font-format, 'TrueType', 'font format';
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Sans', 'face family name';
@@ -45,7 +46,10 @@ is $face.descender, -483, '.ascender';
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf'.IO) }, 'face creation from IO path';
 is $face.font-format, 'TrueType', 'font format';
 
-lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf'.IO.open(:r)) }, 'face creation from IO handle';
+lives-ok {
+    my IO::Handle $fh = 't/fonts/DejaVuSans.ttf'.IO.open(:r);
+    $face = $freetype.face($fh);
+}, 'face creation from IO handle';
 is $face.font-format, 'TrueType', 'font format';
 
 lives-ok { $face = $freetype.face('t/fonts/DejaVuSerif.ttf'.IO.slurp(:bin)) }, 'face creation from buffer';
