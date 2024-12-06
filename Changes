@@ -1,4 +1,5 @@
 {{$NEXT}}
+    - Add top-bearing method #32
 
 0.5.10  2024-11-07T05:34:13+13:00
     - Coerce to IO::Path objects on face creation #31

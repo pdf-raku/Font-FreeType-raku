@@ -30,6 +30,7 @@ method right-bearing returns Rat:D {
         with $.metrics
 }
 method top-bearing returns Rat:D { $.metrics.vert-bearing-y / $!y-scale }
+method bottom-bearing returns Rat:D { ($.metrics.height - $.metrics.vert-bearing-y) / $!y-scale }
 method horizontal-advance returns Rat:D {
     $.metrics.hori-advance / $!x-scale;
 }
@@ -154,7 +155,13 @@ to vertical layouts.  Always positive.
 
 =head top-bearing()
 
-The vertical distance from the baseline to the top of the glyph's bbox.It is usually positive for horizontal layouts, and negative for vertical ones.
+The vertical distance from the baseline to the top of the glyph's bbox. It is usually positive for horizontal layouts, and negative for vertical ones.
+
+This method is only available if the font face `has-vertical-metrics` is True.
+
+=head bottom-bearing()
+
+The vertical distance from the baseline to the bottom of the glyph's bbox.
 
 This method is only available if the font face `has-vertical-metrics` is True.
 

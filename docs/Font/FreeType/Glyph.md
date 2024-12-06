@@ -102,7 +102,16 @@ head
 
 top-bearing()
 
-The vertical distance from the baseline to the top of the glyph's bbox.It is usually positive for horizontal layouts, and negative for vertical ones.
+The vertical distance from the baseline to the top of the glyph's bbox. It is usually positive for horizontal layouts, and negative for vertical ones.
+
+This method is only available if the font face `has-vertical-metrics` is True.
+
+head
+====
+
+bottom-bearing()
+
+The vertical distance from the baseline to the bottom of the glyph's bbox.
 
 This method is only available if the font face `has-vertical-metrics` is True.
 
