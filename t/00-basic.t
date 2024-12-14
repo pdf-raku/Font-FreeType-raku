@@ -28,7 +28,7 @@ lives-ok({ cglobal($FT-WRAPPER-LIB, "ft6_glyph_outline", Pointer) }, 'wrapper sy
 
 my Font::FreeType::Face $face;
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf') }, 'face creation from filename';
-is-deeply $face.file, 't/fonts/DejaVuSans.ttf'.IO;
+is-deeply $face.file, 't/fonts/DejaVuSans.ttf'.IO, 'face file';
 is $face.font-format, 'TrueType', 'font format';
 is $face.num-faces, 1, 'num-faces';
 is $face.family-name, 'DejaVu Sans', 'face family name';
@@ -42,6 +42,8 @@ is $bbox.y-max, 2524, 'bbox.y-max';
 is $face.units-per-EM, 2048, '.units-per-EM';
 is $face.ascender, 1901, '.ascender';
 is $face.descender, -483, '.ascender';
+
+is-deeply $face.cmap.head(3), (3 => " ", 4 => "!", 5 => "\"");
 
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf'.IO) }, 'face creation from IO path';
 is $face.font-format, 'TrueType', 'font format';

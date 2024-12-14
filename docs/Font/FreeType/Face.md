@@ -92,6 +92,12 @@ Returns an array of Font::FreeType::BitMap::Size objects which detail sizes. Eac
 
     Resolution the bitmaps were designed for, in pixels per em. Only available with Freetype 2.1.5 or newer.
 
+### cmap
+
+    say $face.cmap.head(3).raku; # e.g. (3 => " ", 4 => "!", 5 => "\"")
+
+Iterates the fonts character map, returning character mappings from glyphs-indexes to characters. Any glyphs that don't have character mapping are ommitted. It is also possible for a single glyph-index to map to multiple characters.
+
 ### glyph-images(str)
 
 Returns an array of [Font::FreeType::GlyphImage](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/GlyphImage) objects for the Unicode string.

@@ -320,6 +320,28 @@ method glyph-images(Str $text, Int :$flags = $!load-flags) {
     my Font::FreeType::GlyphImage @ = self.forall-char-images({$_}, $text.ords, :$flags);
 }
 
+method cmap(::?CLASS:D $face:) {
+    class PairsIteration does Iterator does Iterable {
+        has Font::FreeType::Face:D $.face is required;
+        has FT_Face $!raw = $!face.raw;
+        has FT_UInt $!gid;
+        has FT_ULong $!char-code = $!raw.FT_Get_First_Char($!gid);
+
+        method pull-one {
+            if $!gid {
+                my $rv := $!gid => $!char-code.chr;
+                $!char-code = $!raw.FT_Get_Next_Char( $!char-code, $!gid);
+                $rv;
+            }
+            else {
+                IterationEnd;
+            }
+        }
+        method iterator { self }
+    }
+    PairsIteration.new: :$face;
+}
+
 method set-char-size(Numeric $width, Numeric $height = $width, UInt $horiz-res = 0, UInt $vert-res = 0) {
     $!lock.protect: sub () is hidden-from-backtrace {
         my FT_F26Dot6 $w = ($width * Dot6).round;
@@ -568,6 +590,15 @@ detail sizes.  Each object has the following available methods:
     Only available with Freetype 2.1.5 or newer.
     =end item
 
+=head3 cmap
+
+    say $face.cmap.head(3).raku; # e.g. (3 => " ", 4 => "!", 5 => "\"")
+
+Iterates the fonts character map, returning character mappings from
+glyphs-indexes to characters. Any glyphs that don't have character
+mapping are ommitted. It is also possible for a single glyph-index to
+map to multiple characters.
+
 =head3 glyph-images(str)
 
 Returns an array of L<Font::FreeType::GlyphImage> objects for the Unicode string.
@@ -579,7 +610,6 @@ For example, to load particular glyphs (character images):
         my $bitmap = .bitmap;
         say $bitmap.Str;
     }`
-
 
 =head3 forall-chars($text, &code)
 
