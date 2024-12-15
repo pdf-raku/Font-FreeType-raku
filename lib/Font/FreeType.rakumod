@@ -1,4 +1,4 @@
-unit class Font::FreeType:ver<0.5.11>;
+unit class Font::FreeType:ver<0.5.12>;
 
 use NativeCall;
 use Font::FreeType::Face;
