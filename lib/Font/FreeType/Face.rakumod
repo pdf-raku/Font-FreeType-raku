@@ -231,13 +231,9 @@ multi method forall-chars(::?CLASS:D $face: &code, @ords, :$flags = $!load-flags
 }
 
 multi method forall-char-images(::?CLASS:D: &code, :$flags = $!load-flags) {
-    my FT_UInt $glyph-index;
-    my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
-
-    while $glyph-index {
-        my $glyph-image := self.glyph-image($char-code, :$flags);
+    for self.cmap {
+        my $glyph-image := self.glyph-image(.value, :$flags);
         &code($glyph-image);
-        $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
     }
 }
 
@@ -245,17 +241,14 @@ multi method forall-char-images(::?CLASS:D: &code, :$flags = $!load-flags) {
 multi method forall-chars(::?CLASS:D $face: &code, :$flags = $!load-flags) {
     my FT_GlyphSlot:D $raw = $!raw.glyph;
     my Font::FreeType::Glyph $glyph .= new: :$face, :$raw, :$flags;
-    my FT_UInt $glyph-index;
-    my FT_ULong $char-code = $!raw.FT_Get_First_Char( $glyph-index);
 
-    while $glyph-index {
+    for self.cmap {
         $!lock.protect: {
-            $glyph.stat = $!raw.FT_Load_Char($char-code, $flags);
-            $glyph.glyph-index = $glyph-index;
-            $glyph.char-code = $char-code;
+            $glyph.stat = $!raw.FT_Load_Char(.value, $flags);
+            $glyph.glyph-index = .key;
+            $glyph.char-code   = .value;
             &code($glyph);
         }
-        $char-code = $!raw.FT_Get_Next_Char( $char-code, $glyph-index);
     }
 }
 
@@ -329,7 +322,7 @@ method cmap(::?CLASS:D $face:) {
 
         method pull-one {
             if $!gid {
-                my $rv := $!gid => $!char-code.chr;
+                my $rv := $!gid => $!char-code;
                 $!char-code = $!raw.FT_Get_Next_Char( $!char-code, $!gid);
                 $rv;
             }
@@ -592,10 +585,10 @@ detail sizes.  Each object has the following available methods:
 
 =head3 cmap
 
-    say $face.cmap.head(3).raku; # e.g. (3 => " ", 4 => "!", 5 => "\"")
+    say $face.cmap.head(3).map({.key => .value.chr}).raku; # e.g. (3 => " ", 4 => "!", 5 => "\"")
 
 Iterates the fonts character map, returning character mappings from
-glyphs-indexes to characters. Any glyphs that don't have character
+glyphs-indexes to characters-codes. Any glyphs that don't have character
 mapping are ommitted. It is also possible for a single glyph-index to
 map to multiple characters.
 

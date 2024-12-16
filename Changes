@@ -1,4 +1,6 @@
 {{$NEXT}}
+    - Make cmap() return character codes rather than characters.
+      Base forall-chars() and forall-images() on cmap().
 
 0.5.12  2024-12-15T14:38:07+13:00
     - Add cmap method; for lightweight glyph/character mappings

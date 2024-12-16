@@ -65,7 +65,7 @@ $bdf.forall-chars: {
         unless defined $line;
     my ($unicode, $name) = split /\s+/, $line;
     $unicode = :16($unicode);
-    is .char-code, $unicode, "glyph $unicode char code in foreach-char()";
+    is .char-code, $unicode, "glyph $unicode char code in forall-chars()";
     # Can't test the name yet because it isn't implemented in FreeType.
     #is .name, $name, "glyph $unicode name in foreach-char";
 };

@@ -43,7 +43,7 @@ is $face.units-per-EM, 2048, '.units-per-EM';
 is $face.ascender, 1901, '.ascender';
 is $face.descender, -483, '.ascender';
 
-is-deeply $face.cmap.head(3), (3 => " ", 4 => "!", 5 => "\"");
+is-deeply $face.cmap.head(3).map({.key => .value.chr}), (3 => " ", 4 => "!", 5 => "\"");
 
 lives-ok {$face = $freetype.face('t/fonts/DejaVuSans.ttf'.IO) }, 'face creation from IO path';
 is $face.font-format, 'TrueType', 'font format';

@@ -94,9 +94,9 @@ Returns an array of Font::FreeType::BitMap::Size objects which detail sizes. Eac
 
 ### cmap
 
-    say $face.cmap.head(3).raku; # e.g. (3 => " ", 4 => "!", 5 => "\"")
+    say $face.cmap.head(3).map({.key => .value.chr}).raku; # e.g. (3 => " ", 4 => "!", 5 => "\"")
 
-Iterates the fonts character map, returning character mappings from glyphs-indexes to characters. Any glyphs that don't have character mapping are ommitted. It is also possible for a single glyph-index to map to multiple characters.
+Iterates the fonts character map, returning character mappings from glyphs-indexes to characters-codes. Any glyphs that don't have character mapping are ommitted. It is also possible for a single glyph-index to map to multiple characters.
 
 ### glyph-images(str)
 
