@@ -40,31 +40,6 @@
     - Add face bbox() alias for bounding-box() #23.
 
 0.5.3  2023-08-10T06:26:27+12:00
-
-
-0.5.8  2024-08-09T06:21:56+12:00
-    - Fix tests on Windows
-    - Take a copy of FT_Bitmap_Size structs. To avoid any chance of
-      dangling references.
-
-0.5.7  2024-05-24T07:49:27+12:00
-    - Add FT_Face.get-bitmap-size() accessor. Fix and reinstate BDF fonts.
-
-0.5.6  2024-05-20T09:15:00+12:00
-    - Make the default load flags suitable for outline, scalable fonts #25
-    - Partially deprecate BDF fonts #28
-
-0.5.5  2024-01-22T05:46:45+13:00
-    - Add face glyph-image() method
-    - Change OpenType/CFF to return type font-format 'OpenType' #27.
-    - Add index-to-unicode() method
-    - Add set-charmap() method
-
-0.5.4  2023-12-17T06:55:36+13:00
-    - Fix face height and advance-width. Thanks Tom Browder
-    - Add face bbox() alias for bounding-box() #23.
-
-0.5.3  2023-08-10T06:26:27+12:00
     - Implement face .attach-file method and face creation option
 
 0.5.2  2023-08-07T08:18:25+12:00
