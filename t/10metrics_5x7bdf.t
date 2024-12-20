@@ -20,11 +20,11 @@ is $bdf.postscript-name, Str, 'there is no postscript name'; is
 $bdf.family-name, 'Fixed', '$face->family-name() is right'; is
 $bdf.style-name, 'Regular', 'no style name, defaults to "Regular"';
 
-my %expected-flags = ( :has-glyph-names(False),
-    :has-horizontal-metrics(True), :has-kerning(False),
-    :has-reliable-glyph-names(False), :has-vertical-metrics(False),
-    :is-bold(False), :is-fixed-width(True), :is-italic(False),
-    :is-scalable(False), :is-sfnt(False), );
+my %expected-flags = ( :!has-glyph-names,
+    :has-horizontal-metrics, :!has-kerning,
+    :!has-reliable-glyph-names, :!has-vertical-metrics,
+    :!is-bold, :is-fixed-width, :!is-italic,
+    :!is-scalable, :!is-sfnt, );
 
 for %expected-flags.pairs.sort { is-deeply $bdf."{.key}"(), .value,
     "\$face.{.key}"; }

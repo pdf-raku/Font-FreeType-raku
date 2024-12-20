@@ -32,16 +32,16 @@ is $vera.style-name, 'Roman', '$face->style-name';
 
 # Test face flags.
 my %expected-flags = (
-    :has-glyph-names(True),
-    :has-horizontal-metrics(True),
-    :has-kerning(True),
-    :has-reliable-glyph-names(False),
-    :has-vertical-metrics(False),
-    :is-bold(False),
-    :is-fixed-width(False),
-    :is-italic(False),
-    :is-scalable(True),
-    :is-sfnt(True),
+    :has-glyph-names,
+    :has-horizontal-metrics,
+    :has-kerning,
+    :!has-reliable-glyph-names,
+    :!has-vertical-metrics,
+    :!is-bold,
+    :!is-fixed-width,
+    :!is-italic,
+    :is-scalable,
+    :is-sfnt,
 );
 
 for %expected-flags.pairs.sort {

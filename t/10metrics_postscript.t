@@ -25,16 +25,16 @@ sub test-times-font($tnr, Bool :$afm) {
 
     # Test face flags.
     my %expected-flags = (
-        :has-glyph-names(True),
-        :has-horizontal-metrics(True),
+        :has-glyph-names,
+        :has-horizontal-metrics,
         :has-kerning($afm.so),
-        :has-reliable-glyph-names(True),
-        :has-vertical-metrics(False),
-        :is-bold(False),
-        :is-fixed-width(False),
-        :is-italic(False),
-        :is-scalable(True),
-        :is-sfnt(False),
+        :has-reliable-glyph-names,
+        :!has-vertical-metrics,
+        :!is-bold,
+        :!is-fixed-width,
+        :!is-italic,
+        :is-scalable,
+        :!is-sfnt,
     );
 
     for %expected-flags.pairs.sort {
