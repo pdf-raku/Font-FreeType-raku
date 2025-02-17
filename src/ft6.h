@@ -1,7 +1,7 @@
 #ifndef __FT6_H
 #define __FT6_H
 
-#include <ft2build.h>
+#include "ft2build.h"
 
 #ifdef _WIN32
 #define DLLEXPORT __declspec(dllexport)
