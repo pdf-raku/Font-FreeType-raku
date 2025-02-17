@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.5.14  2025-02-18T06:39:27+13:00
+    - Re-release with corrected source-url
+
 0.5.13  2024-12-17T05:37:21+13:00
     - Make cmap() return character codes rather than characters.
       Base forall-chars() and forall-images() on cmap().
