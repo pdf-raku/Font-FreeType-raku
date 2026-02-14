@@ -29,7 +29,7 @@ for  <bdf fnt> -> $fmt {
                 or die "badly formated bitmap test file";
             my $unicode = $0.Str;
             my $char = :16($unicode).chr;
-            my $desc = "'$fmt' format font, glyph {$char.perl}";
+            my $desc = "'$fmt' format font, glyph {$char.raku}";
 
             # Read test bitmap.
             my @expected;
