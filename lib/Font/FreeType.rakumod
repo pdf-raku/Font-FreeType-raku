@@ -106,7 +106,7 @@ multi method version(::?CLASS:D:) returns Version:D {
 
 =head2 Description
 
-A Font::FreeType object must first be created before other objects may be crated.  Fort example to load a L<Font::FreeType::Face> object:
+A Font::FreeType object must first be created before creating other objects.  For example to load a L<Font::FreeType::Face> object:
 
     use Font::FreeType;
     use Font::FreeType::Face;

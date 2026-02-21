@@ -24,7 +24,7 @@ Synopsis
 Description
 -----------
 
-A Font::FreeType object must first be created before other objects may be crated. Fort example to load a [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face) object:
+A Font::FreeType object must first be created before creating other objects. For example to load a [Font::FreeType::Face](https://pdf-raku.github.io/Font-FreeType-raku/Font/FreeType/Face) object:
 
     use Font::FreeType;
     use Font::FreeType::Face;
