@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.5.15  2026-04-02T18:25:10+13:00
     - Fix test-suite Rakudo deprecation warning
 
 0.5.14  2025-02-18T06:39:27+13:00
