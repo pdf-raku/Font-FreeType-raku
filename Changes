@@ -1,4 +1,5 @@
 {{$NEXT}}
+    - Fix test-suite Rakudo deprecation warning
 
 0.5.14  2025-02-18T06:39:27+13:00
     - Re-release with corrected source-url
