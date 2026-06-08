@@ -6,7 +6,7 @@
   "depends": {
       "build" : {
           "requires" : [
-              {"by-distro.name": { "win32" : [], "" : ["LibraryMake"] } }
+              {"by-distro.name": { "mswin32" : [], "" : ["LibraryMake"] } }
           ]
       },
       "runtime" : {
