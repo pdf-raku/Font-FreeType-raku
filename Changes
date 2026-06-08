@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.5.16  2026-06-09T04:21:36+12:00
+    - Make LibraryMake an optional dependency on Windows (mswin32 distro)
+
 0.5.15  2026-04-02T18:25:10+13:00
     - Fix test-suite Rakudo deprecation warning
 
