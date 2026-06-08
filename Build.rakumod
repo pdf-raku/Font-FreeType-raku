@@ -3,21 +3,21 @@
 use v6;
 
 class Build {
-    need LibraryMake;
     # adapted from deprecated Native::Resources
 
     #| Sets up a C<Makefile> and runs C<make>.  C<$folder> should be
     #| C<"$folder/resources/lib"> and C<$libname> should be the name of the library
     #| without any prefixes or extensions.
     sub make(Str $folder, Str $destfolder, IO() :$libname!, Str :$I) {
+        if !$I && Rakudo::Internals.IS-WIN {
+                note "Using prebuilt DLLs on Windows";
+                return True;
+        }
+
+        require LibraryMake;
         my %vars = LibraryMake::get-vars($destfolder);
         %vars<LIB-NAME> = ~ $*VM.platform-library-name($libname);
         if Rakudo::Internals.IS-WIN {
-            unless $I {
-                note "Using prebuilt DLLs on Windows";
-                return True;
-            }
-
             %vars<LIB-CFLAGS> = "-I$I";
             %vars<LIBS> = '-lfreetype'; 
             %vars<MAKE> = 'make';

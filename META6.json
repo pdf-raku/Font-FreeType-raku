@@ -3,13 +3,19 @@
   "authors": [
     "David Warring"
   ],
-  "build-depends": [
-    "LibraryMake"
-  ],
-  "depends": [
-    "MacOS::NativeLib",
-    "Method::Also"
-  ],
+  "depends": {
+      "build" : {
+          "requires" : [
+              {"by-distro.name": { "win32" : [], "" : ["LibraryMake"] } }
+          ]
+      },
+      "runtime" : {
+          "requires" : [
+              "MacOS::NativeLib",
+              "Method::Also"
+          ]
+      }
+  },
   "description": "Raku bindings to the FreeType font library (version 2)",
   "license": "Artistic-2.0",
   "name": "Font::FreeType",
