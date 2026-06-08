@@ -2,7 +2,7 @@
 use Font::FreeType;
 use Font::FreeType::Raw::Defs;
 
-sub MAIN(Str $font-file, Str $char is copy, UInt :$bold) {
+sub MAIN(Str $font-file, Str $char is copy, Int :$bold) {
 
     my $face = Font::FreeType.new.face($font-file,
                                        :load-flags(FT_LOAD_NO_HINTING));
