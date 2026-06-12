@@ -4,7 +4,6 @@ unit class Font::FreeType::Glyph;
 use Font::FreeType::_Glyph;
 also is Font::FreeType::_Glyph;
 
-use NativeCall;
 use Font::FreeType::GlyphImage;
 use Font::FreeType::Raw;
 use Font::FreeType::Raw::Defs;
