@@ -13,7 +13,7 @@ lives-ok({ cglobal($FT-LIB, "FT_Library_Version", Pointer) }, 'FreeType lib acce
 
 ok $FT-WRAPPER-LIB.IO.s, $FT-WRAPPER-LIB.IO.path ~ ' library has been built';
 unless $FT-WRAPPER-LIB.IO.s {
-    bail-out "unable to access {$FT-WRAPPER-LIB.basename}, has it been built, (e.g. 'zef build .' or 'raku Build.rakumod'" ~ ('Makefile'.IO.e ?? ", or 'make'" !! '') ~ ')';
+    bail-out "unable to access {$FT-WRAPPER-LIB.IO.basename}, has it been built, (e.g. 'zef build .' or 'raku Build.rakumod'" ~ ('Makefile'.IO.e ?? ", or 'make'" !! '') ~ ')';
 }
 
 my Font::FreeType $freetype;
